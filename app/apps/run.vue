@@ -1,11 +1,36 @@
 <script setup lang="ts">
+import { onMounted, nextTick } from "vue";
 import Window from "~/components/window.vue"
+import { APPS } from "~/registry/apps";
+import type { WindowInstance } from "~/types/window";
 
-const id = useId();
 const manager = useWindowManager();
-function open(appId) {
+const props = withDefaults(defineProps<{
+    instance: WindowInstance
+}>(), {
+})
+
+function open(appId: string): boolean {
+    if (!Object.keys(APPS).includes(appId)) return false;
     manager.open(appId);
-} 
+    return true;
+}
+
+function submit() {
+    if (!query.value.trim()) return;
+    if (open(query.value.trim())) {
+        manager.close(props.instance.id);
+    } else {
+        // whatever, it just closes for now
+    }
+}
+
+const textbox = useTemplateRef<HTMLInputElement>('run-' + props.instance.id);
+const query = ref("");
+onMounted(async () => {
+    await nextTick();
+    textbox.value?.focus();
+});
 </script>
 
 <template>
@@ -23,10 +48,11 @@ function open(appId) {
         </div>
 
         <div class="main">
-            <input type="text" placeholder="welcome" />
+            <input type="text" :ref="'run-' + instance.id" placeholder="welcome" @keydown.enter="submit"
+                v-model="query" />
             <div class="buttons">
-                <button>OK</button>
-                <button @click="manager.close(id)">Cancel</button>
+                <button @click="submit">OK</button>
+                <button @click="manager.close(instance.id)">Cancel</button>
             </div>
         </div>
     </div>
@@ -44,10 +70,10 @@ function open(appId) {
     display: flex;
     flex-direction: row;
     gap: 5px;
-}
 
-.buttons button {
-    width: 100px;
+    button {
+        width: 100px;
+    }
 }
 
 .logo {
@@ -62,29 +88,32 @@ function open(appId) {
     flex-direction: column;
 }
 
-.striped-bg span h2 {
-    margin: 0;
-}
-
-.striped-bg span {
-    display: flex;
-    justify-content: center;
-    align-items: start;
-    flex-direction: column;
-}
-
-.striped-bg span p {
-    margin: 0;
-}
-
 .striped-bg {
+    span {
+        display: flex;
+        justify-content: center;
+        align-items: start;
+        flex-direction: column;
+
+        h2 {
+            margin: 0;
+            font-weight: normal;
+            filter: drop-shadow(1px 1px 5px #000000);
+        }
+
+        p {
+            margin: 0;
+            filter: drop-shadow(1px 1px 5px #000000);
+        }
+    }
+
     width: 100%;
 
     background: repeating-linear-gradient(0deg,
-            #d7d7d7 0px,
-            #d7d7d7 6px,
-            #9f9f9f 6px,
-            #9f9f9f 7px);
+        #d7d7d7 0px,
+        #d7d7d7 6px,
+        #9f9f9f 6px,
+        #9f9f9f 7px);
     height: 80px;
 
     display: flex;

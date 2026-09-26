@@ -6,7 +6,6 @@ const manager = useWindowManager();
 const props = withDefaults(defineProps<{
   instance: WindowInstance
 }>(), {
-
 })
 
 const instanceId = useId();
@@ -71,7 +70,6 @@ function onMouseUp(event: MouseEvent) {
 
 function startDrag(event: MouseEvent) {
     event.preventDefault();
-    console.log("aiojag;ihagaguiherg")
 
     drag = true;
     startX = event.clientX;
@@ -81,7 +79,6 @@ function startDrag(event: MouseEvent) {
 
     document.addEventListener("mousemove", onDragMove);
     document.addEventListener("mouseup", onDragEnd);
-
 }
 
 function onDragMove(event: MouseEvent) {
@@ -137,9 +134,5 @@ function onDragEnd(event: MouseEvent) {
 <style>
 .title-bar-text {
     user-select: none;
-}
-
-.window-body {
-    font-family: "Old Standard TT", serif;
 }
 </style>

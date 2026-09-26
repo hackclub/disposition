@@ -1,13 +1,29 @@
 <script setup lang="ts">
 import { APPS } from '~/registry/apps';
 import { ICONS } from '~/registry/icons';
+const { loggedIn, user } = useUserSession()
 const manager = useWindowManager();
+
+let info;
+if (loggedIn) {
+    interface CachetResponse {
+        id: string,
+        userId: string,
+        displayName: string,
+        realName: string,
+        pronouns: string,
+        imageUrl: string,
+    }
+
+    //@ts-ignore
+    info = await $fetch<CachetResponse>(`https://cachet.hackclub.com/users/${user.value.slackId}`);
+}
 </script>
 
 <template>
     <div class="startMenu">
         <div class="left">
-            <div class="header"> 
+            <div class="header">
                 <img src="~/assets/logos/Disposition.png" alt="Disposition logo" />
                 <span>
                     <h1>Disposition</h1>
@@ -29,14 +45,21 @@ const manager = useWindowManager();
         <div class="right">
             <!-- here we can put some tool apps like dispover. not all of the tool apps tho -->
             <div class="menu-item" @click="manager.open('winver')">DispoVer</div>
-            <div class="menu-item">Sign Out</div>
+            <AuthState v-slot="{ loggedIn, clear }">
+                <div v-if="loggedIn" class="menu-item" @click="clear">Sign Out</div>
+            </AuthState>
 
             <div class="menu-profile">
-                    
-                <span>
-                <b>Username</b>
-                <img class="profile-pic" src="C:\Users\Hax\Desktop\disposition\app\assets\icons\profile.png"></img>
-                </span>
+                <AuthState v-slot="{ loggedIn }">
+                    <span v-if="loggedIn && info">
+                        <b>{{ info.displayName }}</b>
+                        <img class="profile-pic" :src="info.imageUrl"></img>
+                    </span>
+                    <span v-else>
+                        <b>Not logged in</b>
+                        <img class="profile-pic" src="~/assets/logos/pfp.png"></img>
+                    </span>
+                </AuthState>
             </div>
         </div>
     </div>

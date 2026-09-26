@@ -1,16 +1,18 @@
 <script setup lang="ts">
+const { loggedIn } = useUserSession();
+const { read, write, has } = useConfiguration("welcome");
+
 let funFacts = [
     "I love eating shawarma!",
     "The fetuccini sequence or something like that"
 ];
 
+const openNext = ref(read("openNext"));
 const manager = useWindowManager();
-
 async function rsvp() {
     const rsvp = document.getElementById("rsvp");
 
-    const loggedIn = await fetch('/oauth/loggedIn');
-    if (loggedIn.status == 200) {
+    if (loggedIn.value) {
         const rsvpResponse = await fetch('/rsvp');
         if (rsvpResponse.status == 200) {
             rsvp!.innerText = "RSVP'd!";
@@ -20,12 +22,16 @@ async function rsvp() {
             rsvp!.innerText = "Error :(";
         }
     } else {
-        manager.open("rsvp");
+        manager.open("auth");
     }
 
     setTimeout(() => {
         rsvp!.innerText = "RSVP";
     }, 5000);
+}
+
+function openNextChanged() {
+    write("openNext", openNext.value);
 }
 </script>
 
@@ -52,7 +58,7 @@ async function rsvp() {
                         <img src="~/assets/logos/Docs.png" alt="Information Icon" width="40px" height="40px" />
                         <h3>Fun Fact!</h3>
                     </span>
-                    <p>{{ funFacts[0] }}</p>
+                    <p>{{ funFacts[Math.floor(Math.random() * (funFacts.length - 1))] }}</p>
                 </div>
 
                 <div class="buttons">
@@ -64,7 +70,7 @@ async function rsvp() {
             </div>
 
             <label>
-                <input type="checkbox" checked />
+                <input type="checkbox" v-model="openNext" @change="openNextChanged" />
                 Open this welcome screen the next time you open Disposition
             </label>
         </div>
@@ -72,20 +78,32 @@ async function rsvp() {
 </template>
 
 <style scoped>
-.fun-fact p {
-    margin: 0;
-    padding-left: 10px;
-    padding-bottom: 10px;
-}
+.fun-fact {
+    flex-grow: 5;
 
-.fun-fact span {
-    margin: 0;
+    border-style: none;
+    background-color: #D9D9D9;
+
     display: flex;
-    flex-direction: row;
-    justify-content: start;
-    align-items: center;
-    padding-left: 10px;
-    gap: 5px;
+    flex-direction: column;
+    gap: 10px;
+    margin: 0;
+
+    p {
+        margin: 0;
+        padding-left: 10px;
+        padding-bottom: 10px;
+    }
+
+    span {
+        margin: 0;
+        display: flex;
+        flex-direction: row;
+        justify-content: start;
+        align-items: center;
+        padding-left: 10px;
+        gap: 5px;
+    }
 }
 
 .logo {
@@ -98,31 +116,36 @@ async function rsvp() {
 .header {
     display: flex;
     flex-direction: column;
-}
 
-.striped-bg span h2 {
-    margin: 0;
-}
-
-.striped-bg span {
-    display: flex;
-    justify-content: center;
-    align-items: start;
-    flex-direction: column;
-}
-
-.striped-bg span p {
-    margin: 0;
+    font-family: 'Joan', serif;
 }
 
 .striped-bg {
+    span {
+        display: flex;
+        justify-content: center;
+        align-items: start;
+        flex-direction: column;
+
+        h2 {
+            margin: 0;
+            font-weight: normal;
+            filter: drop-shadow(1px 1px 5px #000000);
+        }
+
+        p {
+            margin: 0;
+            filter: drop-shadow(1px 1px 5px #000000);
+        }
+    }
+
     width: 100%;
 
     background: repeating-linear-gradient(0deg,
-            #d7d7d7 0px,
-            #d7d7d7 6px,
-            #9f9f9f 6px,
-            #9f9f9f 7px);
+        #d7d7d7 0px,
+        #d7d7d7 6px,
+        #9f9f9f 6px,
+        #9f9f9f 7px);
     height: 80px;
 
     display: flex;
@@ -139,12 +162,12 @@ async function rsvp() {
     display: flex;
     flex-direction: column;
     gap: 4px;
-}
 
-.main h2 {
-    margin: 5px;
-    /* what the fuck?? why does this have so much margin bro :sob: */
-    margin-left: 0;
+    h2 {
+        margin: 5px;
+        /* what the fuck?? why does this have so much margin bro :sob: */
+        margin-left: 0;
+    }
 }
 
 .spacer {
@@ -172,17 +195,5 @@ async function rsvp() {
     flex-direction: row;
 
     gap: 3px;
-}
-
-.fun-fact {
-    flex-grow: 5;
-
-    border-style: none;
-    background-color: #D9D9D9;
-
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin: 0;
 }
 </style>

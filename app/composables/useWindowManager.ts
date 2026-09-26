@@ -1,6 +1,6 @@
 import Documentation from "~/apps/documentation.vue";
 import Welcome from "~/apps/welcome.vue";
-import type {WindowInstance} from "~/types/window"
+import type { WindowInstance } from "~/types/window"
 import { APPS } from "~/registry/apps.ts"
 
 export const useWindowManager = () => {
@@ -9,7 +9,16 @@ export const useWindowManager = () => {
     const focused = (id: string) => { windows.value.find(w => w.id === id)!.z = nextZ.value++ };
 
     function open(appId: keyof typeof APPS) {
-        if(!APPS[appId]) return;
+        if (!APPS[appId]) return;
+
+        let posX = APPS[appId].posX ? APPS[appId].posX : 200;
+        let posY = APPS[appId].posY ? APPS[appId].posY : 200;
+
+        if (import.meta.client && !APPS[appId].posX && !APPS[appId].posY) {
+            posX = window.innerWidth / 2 - APPS[appId].width / 2;
+            posY = window.innerHeight / 2 - APPS[appId].height / 2;
+        }
+
         windows.value.push({
             id: (Math.random() * 10000).toString(),
             appId: appId.toString(),
@@ -25,15 +34,12 @@ export const useWindowManager = () => {
             tool: APPS[appId].tool,
             resizeable: APPS[appId].resizeable,
 
-            //posX: window.innerWidth / 2 - APPS[appId].width / 2,
-            //posY: window.innerHeight / 2 - APPS[appId].height / 2
-            posX: 200,
-            posY: 200
+            posX,
+            posY
         });
     }
 
     function close(id: string) {
-        console.log(id);
         windows.value = windows.value.filter(w => w.id !== id);
     }
 

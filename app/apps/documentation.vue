@@ -3,7 +3,7 @@ const { data: navigation } = await useAsyncData('nav', () =>
     queryCollectionNavigation('content')
 )
 
-const currentPath = ref('/getting-started/index') // pick a sensible default
+const currentPath = ref('/getting-started/index')
 
 const { data: home } = await useAsyncData(
     () => queryCollection('content').path(currentPath.value).first(),
@@ -35,10 +35,7 @@ function selectArticle(path: string) {
                     <h3>{{ cat.title }}</h3>
                     <ul v-if="cat.children?.length">
                         <li v-for="article in cat.children" :key="article.path">
-                            <a
-                                @click="selectArticle(article.path)"
-                                :class="{ active: currentPath === article.path }"
-                            >
+                            <a @click="selectArticle(article.path)" :class="{ active: currentPath === article.path }">
                                 {{ article.title }}
                             </a>
                         </li>
@@ -71,29 +68,32 @@ function selectArticle(path: string) {
     flex-direction: column;
 }
 
-.striped-bg span h2 {
-    margin: 0;
-}
-
-.striped-bg span {
-    display: flex;
-    justify-content: center;
-    align-items: start;
-    flex-direction: column;
-}
-
-.striped-bg span p {
-    margin: 0;
-}
-
 .striped-bg {
+    span {
+        display: flex;
+        justify-content: center;
+        align-items: start;
+        flex-direction: column;
+
+        h2 {
+            margin: 0;
+            font-weight: normal;
+            filter: drop-shadow(1px 1px 5px #000000);
+        }
+
+        p {
+            margin: 0;
+            filter: drop-shadow(1px 1px 5px #000000);
+        }
+    }
+
     width: 100%;
 
     background: repeating-linear-gradient(0deg,
-            #d7d7d7 0px,
-            #d7d7d7 6px,
-            #9f9f9f 6px,
-            #9f9f9f 7px);
+        #d7d7d7 0px,
+        #d7d7d7 6px,
+        #9f9f9f 6px,
+        #9f9f9f 7px);
     height: 80px;
 
     display: flex;
@@ -130,16 +130,18 @@ function selectArticle(path: string) {
     width: 300px;
 
     flex-grow: 1;
+
+    h3 {
+        background-color: #D9D9D9;
+        padding: 2px;
+    }
+
+    a:hover {
+        cursor: pointer;
+        text-decoration: underline;
+    }
 }
 
-.sidebar h3 {
-    background-color: #D9D9D9;
-}
-
-.sidebar a:hover {
-    cursor: pointer;
-    text-decoration: underline;
-}
 
 .divider {
     width: 2px;
