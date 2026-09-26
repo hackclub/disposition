@@ -95,21 +95,23 @@ if (loggedIn) {
     display: flex;
     flex-direction: row;
     gap: 5px;
-}
 
-.header span h1 {
-    margin: 0;
-    font-size: 26px;
-}
+    span {
+        h1 {
+            margin: 0;
+            font-size: 26px;
+        }
 
-.header span p {
-    margin: 0;
-    font-size: 12px;
-}
+        p {
+            margin: 0;
+            font-size: 12px;
+        }
+    }
 
-.header img {
-    height: 80px;
-    width: 80px;
+    img {
+        height: 80px;
+        width: 80px;
+    }
 }
 
 .right {
@@ -136,13 +138,12 @@ if (loggedIn) {
 
     user-select: none;
 
-}
-
-.menu-profile span {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 6px;
+    span {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 6px;
+    }
 }
 
 .profile-pic {
@@ -158,12 +159,12 @@ if (loggedIn) {
     transition: 0.2s;
 
     user-select: none;
-}
 
-.menu-item:hover {
-    font-size: larger;
-    font-weight: bold;
-    cursor: pointer;
+    &:hover {
+        font-size: larger;
+        font-weight: bold;
+        cursor: pointer;
+    }
 }
 
 .apps {
@@ -177,10 +178,6 @@ if (loggedIn) {
     height: 80%;
 
     user-select: none;
-}
-
-.app p {
-    margin: 0;
 }
 
 .app {
@@ -198,17 +195,21 @@ if (loggedIn) {
     transition: 0.2s;
 
     user-select: none;
-}
 
-.app img {
-    width: 30px;
-    height: 30px;
-}
+    p {
+        margin: 0;
+    }
 
-.app:hover {
-    background-color: #1F1F1F;
-    font-weight: bold;
-    color: white;
-    cursor: pointer;
+    img {
+        width: 30px;
+        height: 30px;
+    }
+
+    &:hover {
+        background-color: #1F1F1F;
+        font-weight: bold;
+        color: white;
+        cursor: pointer;
+    }
 }
 </style>
