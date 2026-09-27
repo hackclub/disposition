@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { APPS } from '~/registry/apps';
 import { ICONS } from '~/registry/icons';
-const { loggedIn, user } = useUserSession()
+const { loggedIn, user } = await useUserSession()
 const manager = useWindowManager();
 
 let info;
-if (loggedIn) {
+console.log(loggedIn.value)
+if (loggedIn.value) {
     interface CachetResponse {
         id: string,
         userId: string,
@@ -57,7 +58,7 @@ if (loggedIn) {
                         <img class="profile-pic" :src="info.imageUrl"></img>
                     </span>
                     <span v-else>
-                        <b>Not logged in</b>
+                        <b>Guest</b>
                         <img class="profile-pic" src="~/assets/misc/pfp.png"></img>
                     </span>
                 </AuthState>
@@ -67,6 +68,12 @@ if (loggedIn) {
 </template>
 
 <style scoped>
+.profile-pic {
+    height: 25px;
+    width: 25px;
+    object-fit: fill;
+}
+
 .startMenu {
     background: linear-gradient(0deg, #525252 0%, #050505 100%);
     border-top-left-radius: 5px;
@@ -133,7 +140,7 @@ if (loggedIn) {
     display: flex;
     flex-direction: column;
     justify-items: center;
-    align-items: end;
+    align-items: center;
     padding: 2px;
     width: 90%;
 
@@ -143,14 +150,9 @@ if (loggedIn) {
         display: flex;
         flex-direction: row;
         align-items: center;
+        justify-content: center;
         gap: 6px;
     }
-}
-
-.profile-pic {
-    height: 25px;
-    width: 25px;
-    object-fit: cover;
 }
 
 .menu-item {

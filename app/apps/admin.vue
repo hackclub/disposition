@@ -1,11 +1,16 @@
 <script setup lang="ts">
-interface RsvpStats {
-    total: number,
-    today: number,
-    week: number
-}
+const { loggedIn, user } = await useUserSession()
 
-const info = await $fetch<RsvpStats>("/admin/rsvpStats");
+let info;
+if (loggedIn.value && useRuntimeConfig().public.adminIds.includes(user.value.slackId)) {
+    interface RsvpStats {
+        total: number,
+        today: number,
+        week: number
+    }
+
+    info = await $fetch<RsvpStats>("/admin/rsvpStats");
+}
 </script>
 
 <template>
@@ -40,7 +45,7 @@ const info = await $fetch<RsvpStats>("/admin/rsvpStats");
                         <p class="data">{{ info.today }}</p>
                     </span>
                 </div>
-                
+
                 <div v-else class="center">
                     sorry, not admin :(
                 </div>
@@ -63,7 +68,7 @@ const info = await $fetch<RsvpStats>("/admin/rsvpStats");
 .flex {
     display: flex;
     flex-direction: column;
-    
+
     span h1 {
         margin: 0;
     }
