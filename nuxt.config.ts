@@ -8,12 +8,24 @@ export default defineNuxtConfig({
 		hackclub: {
 			clientId: process.env.HCA_CLIENT_ID,
 			clientSecret: process.env.HCA_CLIENT_SECRET,
-			
-			adminIds: "",
 		},
 
 		public: {
-			baseUrl: "http://localhost:3000"
+			baseUrl: "http://localhost:3000",
+			adminIds: ["U0A9S13HQF3", "U0AFWJX9CP2", "U0A9M9LC5PV"], // org slack ids
+
+			defaultConfig: {
+				welcome: {
+					openNext: true,
+				},
+
+				settings: {
+					showBuddy: true,
+					wallpaperSource: "/wallpaper/default.png",
+					configVersion: "1.0.0"
+				}
+			},
+
 		},
 
 		database: {

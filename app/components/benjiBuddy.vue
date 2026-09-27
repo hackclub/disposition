@@ -27,17 +27,18 @@ const currentFrame = computed(() => {
 // how far he can wander in a single move (px)
 const MIN_STEP = 50
 const MAX_STEP = 200
+const LEFT_BOUNDARY = 400; // kinda self explanatory idk
 
 function moveSomewhere() {
     if (emote.value) return
     const margin = 20
     const maxX = window.innerWidth - BUDDY_SIZE - margin
-    const distance = MIN_STEP + Math.random() * (MAX_STEP - MIN_STEP) // always between MIN_STEP and MAX_STEP
+    const distance = MIN_STEP + Math.random() * (MAX_STEP - MIN_STEP) // always between min step and max step
     const direction = Math.random() < 0.5 ? -1 : 1
     const nextX = Math.min(maxX, Math.max(margin, pos.x + distance * direction))
     facingLeft.value = nextX < pos.x
-    pos.x = nextX
-    // y stays pinned near the bottom — never changes
+    pos.x = Math.max(nextX, LEFT_BOUNDARY);
+
     isMoving.value = true
 }
 
@@ -62,7 +63,7 @@ let moveTimer: ReturnType<typeof setInterval>
 let emoteTimer: ReturnType<typeof setInterval>
 
 onMounted(() => {
-    onResize() // set real position now that window exists
+    onResize()
     buddyRef.value!.addEventListener('transitionend', onTransitionEnd)
     window.addEventListener('resize', onResize)
     moveTimer = setInterval(moveSomewhere, 5000)
@@ -78,26 +79,12 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-   <div
-    ref="buddyRef"
-    class="desktop-buddy"
-    :style="{ left: pos.x + 'px', top: pos.y + 'px' }"
-  >
-    <!--
-      Positioning (left/top) lives on the OUTER div.
-      Flipping + hopping + the sprite image live on this INNER div,
-      so mirroring never shifts the box the position styles control,
-      and the emote bubble (a sibling, not a child of this) never flips.
-    -->
-    <div
-      class="buddy-sprite"
-      :class="{ 'facing-left': facingLeft && !emote, hopping: isMoving, bouncing: !!emote }"
-      :style="{ backgroundImage: `url(${currentFrame})` }"
-      
-    />
+    <div ref="buddyRef" class="desktop-buddy" :style="{ left: pos.x + 'px', top: pos.y + 'px' }">
+        <div class="buddy-sprite" :class="{ 'facing-left': facingLeft && !emote, hopping: isMoving, bouncing: !!emote }"
+            :style="{ backgroundImage: `url(${currentFrame})` }" />
 
-    <div v-if="emote" class="emote-bubble">{{ emote }}</div>
-  </div>
+        <div v-if="emote" class="emote-bubble">{{ emote }}</div>
+    </div>
 </template>
 
 
@@ -106,7 +93,7 @@ onBeforeUnmount(() => {
     position: fixed;
     width: 150px;
     height: 150px;
-    z-index: 10000;
+    z-index: 9998;
     transition: left 0.35s ease-in-out;
 }
 
@@ -120,42 +107,69 @@ onBeforeUnmount(() => {
     filter: drop-shadow(2px 5px 4px #070707);
     user-select: none;
     pointer-events: none;
+
+    &.facing-left {
+        transform: scaleX(-1);
+    }
+
+    &.hopping {
+        animation: hop 0.35s ease-in-out infinite;
+
+        &.facing-left {
+            animation: hop-flipped 0.35s ease-in-out infinite;
+        }
+    }
+
+    &.bouncing {
+        animation: emote-bounce 0.4s ease-in-out;
+    }
 }
 
-.buddy-sprite.facing-left {
-    transform: scaleX(-1);
-}
-
-
-/* hop: quick up-down bounce, timed to roughly match the 0.35s move */
-.buddy-sprite.hopping {
-    animation: hop 0.35s ease-in-out infinite;
-}
-.buddy-sprite.hopping.facing-left {
-    animation: hop-flipped 0.35s ease-in-out infinite;
-}
 
 @keyframes hop {
-    0%   { transform: scaleX(1) translateY(0); }
-    50%  { transform: scaleX(1) translateY(-10px); }
-    100% { transform: scaleX(1) translateY(0); }
-}
-@keyframes hop-flipped {
-    0%   { transform: scaleX(-1) translateY(0); }
-    50%  { transform: scaleX(-1) translateY(-10px); }
-    100% { transform: scaleX(-1) translateY(0); }
+    0% {
+        transform: scaleX(1) translateY(0);
+    }
+
+    50% {
+        transform: scaleX(1) translateY(-10px);
+    }
+
+    100% {
+        transform: scaleX(1) translateY(0);
+    }
 }
 
-/* little bounce/pop when emoting */
-.buddy-sprite.bouncing {
-    animation: emote-bounce 0.4s ease-in-out;
+@keyframes hop-flipped {
+    0% {
+        transform: scaleX(-1) translateY(0);
+    }
+
+    50% {
+        transform: scaleX(-1) translateY(-10px);
+    }
+
+    100% {
+        transform: scaleX(-1) translateY(0);
+    }
 }
 
 @keyframes emote-bounce {
-    0%   { transform: scale(1) translateY(0); }
-    30%  { transform: scale(1.15, 0.85) translateY(4px); }
-    60%  { transform: scale(0.95, 1.1) translateY(-8px); }
-    100% { transform: scale(1) translateY(0); }
+    0% {
+        transform: scale(1) translateY(0);
+    }
+
+    30% {
+        transform: scale(1.15, 0.85) translateY(4px);
+    }
+
+    60% {
+        transform: scale(0.95, 1.1) translateY(-8px);
+    }
+
+    100% {
+        transform: scale(1) translateY(0);
+    }
 }
 
 .emote-bubble {
@@ -166,8 +180,16 @@ onBeforeUnmount(() => {
     font-size: 18px;
     animation: pop-in 0.2s ease-out;
 }
+
 @keyframes pop-in {
-    from { transform: translateX(-50%) scale(0.4); opacity: 0; }
-    to   { transform: translateX(-50%) scale(1); opacity: 1; }
+    from {
+        transform: translateX(-50%) scale(0.4);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(-50%) scale(1);
+        opacity: 1;
+    }
 }
 </style>

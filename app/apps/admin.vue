@@ -1,4 +1,11 @@
 <script setup lang="ts">
+interface RsvpStats {
+    total: number,
+    today: number,
+    week: number
+}
+
+const info = await $fetch<RsvpStats>("/admin/rsvpStats");
 </script>
 
 <template>
@@ -7,8 +14,8 @@
             <div class="striped-bg">
                 <img src="~/assets/logos/Docs.png" alt="DispoVer Logo" class="logo" />
                 <span>
-                    <h2>DispoVer</h2>
-                    <p>hey kid, you want some... information?</p>
+                    <h2>DispoStats</h2>
+                    <p>super secret stats app for super secret people 🙏</p>
                 </span>
             </div>
 
@@ -17,32 +24,57 @@
 
         <div class="main">
             <AuthState v-slot="{ loggedIn, user }">
-                <pre v-if="loggedIn">Hack Club Disposition
-Version 0.1 (Build 15: Service Pack 1)
-Copyright (c) 2026 Absolutely no one. Some rights reserved.
-The Disposition operating system and its user interface are protected by the wonderful MIT license.
+                <div v-if="loggedIn && $config.public.adminIds.includes(user.slackId) && info" class="flex">
+                    <span>
+                        <h1>RSVP's total</h1>
+                        <p class="data">{{ info.total }}</p>
+                    </span>
 
+                    <span>
+                        <h1>RSVP's this week</h1>
+                        <p class="data">{{ info.week }}</p>
+                    </span>
 
-
-This product is licensed under the MIT license to:
-    {{ user.name }}
-                </pre>
-                <pre v-else>Hack Club Disposition
-Version 0.1 (Build 15: Service Pack 1)
-Copyright (c) 2026 Absolutely no one. Some rights reserved.
-The Disposition operating system and its user interface are protected by the wonderful MIT license.
-
-
-
-This product is licensed under the MIT license to:
-    you!!
-                </pre>
+                    <span>
+                        <h1>RSVP's today</h1>
+                        <p class="data">{{ info.today }}</p>
+                    </span>
+                </div>
+                
+                <div v-else class="center">
+                    sorry, not admin :(
+                </div>
             </AuthState>
         </div>
     </div>
 </template>
 
 <style scoped>
+.center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.main {
+    padding: 10px;
+}
+
+.flex {
+    display: flex;
+    flex-direction: column;
+    
+    span h1 {
+        margin: 0;
+    }
+}
+
+.data {
+    background-color: #E6E6E6;
+    border: 2px solid #8E8F90;
+    padding: 5px;
+}
+
 .logo {
     width: 60px;
     height: 60px;
@@ -105,17 +137,5 @@ This product is licensed under the MIT license to:
 .content {
     display: flex;
     flex-direction: column;
-}
-
-.main {
-    padding: 10px;
-
-    pre {
-        font-family: 'Fira Sans', sans-serif;
-
-        margin: 0;
-        font-size: 14px;
-        user-select: none;
-    }
 }
 </style>

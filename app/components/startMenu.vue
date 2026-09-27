@@ -33,7 +33,7 @@ if (loggedIn) {
 
             <div class="apps">
                 <template v-for="app in APPS">
-                    <div v-if="!app.tool" class="app" @click="manager.open(app.appId)">
+                    <div v-if="!app.tool && !app.hidden" class="app" @click="manager.open(app.appId)">
                         <img :src="ICONS[app.appId]" />
                         <p>{{ app.title }}</p>
                     </div>
@@ -44,6 +44,7 @@ if (loggedIn) {
 
         <div class="right">
             <!-- here we can put some tool apps like dispover. not all of the tool apps tho -->
+            <div class="menu-item" @click="manager.open('rigby')">Secret...</div>
             <div class="menu-item" @click="manager.open('winver')">DispoVer</div>
             <AuthState v-slot="{ loggedIn, clear }">
                 <div v-if="loggedIn" class="menu-item" @click="clear">Sign Out</div>

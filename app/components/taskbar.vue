@@ -121,7 +121,7 @@ onUnmounted(() => {
     padding-left: 10px;
     padding-right: 10px;
 
-    z-index: 9999;
+    z-index: 9997;
 }
 
 .divider {

@@ -34,4 +34,5 @@ export interface AppDef {
 
     tool: Boolean, // just like on windows, this defines if the app shows up in the taskbar and if it can be minimized.
     resizeable: Boolean,
+    hidden?: Boolean,
 }

@@ -4,5 +4,6 @@ import documentationIcon from "~/assets/icons/documentation.png"
 
 export const ICONS: { [key: string]: string } = {
     welcome: welcomeIcon,
-    documentation: documentationIcon
+    documentation: documentationIcon,
+    admin: documentationIcon
 }

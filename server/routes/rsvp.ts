@@ -1,5 +1,5 @@
 import { rsvps } from "~~/db/schema";
-import { db } from "../utils/db";
+import { db } from "~~/server/utils/db";
 import { eq } from "drizzle-orm";
 
 export default defineEventHandler(async (event) => {

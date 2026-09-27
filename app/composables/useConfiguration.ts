@@ -1,5 +1,7 @@
 // pretty basic wrapper around localStorage but its a nice abstraction in case i ever need to change it :)
 export const useConfiguration = (id: string) => {
+
+    
     function write(key: string, value: any) {
         if (!import.meta.client) return;
         localStorage.setItem(`${id}-${key}`, JSON.stringify(value));

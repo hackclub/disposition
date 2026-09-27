@@ -4,6 +4,8 @@ import type { AppDef } from "~/types/window"
 import Winver from "~/apps/winver.vue"
 import Auth from "~/apps/auth.vue"
 import Run from "~/apps/run.vue"
+import Rigby from "~/apps/rigby.vue"
+import Admin from "~/apps/admin.vue"
 
 export const APPS: { [key: string]: AppDef } = {
     welcome: {
@@ -78,4 +80,33 @@ export const APPS: { [key: string]: AppDef } = {
         tool: false,
         resizeable: false
     },
+
+    rigby: {
+        appId: 'rigby',
+        title: 'Rigby',
+        component: Rigby,
+
+        width: 367,
+        height: 476,
+        minWidth: 367,
+        minHeight: 476,
+
+        tool: true,
+        resizeable: false
+    },
+
+    admin: {
+        appId: 'admin',
+        title: 'DispoStats',
+        component: Admin,
+
+        width: 367,
+        height: 476,
+        minWidth: 367,
+        minHeight: 476,
+
+        tool: false,
+        resizeable: true,
+        hidden: true
+    }
 }
