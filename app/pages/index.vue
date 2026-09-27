@@ -5,6 +5,7 @@ import Documentation from '~/apps/documentation.vue';
 import StartMenu from "~/components/startMenu.vue";
 import Taskbar from '~/components/taskbar.vue';
 import TaskbarItem from '~/components/taskbarItem.vue';
+import BenjiBuddy from "~/components/benjiBuddy.vue";
 import { APPS } from "~/registry/apps";
 
 const {
@@ -34,4 +35,6 @@ if (!isTypeOpen("welcome")) open("welcome");
             <TaskbarItem v-if="!w.tool" :instance="w" />
         </template>
     </Taskbar>
+
+    <BenjiBuddy />
 </template>
