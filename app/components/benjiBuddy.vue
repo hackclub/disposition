@@ -5,13 +5,13 @@ import idleImg from "~/assets/benjiBuddy/idle.jpg"
 import walkImg from "~/assets/benjiBuddy/walk.jpg"
 import emoteImg from "~/assets/benjiBuddy/emote.jpg"
 
-const emojis = [' ', ' ', ' ', ' ', ' ']
+const emojis = ['hello!', '👀', 'hi...', 'what\'cha cooking?']
 
 // how far up from the very bottom of the screen he sits (px)
-const BOTTOM_OFFSET = 165
+const BOTTOM_OFFSET = 25
 const BUDDY_SIZE = 64
 
-const pos = reactive({ x: 625, y: BOTTOM_OFFSET })
+const pos = reactive({ x: 625 })
 
 const isMoving = ref<boolean>(false)
 const emote = ref<string>("")
@@ -55,31 +55,25 @@ function doEmote() {
     setTimeout(() => (emote.value = ''), 1500)
 }
 
-function onResize() {
-    pos.y = window.innerHeight - BOTTOM_OFFSET
-}
-
 let moveTimer: ReturnType<typeof setInterval>
 let emoteTimer: ReturnType<typeof setInterval>
 
 onMounted(() => {
-    onResize()
     buddyRef.value!.addEventListener('transitionend', onTransitionEnd)
-    window.addEventListener('resize', onResize)
-    moveTimer = setInterval(moveSomewhere, 5000)
-    emoteTimer = setInterval(doEmote, 4000)
+    moveTimer = setInterval(moveSomewhere, 10000)
+    emoteTimer = setInterval(doEmote, 30000)
 })
 
 onBeforeUnmount(() => {
     buddyRef.value?.removeEventListener('transitionend', onTransitionEnd)
-    window.removeEventListener('resize', onResize)
     clearInterval(moveTimer)
     clearInterval(emoteTimer)
 })
 </script>
 
 <template>
-    <div ref="buddyRef" class="desktop-buddy" :style="{ left: pos.x + 'px', top: pos.y + 'px' }">
+    <div ref="buddyRef" class="desktop-buddy" :style="{ left: pos.x + 'px', bottom: BOTTOM_OFFSET + 'px' }"
+        @click="doEmote">
         <div class="buddy-sprite" :class="{ 'facing-left': facingLeft && !emote, hopping: isMoving, bouncing: !!emote }"
             :style="{ backgroundImage: `url(${currentFrame})` }" />
 
@@ -89,6 +83,25 @@ onBeforeUnmount(() => {
 
 
 <style scoped>
+.emote-bubble {
+    position: absolute;
+    top: -28px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 18px;
+    animation: pop-in 0.2s ease-out;
+
+    text-shadow:
+        -1px -1px 0 #FFF,
+        0 -1px 0 #FFF,
+        1px -1px 0 #FFF,
+        1px 0 0 #FFF,
+        1px 1px 0 #FFF,
+        0 1px 0 #FFF,
+        -1px 1px 0 #FFF,
+        -1px 0 0 #FFF;
+}
+
 .desktop-buddy {
     position: fixed;
     width: 150px;
@@ -170,15 +183,6 @@ onBeforeUnmount(() => {
     100% {
         transform: scale(1) translateY(0);
     }
-}
-
-.emote-bubble {
-    position: absolute;
-    top: -28px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 18px;
-    animation: pop-in 0.2s ease-out;
 }
 
 @keyframes pop-in {

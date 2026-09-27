@@ -66,6 +66,9 @@ function selectArticle(path: string) {
 .header {
     display: flex;
     flex-direction: column;
+
+    font-family: 'Joan', serif;
+    user-select: none;
 }
 
 .striped-bg {

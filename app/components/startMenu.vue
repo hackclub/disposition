@@ -58,7 +58,7 @@ if (loggedIn) {
                     </span>
                     <span v-else>
                         <b>Not logged in</b>
-                        <img class="profile-pic" src="~/assets/logos/pfp.png"></img>
+                        <img class="profile-pic" src="~/assets/misc/pfp.png"></img>
                     </span>
                 </AuthState>
             </div>

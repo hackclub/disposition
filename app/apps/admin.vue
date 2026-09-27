@@ -86,6 +86,9 @@ const info = await $fetch<RsvpStats>("/admin/rsvpStats");
     display: flex;
     flex-direction: column;
 
+    font-family: 'Joan', serif;
+    user-select: none;
+
     h2 {
         font-weight: normal;
     }

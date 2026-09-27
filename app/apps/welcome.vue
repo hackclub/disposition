@@ -58,14 +58,14 @@ function openNextChanged() {
                         <img src="~/assets/logos/Docs.png" alt="Information Icon" width="40px" height="40px" />
                         <h3>Fun Fact!</h3>
                     </span>
-                    <p>{{ funFacts[Math.floor(Math.random() * (funFacts.length - 1))] }}</p>
+                    <p>{{ funFacts[Math.floor(Math.random() * (funFacts.length))] }}</p>
                 </div>
 
                 <div class="buttons">
                     <button @click="rsvp" id="rsvp">RSVP</button>
                     <button @click="manager.open('documentation')">What's this about?</button>
                     <button @click="manager.open('winver')">Information</button>
-                    <button>Coming soon</button>
+                    <button @click="manager.open('config')">Config</button>
                 </div>
             </div>
 
@@ -118,6 +118,7 @@ function openNextChanged() {
     flex-direction: column;
 
     font-family: 'Joan', serif;
+    user-select: none;
 }
 
 .striped-bg {
