@@ -6,6 +6,7 @@ import Auth from "~/apps/auth.vue"
 import Run from "~/apps/run.vue"
 import Rigby from "~/apps/rigby.vue"
 import Admin from "~/apps/admin.vue"
+import Config from "~/apps/config.vue"
 
 export const APPS: { [key: string]: AppDef } = {
     welcome: {
@@ -108,5 +109,20 @@ export const APPS: { [key: string]: AppDef } = {
         tool: false,
         resizeable: true,
         hidden: true
-    }
+    },
+
+    config: {
+        appId: 'config',
+        title: 'DispoConfig',
+        component: Config,
+
+        width: 367,
+        height: 476,
+        minWidth: 367,
+        minHeight: 476,
+
+        tool: false,
+        resizeable: true,
+        hidden: false
+    },
 }

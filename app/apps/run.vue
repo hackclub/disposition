@@ -37,7 +37,7 @@ onMounted(async () => {
     <div class="content">
         <div class="header">
             <div class="striped-bg">
-                <img src="~/assets/logos/Settings.png" alt="DispoVer Logo" class="logo" />
+                <img src="~/assets/logos/Run.png" alt="DispoVer Logo" class="logo" />
                 <span>
                     <h2>DispoRun</h2>
                     <p>Type in the ID of any app and Disposition will open it for you.</p>
@@ -77,8 +77,8 @@ onMounted(async () => {
 }
 
 .logo {
-    width: 30px;
-    height: 60px;
+    width: 83px;
+    height: 46px;
 
     filter: drop-shadow(0 0 0.2rem black);
 }
@@ -86,6 +86,9 @@ onMounted(async () => {
 .header {
     display: flex;
     flex-direction: column;
+
+    font-family: 'Joan', serif;
+    user-select: none;
 }
 
 .striped-bg {

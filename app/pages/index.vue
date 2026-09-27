@@ -7,7 +7,7 @@ import Taskbar from '~/components/taskbar.vue';
 import TaskbarItem from '~/components/taskbarItem.vue';
 import BenjiBuddy from "~/components/benjiBuddy.vue";
 import { APPS } from "~/registry/apps";
-import { onMounted, nextTick } from "vue";
+import { onMounted, nextTick, computed } from "vue";
 
 const {
     windows,
@@ -27,32 +27,38 @@ onMounted(async () => {
 });
 
 const wallpaper = computed(() =>
-	useConfiguration("settings").read("wallpaperSource") || "/wallpaper/default.png"
+    useConfiguration("settings").read("wallpaperSource") || "/wallpaper/default.png"
 );
 </script>
 
 <template>
-    <div :style="{
-        backgroundImage: `url('` + wallpaper + `')`
-    }" class="wallpaper">
-        <Window v-for="w in windows" :key="w.id" :instance="w">
-            <Component :is="APPS[w.appId]?.component" :instance="w" />
-        </Window>
+    <ClientOnly>
+        <div :style="{
+            backgroundImage: `url('` + wallpaper + `')`
+        }" class="wallpaper">
+        </div>
+    </ClientOnly>
 
-        <Taskbar>
-            <template v-for="w in windows" :key="w.id">
-                <TaskbarItem v-if="!w.tool" :instance="w" />
-            </template>
-        </Taskbar>
 
-        <BenjiBuddy />
-    </div>
+    <Window v-for="w in windows" :key="w.id" :instance="w">
+        <Component :is="APPS[w.appId]?.component" :instance="w" />
+    </Window>
+
+    <Taskbar>
+        <template v-for="w in windows" :key="w.id">
+            <TaskbarItem v-if="!w.tool" :instance="w" />
+        </template>
+    </Taskbar>
+
+    <ClientOnly>
+        <BenjiBuddy v-if="useConfiguration('settings').read('showBuddy')" />
+    </ClientOnly>
 </template>
 
 <style scoped>
 .wallpaper {
-    width: 100%;
-    height: 100%;
-    background-size: cover;
+    width: 100vw;
+    height: 100vw;
+    background-size: contain;
 }
 </style>
