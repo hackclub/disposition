@@ -2,7 +2,7 @@ import Welcome from "~/apps/welcome.vue"
 import Documentation from "~/apps/documentation.vue"
 import type { AppDef } from "~/types/window"
 import Winver from "~/apps/winver.vue"
-import Rsvp from "~/apps/rsvp.vue"
+import Auth from "~/apps/auth.vue"
 import Run from "~/apps/run.vue"
 
 export const APPS: { [key: string]: AppDef } = {
@@ -40,18 +40,18 @@ export const APPS: { [key: string]: AppDef } = {
         component: Winver,
 
         width: 650,
-        height: 320,
+        height: 300,
         minWidth: 650,
-        minHeight: 320,
+        minHeight: 300,
 
         tool: true,
         resizeable: false
     },
 
-    rsvp: {
-        appId: 'rsvp',
-        title: 'RSVP',
-        component: Rsvp,
+    auth: {
+        appId: 'auth',
+        title: 'Authorize',
+        component: Auth,
 
         width: 500,
         height: 150,
@@ -67,10 +67,13 @@ export const APPS: { [key: string]: AppDef } = {
         title: 'DispoRun',
         component: Run,
 
-        width: 320,
+        width: 520,
         height: 200,
-        minWidth: 320,
+        minWidth: 520,
         minHeight: 200,
+
+        posX: 20,
+        posY: 20,
 
         tool: false,
         resizeable: false

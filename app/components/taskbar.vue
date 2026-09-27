@@ -28,6 +28,7 @@ function startTime() {
     clockTimeout = setTimeout(startTime, 1000);
 }
 
+// @ts-ignore amazing function this one
 function checkTime(i) {
     if (i < 10) { i = "0" + i };
     return i;

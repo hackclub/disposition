@@ -1,13 +1,29 @@
 <script setup lang="ts">
 import { APPS } from '~/registry/apps';
 import { ICONS } from '~/registry/icons';
+const { loggedIn, user } = useUserSession()
 const manager = useWindowManager();
+
+let info;
+if (loggedIn) {
+    interface CachetResponse {
+        id: string,
+        userId: string,
+        displayName: string,
+        realName: string,
+        pronouns: string,
+        imageUrl: string,
+    }
+
+    //@ts-ignore
+    info = await $fetch<CachetResponse>(`https://cachet.hackclub.com/users/${user.value.slackId}`);
+}
 </script>
 
 <template>
     <div class="startMenu">
         <div class="left">
-            <div class="header"> 
+            <div class="header">
                 <img src="~/assets/logos/Disposition.png" alt="Disposition logo" />
                 <span>
                     <h1>Disposition</h1>
@@ -29,14 +45,21 @@ const manager = useWindowManager();
         <div class="right">
             <!-- here we can put some tool apps like dispover. not all of the tool apps tho -->
             <div class="menu-item" @click="manager.open('winver')">DispoVer</div>
-            <div class="menu-item">Sign Out</div>
+            <AuthState v-slot="{ loggedIn, clear }">
+                <div v-if="loggedIn" class="menu-item" @click="clear">Sign Out</div>
+            </AuthState>
 
             <div class="menu-profile">
-                    
-                <span>
-                <b>Username</b>
-                <img class="profile-pic" src="C:\Users\Hax\Desktop\disposition\app\assets\icons\profile.png"></img>
-                </span>
+                <AuthState v-slot="{ loggedIn }">
+                    <span v-if="loggedIn && info">
+                        <b>{{ info.displayName }}</b>
+                        <img class="profile-pic" :src="info.imageUrl"></img>
+                    </span>
+                    <span v-else>
+                        <b>Not logged in</b>
+                        <img class="profile-pic" src="~/assets/logos/pfp.png"></img>
+                    </span>
+                </AuthState>
             </div>
         </div>
     </div>
@@ -72,21 +95,23 @@ const manager = useWindowManager();
     display: flex;
     flex-direction: row;
     gap: 5px;
-}
 
-.header span h1 {
-    margin: 0;
-    font-size: 26px;
-}
+    span {
+        h1 {
+            margin: 0;
+            font-size: 26px;
+        }
 
-.header span p {
-    margin: 0;
-    font-size: 12px;
-}
+        p {
+            margin: 0;
+            font-size: 12px;
+        }
+    }
 
-.header img {
-    height: 80px;
-    width: 80px;
+    img {
+        height: 80px;
+        width: 80px;
+    }
 }
 
 .right {
@@ -113,13 +138,12 @@ const manager = useWindowManager();
 
     user-select: none;
 
-}
-
-.menu-profile span {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 6px;
+    span {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 6px;
+    }
 }
 
 .profile-pic {
@@ -135,12 +159,12 @@ const manager = useWindowManager();
     transition: 0.2s;
 
     user-select: none;
-}
 
-.menu-item:hover {
-    font-size: larger;
-    font-weight: bold;
-    cursor: pointer;
+    &:hover {
+        font-size: larger;
+        font-weight: bold;
+        cursor: pointer;
+    }
 }
 
 .apps {
@@ -154,10 +178,6 @@ const manager = useWindowManager();
     height: 80%;
 
     user-select: none;
-}
-
-.app p {
-    margin: 0;
 }
 
 .app {
@@ -175,17 +195,21 @@ const manager = useWindowManager();
     transition: 0.2s;
 
     user-select: none;
-}
 
-.app img {
-    width: 30px;
-    height: 30px;
-}
+    p {
+        margin: 0;
+    }
 
-.app:hover {
-    background-color: #1F1F1F;
-    font-weight: bold;
-    color: white;
-    cursor: pointer;
+    img {
+        width: 30px;
+        height: 30px;
+    }
+
+    &:hover {
+        background-color: #1F1F1F;
+        font-weight: bold;
+        color: white;
+        cursor: pointer;
+    }
 }
 </style>

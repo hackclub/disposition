@@ -7,7 +7,9 @@ export default defineNuxtConfig({
 	runtimeConfig: {
 		hackclub: {
 			clientId: process.env.HCA_CLIENT_ID,
-			clientSecret: process.env.HCA_CLIENT_SECRET
+			clientSecret: process.env.HCA_CLIENT_SECRET,
+			
+			adminIds: "",
 		},
 
 		public: {

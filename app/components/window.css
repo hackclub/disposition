@@ -1,5 +1,5 @@
 * {
-    box-sizing:border-box;
+    box-sizing: border-box;
 }
 
 .window {
@@ -12,7 +12,7 @@
     flex-direction: column;
     position: absolute;
 
-    filter: drop-shadow(0 0 0.75rem black); 
+    filter: drop-shadow(0 0 0.75rem black);
 }
 
 /* title bar */
@@ -35,45 +35,45 @@
     padding-right: 10px;
 
     border-bottom: 2px solid #797979;
-}
 
-.title-bar .title-bar-text {
-    color: white;
-    font-family: 'Old Standard TT', serif;
-}
+    .title-bar-controls {
+        display: flex;
+        gap: 5px;
+        justify-content: end;
+        align-items: center;
 
-.title-bar .title-bar-controls {
-    display: flex;
-    gap: 5px;
-    justify-content: end;
-    align-items: center;
-}
+        button {
+            background-color: transparent;
+            border: none;
 
-.title-bar-controls button {
-    background-color: transparent;
-    border: none;
+            background-size: cover;
+        }
 
-    background-size: cover;
-}
+        .close {
+            width: 16px;
+            height: 16px;
+            background-image: url("~/assets/window/close.png");
+        }
 
-.title-bar-controls .close {
-    width: 16px;
-    height: 16px;
-    background-image: url("~/assets/window/close.png");
-}
+        .minimize {
+            width: 16px;
+            height: 5px;
+            background-image: url("~/assets/window/minimize.png");
+        }
 
-.title-bar-controls .minimize {
-    width: 16px;
-    height: 5px;
-    background-image: url("~/assets/window/minimize.png");
-}
+        button:hover {
+            filter: brightness(0.8);
+        }
 
-.title-bar-controls button:hover {
-    filter: brightness(0.8);
-}
+        button:active {
+            filter: brightness(0.5);
+        }
+    }
 
-.title-bar-controls button:active {
-    filter: brightness(0.5);
+    .title-bar-text {
+        color: white;
+        font-family: 'Old Standard TT', serif;
+    }
 }
 
 /* window content */

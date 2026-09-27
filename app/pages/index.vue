@@ -7,6 +7,7 @@ import Taskbar from '~/components/taskbar.vue';
 import TaskbarItem from '~/components/taskbarItem.vue';
 import BenjiBuddy from "~/components/benjiBuddy.vue";
 import { APPS } from "~/registry/apps";
+import {onMounted, nextTick} from "vue";
 
 const {
     windows,
@@ -21,13 +22,21 @@ const {
     isTypeOpen,
 } = useWindowManager();
 
-// open welcome for the first app
-if (!isTypeOpen("welcome")) open("welcome");
+
+onMounted(async () => {
+    await nextTick();
+    
+    // open welcome for the first app
+    const {read, has, write} = useConfiguration("welcome");
+    if(!has("openNext")) write("openNext", true);
+    if(!read("openNext")) return;
+    if (!isTypeOpen("welcome")) open("welcome");
+});
 </script>
 
 <template>
     <Window v-for="w in windows" :key="w.id" :instance="w">
-        <Component :is="APPS[w.appId]?.component" />
+        <Component :is="APPS[w.appId]?.component" :instance="w" />
     </Window>
 
     <Taskbar>

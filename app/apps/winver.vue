@@ -2,7 +2,6 @@
 </script>
 
 <template>
-    <!-- <Window title="Welcome!" :width="600" :height="310" :posX="700" :posY="300" :resizeable="false" :tool="true"> -->
     <div class="content">
         <div class="header">
             <div class="striped-bg">
@@ -17,7 +16,18 @@
         </div>
 
         <div class="main">
-            <pre>Hack Club Disposition
+            <AuthState v-slot="{ loggedIn, user }">
+                <pre v-if="loggedIn">Hack Club Disposition
+Version 0.1 (Build 15: Service Pack 1)
+Copyright (c) 2026 Absolutely no one. Some rights reserved.
+The Disposition operating system and its user interface are protected by the wonderful MIT license.
+
+
+
+This product is licensed under the MIT license to:
+    {{ user.name }}
+                </pre>
+                <pre v-else>Hack Club Disposition
 Version 0.1 (Build 15: Service Pack 1)
 Copyright (c) 2026 Absolutely no one. Some rights reserved.
 The Disposition operating system and its user interface are protected by the wonderful MIT license.
@@ -26,27 +36,29 @@ The Disposition operating system and its user interface are protected by the won
 
 This product is licensed under the MIT license to:
     you!!
-            </pre>
+                </pre>
+            </AuthState>
         </div>
     </div>
-    <!-- </Window> -->
 </template>
 
 <style scoped>
-.fun-fact p {
-    margin: 0;
-    padding-left: 10px;
-    padding-bottom: 10px;
-}
+.fun-fact {
+    p {
+        margin: 0;
+        padding-left: 10px;
+        padding-bottom: 10px;
+    }
 
-.fun-fact span {
-    margin: 0;
-    display: flex;
-    flex-direction: row;
-    justify-content: start;
-    align-items: center;
-    padding-left: 10px;
-    gap: 5px;
+    span {
+        margin: 0;
+        display: flex;
+        flex-direction: row;
+        justify-content: start;
+        align-items: center;
+        padding-left: 10px;
+        gap: 5px;
+    }
 }
 
 .logo {
@@ -59,21 +71,10 @@ This product is licensed under the MIT license to:
 .header {
     display: flex;
     flex-direction: column;
-}
 
-.striped-bg span h2 {
-    margin: 0;
-}
-
-.striped-bg span {
-    display: flex;
-    justify-content: center;
-    align-items: start;
-    flex-direction: column;
-}
-
-.striped-bg span p {
-    margin: 0;
+    h2 {
+        font-weight: normal;
+    }
 }
 
 .striped-bg {
@@ -92,8 +93,25 @@ This product is licensed under the MIT license to:
     align-items: center;
     padding-left: 7px;
     gap: 2px;
-}
 
+    span {
+        display: flex;
+        justify-content: center;
+        align-items: start;
+        flex-direction: column;
+
+        p {
+            margin: 0;
+            filter: drop-shadow(1px 1px 5px #000000);
+        }
+
+        h2 {
+            margin: 0;
+            font-weight: normal;
+            filter: drop-shadow(1px 1px 5px #000000);
+        }
+    }
+}
 
 .spacer {
     width: 100%;
@@ -109,9 +127,13 @@ This product is licensed under the MIT license to:
 
 .main {
     padding: 10px;
-}
 
-.main pre {
-    font-size: 14px;
+    pre {
+        font-family: 'Fira Sans', sans-serif;
+
+        margin: 0;
+        font-size: 14px;
+        user-select: none;
+    }
 }
 </style>
