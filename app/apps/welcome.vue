@@ -4,7 +4,17 @@ const { read, write, has } = useConfiguration("welcome");
 
 let funFacts = [
     "I love eating shawarma!",
-    "The fetuccini sequence or something like that"
+    "The fetuccini sequence or something like that",
+    "Embrace physical, Slander digital",
+    "You should make a project",
+    "Benji is inspired by Newgrounds",
+    "Fear Rigby...",
+    "Try not to slop ;p",
+    "for every burnt cd, an angel regains it's wings",
+    "I love you!",
+    "I hate YOU!",
+    "Respect your elders!",
+    "Help my cat has been possesed by the crude evil!",
 ];
 
 const openNext = ref(read("openNext"));
