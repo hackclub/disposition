@@ -5,7 +5,6 @@ const { loggedIn, user } = await useUserSession()
 const manager = useWindowManager();
 
 let info;
-console.log(loggedIn.value)
 if (loggedIn.value) {
     interface CachetResponse {
         id: string,

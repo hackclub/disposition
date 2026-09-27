@@ -45,12 +45,18 @@ function selectArticle(path: string) {
 
             <div class="divider"></div>
 
-            <ContentRenderer v-if="home" :value="home" />
+            <ContentRenderer v-if="home" :value="home" class="page" />
         </div>
     </div>
 </template>
 
 <style scoped>
+.page {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+}
+
 .content {
     width: 100%;
     height: 100%;
@@ -144,7 +150,6 @@ function selectArticle(path: string) {
         text-decoration: underline;
     }
 }
-
 
 .divider {
     width: 2px;

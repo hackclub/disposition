@@ -9,8 +9,6 @@ function compareVersions(a: string, b: string): number {
 }
 
 export default defineNuxtPlugin(() => {
-    console.log("AAAA")
-
     const config = useRuntimeConfig();
     const defaults = config.public.defaultConfig;
 
