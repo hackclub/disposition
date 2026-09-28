@@ -14,7 +14,8 @@ let funFacts = [
     "I love you!",
     "I hate YOU!",
     "Respect your elders!",
-    "Help my cat has been possesed by the crude evil!",
+    "Help my cat has been possesed by the cruel evil!",
+    "Optical media GOOD!"
 ];
 
 const openNext = ref(read("openNext"));
