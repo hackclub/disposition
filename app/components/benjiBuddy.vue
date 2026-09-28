@@ -3,7 +3,7 @@ import { ref, reactive, computed, onMounted, onBeforeUnmount } from 'vue'
 
 import idleImg from "~/assets/benjiBuddy/idle.jpg"
 import walkImg from "~/assets/benjiBuddy/walk.jpg"
-import emoteImg from "~/assets/benjiBuddy/emote.jpg"
+import emoteImg from "~/assets/benjiBuddy/emote.png"
 
 const emojis = ['hello!', '👀', 'hi...', 'what\'cha cooking?']
 
