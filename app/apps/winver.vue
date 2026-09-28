@@ -19,8 +19,8 @@
             <AuthState v-slot="{ loggedIn, user }">
                 <pre v-if="loggedIn">Hack Club Disposition
 Version 0.1 (Build 15: Service Pack 1)
-Copyright (c) 2026 Absolutely no one. Some rights reserved.
-The Disposition operating system and its user interface are protected by the wonderful MIT license.
+Copyright (c) 2026 Hack Club. Some rights reserved.
+The Disposition "operating system" and its user interface are protected by the MIT license.
 
 
 
@@ -29,8 +29,8 @@ This product is licensed under the MIT license to:
                 </pre>
                 <pre v-else>Hack Club Disposition
 Version 0.1 (Build 15: Service Pack 1)
-Copyright (c) 2026 Absolutely no one. Some rights reserved.
-The Disposition operating system and its user interface are protected by the wonderful MIT license.
+Copyright (c) 2026 Hack Club. Some rights reserved.
+The Disposition "operating system" and its user interface are protected by the MIT license.
 
 
 

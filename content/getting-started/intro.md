@@ -5,13 +5,13 @@ category: getting-started
 
 # What's Disposition about?
 
-Disposition is a Hack Club YSWS (You Ship We Ship): You ship any project, and we ship you physical media! (CDs, vinyls and cassetes)
+Disposition is a Hack Club YSWS (You Ship We Ship): You ship any project, and we ship you physical media! (CDs, vinyls and cassettes)
 
-Disposition strives to embrace the physical media in an era where digital is slowly being forced down our throats as a new standard.
+We live in an era where digital media is basically killing the process of discovering new music or artists. Most people probably live with one or two playlists :( <br />
+You should use Disposition as an opportunity to either start a physical media collection or expand your existing one, and most importantly, as an opportunity to expand your music taste and discover new artists!
 
-This YSWS is a tribute towards this cause offering real things (that YOU can own!) whether it's a CD, cassette or vinyl. Maybe you want a specific album from your favourite singer/band? We got you covered! Or maybe you want a CD customized to your own liking? We got that aswell.
-
-All you have to do is be creative and make a fun project for Disposition.
+Your project doesn't necessarily have to be music related, however, that is a big factor in getting a platinum badge. (reward for cool projects) <br />
+A platinum badge will unlock more shop items among other secret things!
 
 
 

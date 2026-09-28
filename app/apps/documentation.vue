@@ -53,13 +53,49 @@ function selectArticle(path: string) {
 <style scoped>
 .page {
     flex: 1;
+    min-width: 0;
     min-height: 0;
     overflow-y: auto;
+}
+
+.main {
+    margin: 0;
+    padding: 0 10px 5px;
+
+    display: flex;
+    flex-direction: row;
+    gap: 4px;
+
+    width: 100%;
+    flex: 1;
+    min-height: 0;
+}
+
+.sidebar {
+    flex: 0 0 300px;
+    overflow-y: auto;
+
+    h3 {
+        background-color: #D9D9D9;
+        padding: 2px;
+    }
+
+    a:hover {
+        cursor: pointer;
+        text-decoration: underline;
+    }
+}
+
+.divider {
+    flex: 0 0 2px;
+    background-color: #D9D9D9;
 }
 
 .content {
     width: 100%;
     height: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
 .logo {
@@ -118,42 +154,5 @@ function selectArticle(path: string) {
     height: 12px;
     border: 1px solid #c6c6c4;
     background-color: #dedede;
-}
-
-.main {
-    margin: 0;
-    padding-left: 10px;
-    padding-right: 10px;
-    padding-bottom: 5px;
-
-    display: flex;
-    flex-direction: row;
-    gap: 4px;
-
-    width: 100%;
-    height: 100%;
-}
-
-.sidebar {
-    height: 100%;
-    width: 300px;
-
-    flex-grow: 1;
-
-    h3 {
-        background-color: #D9D9D9;
-        padding: 2px;
-    }
-
-    a:hover {
-        cursor: pointer;
-        text-decoration: underline;
-    }
-}
-
-.divider {
-    width: 2px;
-    height: 100%;
-    background-color: #D9D9D9;
 }
 </style>

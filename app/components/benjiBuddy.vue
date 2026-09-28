@@ -61,7 +61,7 @@ let emoteTimer: ReturnType<typeof setInterval>
 onMounted(() => {
     buddyRef.value!.addEventListener('transitionend', onTransitionEnd)
     moveTimer = setInterval(moveSomewhere, 10000)
-    emoteTimer = setInterval(doEmote, 30000)
+    emoteTimer = setInterval(doEmote, 15000)
 })
 
 onBeforeUnmount(() => {
@@ -72,8 +72,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-    <div ref="buddyRef" class="desktop-buddy" :style="{ left: pos.x + 'px', bottom: BOTTOM_OFFSET + 'px' }"
-        @click="doEmote">
+    <div ref="buddyRef" class="desktop-buddy" :style="{ left: pos.x + 'px', bottom: BOTTOM_OFFSET + 'px' }">
         <div class="buddy-sprite" :class="{ 'facing-left': facingLeft && !emote, hopping: isMoving, bouncing: !!emote }"
             :style="{ backgroundImage: `url(${currentFrame})` }" />
 
@@ -90,6 +89,7 @@ onBeforeUnmount(() => {
     transform: translateX(-50%);
     font-size: 18px;
     animation: pop-in 0.2s ease-out;
+    user-select: none;
 
     text-shadow:
         -1px -1px 0 #FFF,

@@ -1,33 +1,23 @@
 ---
-title: Benji and August
+title: Who's the dude on my taskbar?
 category: getting-started
 ---
 
-# Who is Benji and August?
+# Who is Benji ~~and August~~?
 
-You might or might not ask yourself about the two pals roaming around the desktop. 
+You might or might not ask yourself about the ~~two pals~~ dude roaming around the desktop. 
+Well, you probably guessed that he is the character representing Disposition! (a.k.a. mascot)
 
-Well, you probably guessed that they are our little characters representing Disposition!
+Let's introduce ~~them both~~ him, shall we?
 
- You will see them show up in any media we post outside or inside the site such as: Slack, Youtube, Disposition announcements/notifications and other unimportant media
+# Benji (Benjamin)
 
- Let's introduce them both, shall we?
+Benji is the main star of our show. 
 
- # Benji (Benjamin)
+He is a cool and reserved guy who only likes to listen to his preferred music (hiphop or jazz). He doesn't like trying out new genres, singers or bands than what he's already familiar with, though sometimes he let's his guard down for people he's comfortable with.
 
- Benji is our main star of the show. 
+His favourite hobbies besides listening to music are skating, rock climbing, making comics and playing the bass.
 
- He is a cool and reserved guy who likes to only listen to his preffered music. He doesn't like trying out new genres, singers or bands than what he's already familiar with and that is either hip hop or jazz (He's a classy man, what can ya' say!). Tho sometimes he let's his guard down for people he's comfortable with.
+If you really don't want him on your taskbar, you can disable him in settings :[ (but, who would do that, right..? right?)
 
- His favourite hobbies besides listening to music are skating, rock climbing, making comics and playing the bass. He also likes making tons of cute ornaments, decorations and such out of simple recyclable things (But he doesn't wanna let people know cause it's cringe)
-
-
- # August 
-
- August is Benji's best friend! They've known eachother since elementary school and she's been always looking forward to spend time with Benji even if sometimes he's not up for that.
-
- She's a sweet and caring friend who always takes care of Benji when he get's hurt (Especially rock climbing, that dude SUCKS at it).
- <br> She's always looking forward to getting into new types of music, but her favourite genre is alternative rock.
-
- Her favourite hobbies are ice skating, photography, taking care of her cat and making cute ornaments and decorations cause they're cute!
-
+![super secret lore](/md/lore.png)

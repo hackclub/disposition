@@ -7,14 +7,14 @@ let funFacts = [
     "The fetuccini sequence or something like that",
     "Embrace physical, Slander digital",
     "You should make a project",
-    "Benji is inspired by Newgrounds",
+    "Benji is inspired by games on Newgrounds",
     "Fear Rigby...",
     "Try not to slop ;p",
     "for every burnt cd, an angel regains it's wings",
     "I love you!",
     "I hate YOU!",
     "Respect your elders!",
-    "Help my cat has been possesed by the cruel evil!",
+    "Help!! my cat has been possesed by the cruel evil!",
     "Optical media GOOD!"
 ];
 
