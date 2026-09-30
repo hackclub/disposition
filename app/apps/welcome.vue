@@ -33,7 +33,7 @@ async function rsvp() {
             rsvp!.innerText = "Error :(";
         }
     } else {
-        manager.open("auth");
+        manager.open("auth", { rsvp: true });
     }
 
     setTimeout(() => {

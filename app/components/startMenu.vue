@@ -48,6 +48,7 @@ if (loggedIn.value) {
             <div class="menu-item" @click="manager.open('winver')">DispoVer</div>
             <AuthState v-slot="{ loggedIn, clear }">
                 <div v-if="loggedIn" class="menu-item" @click="clear">Sign Out</div>
+                <div v-else class="menu-item" @click="manager.open('auth')">Sign In</div>
             </AuthState>
 
             <div class="menu-profile">

@@ -41,7 +41,7 @@ const wallpaper = computed(() =>
 
 
     <Window v-for="w in windows" :key="w.id" :instance="w">
-        <Component :is="APPS[w.appId]?.component" :instance="w" />
+        <Component :is="APPS[w.appId]?.component" :instance="w" v-bind="w.props" />
     </Window>
 
     <Taskbar>

@@ -8,7 +8,7 @@ export const useWindowManager = () => {
     const nextZ = useState('wm-z', () => 1);
     const focused = (id: string) => { windows.value.find(w => w.id === id)!.z = nextZ.value++ };
 
-    function open(appId: keyof typeof APPS) {
+    function open(appId: keyof typeof APPS, props: Record<string, any> = {}) {
         if (!APPS[appId]) return;
 
         let posX = APPS[appId].posX ? APPS[appId].posX : 200;
@@ -35,7 +35,9 @@ export const useWindowManager = () => {
             resizeable: APPS[appId].resizeable,
 
             posX,
-            posY
+            posY,
+
+            props
         });
     }
 

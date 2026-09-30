@@ -1,7 +1,13 @@
+import { rsvps } from "~~/db/schema";
+import { db } from "~~/server/utils/db";
+import { eq } from "drizzle-orm";
+
 export default defineEventHandler(async (event) => {
     const config = useRuntimeConfig();
     const { code, state } = getQuery(event);
     const savedState = getCookie(event, "oauth_state");
+    const rsvp = getCookie(event, "oauth_rsvp");
+    if(rsvp) deleteCookie(event, "rsvp");
     deleteCookie(event, "oauth_state");
 
     if (!code || !state || state !== savedState) {
@@ -54,6 +60,30 @@ export default defineEventHandler(async (event) => {
         },
         secure: { hcRefreshToken: tokens.refresh_token }, // not exposed to client
     })
+
+    if (rsvp && rsvp == "true") {
+        const existing = await db
+            .select()
+            .from(rsvps)
+            .where(eq(rsvps.hcaId, identity.id))
+            .limit(1);
+
+        if (existing.length > 0) {
+            setResponseStatus(event, 409);
+            return { message: "RSVP already exists" };
+        }
+
+        const rsvp: typeof rsvps.$inferInsert = {
+            hcaId: identity.id,
+            slackId: identity.slack_id,
+            email: identity.primary_email,
+            name: `${identity.first_name} ${identity.last_name}`,
+            yswsEligible: Number(identity.ysws_eligible),
+            verificationStatus: identity.verification_status
+        };
+
+        await db.insert(rsvps).values(rsvp);
+    }
 
     return sendRedirect(event, '/');
 });

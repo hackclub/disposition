@@ -8,6 +8,7 @@ export default defineEventHandler((event) => {
 
     const query = getQuery(event);
     const loginHint: string = String(query.login_hint);
+    const rsvp: string = String(query.rsvp)
 
     const url = new URL("https://auth.hackclub.com/oauth/authorize");
     url.searchParams.set("client_id", config.hackclub.clientId);
@@ -16,8 +17,11 @@ export default defineEventHandler((event) => {
     url.searchParams.set("scope", "openid profile email name slack_id verification_status");
     url.searchParams.set("state", state);
 
-    if (loginHint) {
-        url.searchParams.set("login_hint", loginHint);
+    if (loginHint) url.searchParams.set("login_hint", loginHint);
+    if(rsvp) {
+        setCookie(event, "oauth_rsvp", rsvp, {
+            httpOnly: false, secure: true, sameSite: "lax", maxAge: 600
+        });
     }
 
     return sendRedirect(event, url.toString());

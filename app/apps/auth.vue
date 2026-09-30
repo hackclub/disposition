@@ -1,4 +1,11 @@
 <script setup lang="ts">
+defineProps({
+    rsvp: {
+        type: Boolean,
+        required: false,
+        default: false
+    }
+})
 </script>
 
 <template>
@@ -7,6 +14,7 @@
         <form action="/oauth" method="get">
             <input id="email" name="login_hint" type="email" placeholder="enter your email here"
                 pattern="^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$" required>
+            <input type="hidden" id="rsvp" name="rsvp" :value="rsvp ? 'true' : 'false'" />
             <input type="submit" value="Authorize" />
         </form>
     </div>
