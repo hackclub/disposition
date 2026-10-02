@@ -7,8 +7,24 @@ import Run from "~/apps/run.vue"
 import Rigby from "~/apps/rigby.vue"
 import Admin from "~/apps/admin.vue"
 import Config from "~/apps/config.vue"
+import Shop from "~/apps/Shop.vue"
+
 
 export const APPS: { [key: string]: AppDef } = {
+    shop: {
+        appId: 'shop',
+        title: 'DispoShop',
+        component: Shop,
+        width: 536,
+        height: 686,
+        minWidth: 600,
+        minHeight: 310,
+
+        tool: false,
+        resizeable: true
+
+    },
+
     welcome: {
         appId: 'welcome',
         title: 'Welcome!',
@@ -18,7 +34,7 @@ export const APPS: { [key: string]: AppDef } = {
         height: 310,
         minWidth: 600,
         minHeight: 310,
-        
+
         tool: false,
         resizeable: false
     },
@@ -32,7 +48,7 @@ export const APPS: { [key: string]: AppDef } = {
         height: 700,
         minWidth: 800,
         minHeight: 500,
-        
+
         tool: false,
         resizeable: true
     },

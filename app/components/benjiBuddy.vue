@@ -84,7 +84,7 @@ onBeforeUnmount(() => {
 <style scoped>
 .emote-bubble {
     position: absolute;
-    top: -28px;
+    top: -14px;
     left: 50%;
     transform: translateX(-50%);
     font-size: 18px;
