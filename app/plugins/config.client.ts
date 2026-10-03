@@ -15,7 +15,7 @@ export default defineNuxtPlugin(() => {
     const settings = useConfiguration('settings');
 
     if (!settings.has('configVersion')) {
-        Object.keys(defaults).forEach(cat => {
+        (Object.keys(defaults) as Array<keyof typeof defaults>).forEach(cat => {
             const category = useConfiguration(cat);
             for (const [key, value] of Object.entries(defaults[cat])) {
                 category.write(key, value);
@@ -25,7 +25,7 @@ export default defineNuxtPlugin(() => {
 
     const storedVersion = settings.read('configVersion');
     if (compareVersions(defaults.settings.configVersion, storedVersion) > 0) {
-        Object.keys(defaults).forEach(cat => {
+        (Object.keys(defaults) as Array<keyof typeof defaults>).forEach(cat => {
             const category = useConfiguration(cat);
             for (const [key, value] of Object.entries(defaults[cat])) {
                 if (!category.has(key)) category.write(key, value);

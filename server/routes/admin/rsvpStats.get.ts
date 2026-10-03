@@ -6,12 +6,12 @@ import { eq } from "drizzle-orm";
 export default defineEventHandler(async (event) => {
     await requireUserSession(event);
     const session = await getUserSession(event);
-    // @ts-ignore
-    if (!useRuntimeConfig().public.adminIds.includes(session.user.slackId)) {
-        setResponseStatus(event, 401);
-        return {
+
+    if (!useRuntimeConfig().public.adminIds.includes(session.user!.slackId)) {
+        throw createError({
+            statusCode: 401,
             message: "You must be an organizer to access this endpoint."
-        };
+        })
     }
 
     // ok from now on we should only have admins access ts

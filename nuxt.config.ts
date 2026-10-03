@@ -1,8 +1,12 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-	modules: ['@nuxt/content', 'nuxt-auth-utils'],
+	modules: ['@nuxt/content', 'nuxt-auth-utils', '@nuxthub/core', "@nuxt/image"],
 	compatibilityDate: '2025-07-15',
 	devtools: { enabled: true },
+
+	hub: {
+		blob: true
+	},
 
 	runtimeConfig: {
 		hackclub: {

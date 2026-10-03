@@ -12,11 +12,13 @@ Also, even though i can't say that anyone would WANT to self host it, here are s
 ```bash
 pnpm install
 ```
-2. start dev server
+2. [setup MariaDB](https://wiki.archlinux.org/title/MariaDB) + open `schema.mwb` with [MySQL Workbench](https://www.mysql.com/products/workbench/) and forward engineer the schema to your database.
+3. edit the .env file according to ``.env.example``
+4. start dev server
 ```bash
 pnpm run dev
 ```
-3. enjoy!  (for now, no db!)
+5. enjoy!
 
 ## Production
 

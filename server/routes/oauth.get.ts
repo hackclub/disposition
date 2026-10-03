@@ -18,7 +18,7 @@ export default defineEventHandler((event) => {
     url.searchParams.set("state", state);
 
     if (loginHint) url.searchParams.set("login_hint", loginHint);
-    if(rsvp) {
+    if (rsvp) {
         setCookie(event, "oauth_rsvp", rsvp, {
             httpOnly: false, secure: true, sameSite: "lax", maxAge: 600
         });
