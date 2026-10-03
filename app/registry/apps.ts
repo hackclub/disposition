@@ -9,9 +9,24 @@ import Admin from "~/apps/admin.vue"
 import Config from "~/apps/config.vue"
 import Shop from "~/apps/shop.vue"
 import Notification from "~/apps/notification.vue"
+import projectManager from "~/apps/projectManager.vue"
 
 
 export const APPS: { [key: string]: AppDef } = {
+
+    projectManager: {
+        appId: 'projectManager',
+        title: 'DispoManager',
+        component: projectManager,
+        width: 536,
+        height: 615,
+        minWidth: 536,
+        minHeight: 515,
+
+        tool: false,
+        resizeable: false,
+
+    },
 
     notification: {
         appId: 'notification',
