@@ -19,14 +19,14 @@ const vinylsCount = 5
 			<div class="spacer"></div>
 		</div>
 
-		<div class="main">
-			<div class="browse">
-				<section class="browse-section">
-					<h2 class="section-title">Trending</h2>
-					<div class="row row--3">
-						<div v-for="i in trendingCount" :key="'trending-' + i" class="tile" />
-					</div>
-				</section>
+<div class="main" style="overflow-y:auto;">
+    <div class="browse">
+      <section class="browse-section">
+        <h2 class="section-title">Trending</h2>
+        <div class="row row--3">
+          <div v-for="i in trendingCount" :key="'trending-' + i" class="tile" />
+        </div>
+      </section>
 
 				<section class="browse-section">
 					<h2 class="section-title">Staff's Picks</h2>
@@ -131,11 +131,11 @@ const vinylsCount = 5
 }
 
 .browse {
-	max-width: 580px;
-	margin: 0 auto;
-	padding: 16px;
-	background: #d7d7d7;
-	color: black;
+  max-width: 460px;
+  margin: 0 auto;
+  padding: 16px;
+  background: #d7d7d7;
+  color: black;
 }
 
 .browse-section {
@@ -184,5 +184,13 @@ const vinylsCount = 5
 	color: #2d6cdf;
 	text-decoration: none;
 	font-size: 16px;
+}
+
+.header {
+    display: flex;
+    flex-direction: column;
+
+    font-family: 'Joan', serif;
+    user-select: none;
 }
 </style>

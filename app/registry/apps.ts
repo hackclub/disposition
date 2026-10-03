@@ -8,20 +8,36 @@ import Rigby from "~/apps/rigby.vue"
 import Admin from "~/apps/admin.vue"
 import Config from "~/apps/config.vue"
 import Shop from "~/apps/shop.vue"
+import Notification from "~/apps/notification.vue"
 
 
 export const APPS: { [key: string]: AppDef } = {
+
+    notification: {
+        appId: 'notification',
+        title: 'Notifications',
+        component: Notification,
+        width: 367,
+        height: 476,
+        minWidth: 367,
+        minHeight: 476,
+
+        tool: false,
+        resizeable: false,
+
+    },
+
     shop: {
         appId: 'shop',
         title: 'DispoShop',
         component: Shop,
-        width: 536,
-        height: 686,
+        width: 500,
+        height: 650,
         minWidth: 600,
         minHeight: 310,
 
         tool: false,
-        resizeable: true
+        resizeable: false
 
     },
 
