@@ -1,5 +1,3 @@
-import { defineRelations } from "drizzle-orm";
-import * as schema from "./schema";
+import { relations } from "drizzle-orm/relations";
+import {  } from "./schema";
 
-export const relations = defineRelations(schema, (r) => ({
-}))

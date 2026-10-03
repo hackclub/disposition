@@ -7,7 +7,7 @@ import Run from "~/apps/run.vue"
 import Rigby from "~/apps/rigby.vue"
 import Admin from "~/apps/admin.vue"
 import Config from "~/apps/config.vue"
-import Shop from "~/apps/Shop.vue"
+import Shop from "~/apps/shop.vue"
 
 
 export const APPS: { [key: string]: AppDef } = {

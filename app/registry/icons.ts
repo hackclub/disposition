@@ -9,5 +9,6 @@ export const ICONS: { [key: string]: string } = {
     documentation: documentationIcon,
     admin: documentationIcon,
     config: configIcon,
-    run: runIcon
+    run: runIcon,
+    shop: shopIcon
 }
