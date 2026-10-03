@@ -1,4 +1,4 @@
-import { mysqlTable, mysqlSchema, AnyMySqlColumn, int, char, text, datetime, index, foreignKey, timestamp, unique, tinyint, json } from "drizzle-orm/mysql-core"
+import { mysqlTable, mysqlSchema, AnyMySqlColumn, int, char, text, datetime, index, foreignKey, timestamp, unique, tinyint } from "drizzle-orm/mysql-core"
 import { sql } from "drizzle-orm"
 
 export const announcements = mysqlTable("announcements", {
@@ -49,7 +49,7 @@ export const shopItems = mysqlTable("shop_items", {
 	image: text().notNull(),
 	description: text().notNull(),
 	media: char({ length: 45 }).notNull(),
-	urls: json("urls").$type<string[]>().notNull(),
+	urls: text().notNull(),
 	added: timestamp({ mode: 'string' }).default('current_timestamp()').notNull(),
 });
 
@@ -60,6 +60,8 @@ export const shopRequests = mysqlTable("shop_requests", {
 	album: char({ length: 255 }).notNull(),
 	artist: char({ length: 255 }).notNull(),
 	media: char({ length: 45 }).notNull(),
+	status: char({ length: 24 }).default('idle').notNull(),
+	message: text().default('NULL'),
 },
 (table) => [
 	index("fk_shop_requests_users_idx").on(table.user),

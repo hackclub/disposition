@@ -24,7 +24,7 @@ async function rsvp() {
     const rsvp = document.getElementById("rsvp");
 
     if (loggedIn.value) {
-        const rsvpResponse = await fetch('/rsvp', { method: "POST" });
+        const rsvpResponse = await fetch('/api/rsvps', { method: "POST" });
         if (rsvpResponse.status == 200) {
             rsvp!.innerText = "RSVP'd!";
         } else if (rsvpResponse.status == 409) {

@@ -17,7 +17,7 @@ export default defineEventHandler(async (event) => {
         .as("ranked");
 
     const rows = await db
-        .select()
+        .select(getTableColumns(shopItems))
         .from(ranked)
         .where(lte(ranked.rn, 15));
     

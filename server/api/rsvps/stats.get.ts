@@ -1,18 +1,10 @@
 import { count, gte, sql } from "drizzle-orm";
 import { rsvps } from "~~/db/schema";
 import { db } from "~~/server/utils/db";
-import { eq } from "drizzle-orm";
+import { requireAdmin } from "~~/server/utils/requireAdmin";
 
 export default defineEventHandler(async (event) => {
-    await requireUserSession(event);
-    const session = await getUserSession(event);
-
-    if (!useRuntimeConfig().public.adminIds.includes(session.user!.slackId)) {
-        throw createError({
-            statusCode: 401,
-            message: "You must be an organizer to access this endpoint."
-        })
-    }
+    await requireAdmin(event);
 
     // ok from now on we should only have admins access ts
     const [{ total } = { total: 0 }] = await db

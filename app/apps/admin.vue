@@ -2,14 +2,14 @@
 const { loggedIn, user } = await useUserSession()
 
 let info;
-if (loggedIn.value && useRuntimeConfig().public.adminIds.includes(user.value.slackId)) {
+if (loggedIn.value && useRuntimeConfig().public.adminIds.includes(user.value!.slackId)) {
     interface RsvpStats {
         total: number,
         today: number,
         week: number
     }
 
-    info = await $fetch<RsvpStats>("/admin/rsvpStats");
+    info = await $fetch<RsvpStats>("/api/rsvps/stats");
 }
 </script>
 

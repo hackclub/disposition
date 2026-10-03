@@ -1,30 +1,15 @@
 import * as z from "zod";
 import { shopItems } from "~~/db/schema";
 import { db } from "~~/server/utils/db";
-
-const RequestBody = z.object({
-    album: z.string().min(1).max(255),
-    artist: z.string().min(1).max(255),
-    genre: z.string().min(1).max(255),
-    category: z.string().min(1).max(255),
-    description: z.string().max(2048),
-    media: z.enum(["cd", "vinyl", "cassette", "other"]),
-    urls: z.array(z.url()).max(20),
-});
+import { requireAdmin } from "~~/server/utils/requireAdmin";
+import { validateImage } from "~~/server/utils/shopItem";
+import { ItemRequestBody } from "~~/server/utils/shopItem";
 
 export default defineEventHandler(async event => {
-    await requireUserSession(event);
-    const session = await getUserSession(event);
-
-    if (!useRuntimeConfig().public.adminIds.includes(session.user!.slackId)) {
-        throw createError({
-            statusCode: 401,
-            message: "You must be an organizer to access this endpoint."
-        })
-    }
+    await requireAdmin(event);
 
     const form = await readFormData(event);
-    const parsed = RequestBody.safeParse({
+    const parsed = ItemRequestBody.safeParse({
         album: form.get("album"),
         artist: form.get("artist"),
         genre: form.get("genre"),
@@ -48,16 +33,14 @@ export default defineEventHandler(async event => {
     if (!(file instanceof File)) {
         throw createError({ statusCode: 400, message: "image is required" });
     }
-    if (file.size > 16 * 1024 * 1024 || !["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
-        throw createError({ statusCode: 400, message: "Invalid image" });
-    }
+    validateImage(file);
 
     const uploaded = await blob.put(file.name, file, {
         addRandomSuffix: true,
         prefix: "images",
     });
 
-    const shopItem: typeof shopItems.$inferInsert = {
+    const item: typeof shopItems.$inferInsert = {
         album: fields.album,
         artist: fields.artist,
         genre: fields.genre,
@@ -69,7 +52,9 @@ export default defineEventHandler(async event => {
     }
 
     try {
-        const [result] = await db.insert(shopItems).values(shopItem);
+        const [result] = await db.insert(shopItems).values(item);
+
+        setResponseStatus(event, 201);
         return { id: result.insertId };
     } catch (err) {
         await blob.del(uploaded.pathname);
