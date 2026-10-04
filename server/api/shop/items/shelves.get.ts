@@ -26,8 +26,6 @@ function groupBy<T extends { rn: number }>(rows: T[], key: (r: T) => string, key
 }
 
 export default defineEventHandler(async (event) => {
-    await requireUserSession(event);
-    
     /*
     structure:
     ----------------------------------------------

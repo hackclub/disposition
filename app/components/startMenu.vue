@@ -181,6 +181,7 @@ if (loggedIn.value) {
     height: 80%;
 
     user-select: none;
+    overflow-y: auto;
 }
 
 .app {
