@@ -13,4 +13,5 @@ export const ICONS: { [key: string]: string } = {
     run: runIcon,
     shop: shopIcon,
     notification: notificationIcon,
+    admin_shop: shopIcon
 }

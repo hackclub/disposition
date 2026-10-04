@@ -13,6 +13,7 @@ import projectManager from "~/apps/projectManager.vue"
 import profileViewer from "~/apps/profileViewer.vue"
 import AdminShop from "~/apps/admin/adminShop.vue"
 import ProfileEdit from "~/apps/profileEdit.vue"
+import AdminShopAddItem from "~/apps/admin/adminShopAddItem.vue"
 
 export const APPS: { [key: string]: AppDef } = {
 
@@ -209,13 +210,28 @@ export const APPS: { [key: string]: AppDef } = {
         title: 'DispoAdminShopThing',
         component: AdminShop,
 
-        width: 380,
-        height: 476,
-        minWidth: 380,
-        minHeight: 476,
+        width: 400,
+        height: 500,
+        minWidth: 450,
+        minHeight: 500,
 
         tool: false,
         resizeable: true,
         hidden: true
     },
+
+    admin_shop_add_item: {
+        appId: 'admin_shop_add_item',
+        title: 'Add Shop Item',
+        component: AdminShopAddItem,
+
+        width: 500,
+        height: 600,
+        minWidth: 500,
+        minHeight: 600,
+
+        tool: true,
+        resizeable: true,
+        hidden: true
+    }
 }

@@ -30,7 +30,7 @@ function onDrop(e: DragEvent) {
 
 function handleImageFile(file: File) {
     if (!file.type.startsWith("image/")) {
-        alert("That's not an image file.");
+        alert("Not an image file :(");
         return;
     }
 

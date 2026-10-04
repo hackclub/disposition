@@ -73,30 +73,34 @@ if (loggedIn.value && useRuntimeConfig().public.adminIds.includes(user.value!.sl
                 <div v-if="loggedIn && $config.public.adminIds.includes(user.slackId)" class="flex">
                     <div v-if="currentTab === 'items'">
                         <table>
-                            <tr>
-                                <th>ID</th>
-                                <th>Album</th>
-                                <th>Artist</th>
-                                <th>Genre</th>
-                                <th>Media</th>
-                                <th>Price</th>
-                                <th>
-                                    <button>add</button>
-                                </th>
-                            </tr>
-                            <tr v-for="item in items">
-                                <th>{{ item.id }}</th>
-                                <th>{{ item.album }}</th>
-                                <th>{{ item.artist }}</th>
-                                <th>{{ item.genre }}</th>
-                                <th>{{ item.media }}</th>
-                                <th>{{ item.price }}</th>
-                                <th>
-                                    <button @click="manager.open('admin_shop_item', { id: item.id })">Edit</button>
-                                    <button
-                                        @click="manager.open('admin_shop_item_delete', { id: item.id })">Delete</button>
-                                </th>
-                            </tr>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Album</th>
+                                    <th>Artist</th>
+                                    <th>Genre</th>
+                                    <th>Media</th>
+                                    <th>Price</th>
+                                    <th>
+                                        <button @click="manager.open('admin_shop_add_item')">Add</button>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="item in items" :key="item.id">
+                                    <td>{{ item.id }}</td>
+                                    <td>{{ item.album }}</td>
+                                    <td>{{ item.artist }}</td>
+                                    <td>{{ item.genre }}</td>
+                                    <td>{{ item.media }}</td>
+                                    <td>{{ item.price }}</td>
+                                    <td>
+                                        <button @click="manager.open('admin_shop_item', { id: item.id })">Edit</button>
+                                        <button
+                                            @click="manager.open('admin_shop_item_delete', { id: item.id })">Delete</button>
+                                    </td>
+                                </tr>
+                            </tbody>
                         </table>
                     </div>
                     <div v-if="currentTab === 'orders'">
