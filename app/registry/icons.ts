@@ -3,6 +3,7 @@ import welcomeIcon from "~/assets/icons/start.png"
 import documentationIcon from "~/assets/icons/documentation.png"
 import configIcon from "~/assets/icons/config.png"
 import runIcon from "~/assets/icons/run.png"
+import notificationIcon from "~/assets/icons/notification.png"
 
 export const ICONS: { [key: string]: string } = {
     welcome: welcomeIcon,
@@ -10,5 +11,6 @@ export const ICONS: { [key: string]: string } = {
     admin: documentationIcon,
     config: configIcon,
     run: runIcon,
-    shop: shopIcon
+    shop: shopIcon,
+    notification: notificationIcon,
 }

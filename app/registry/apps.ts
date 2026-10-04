@@ -12,60 +12,22 @@ import Notification from "~/apps/notification.vue"
 import projectManager from "~/apps/projectManager.vue"
 import profileViewer from "~/apps/profileViewer.vue"
 import AdminShop from "~/apps/admin/adminShop.vue"
+import ProfileEdit from "~/apps/profileEdit.vue"
 
 export const APPS: { [key: string]: AppDef } = {
 
-    profileViewer: {
-        appId: 'profileViewer',
-        title: 'Profile Viewer',
-        component: profileViewer,
-        width: 500,
-        height: 550,
-        minWidth: 541,
-        minHeight: 550,
+    profileEdit: {
+        appId: 'profileEdit',
+        title: "Profile Edit",
+        component: ProfileEdit,
+
+        width: 542,
+        height: 307,
+        minWidth: 542,
+        minHeight: 307,
 
         tool: false,
         resizeable: false,
-
-    },
-
-    projectManager: {
-        appId: 'projectManager',
-        title: 'DispoManager',
-        component: projectManager,
-        width: 536,
-        height: 615,
-        minWidth: 536,
-        minHeight: 515,
-
-        tool: false,
-        resizeable: false,
-    },
-
-    notification: {
-        appId: 'notification',
-        title: 'Notifications',
-        component: Notification,
-        width: 367,
-        height: 476,
-        minWidth: 367,
-        minHeight: 476,
-
-        tool: false,
-        resizeable: false,
-    },
-
-    shop: {
-        appId: 'shop',
-        title: 'DispoShop',
-        component: Shop,
-        width: 500,
-        height: 650,
-        minWidth: 600,
-        minHeight: 310,
-
-        tool: false,
-        resizeable: false
     },
 
     welcome: {
@@ -94,6 +56,59 @@ export const APPS: { [key: string]: AppDef } = {
 
         tool: false,
         resizeable: true
+    },
+
+    projectManager: {
+        appId: 'projectManager',
+        title: 'DispoManager',
+        component: projectManager,
+        width: 536,
+        height: 615,
+        minWidth: 536,
+        minHeight: 515,
+
+        tool: false,
+        resizeable: false,
+    },
+
+    shop: {
+        appId: 'shop',
+        title: 'DispoShop',
+        component: Shop,
+        width: 500,
+        height: 650,
+        minWidth: 600,
+        minHeight: 310,
+
+        tool: false,
+        resizeable: false
+    },
+
+    profileViewer: {
+        appId: 'profileViewer',
+        title: 'Profile Viewer',
+        component: profileViewer,
+        width: 500,
+        height: 550,
+        minWidth: 541,
+        minHeight: 550,
+
+        tool: false,
+        resizeable: false,
+
+    },
+
+    notification: {
+        appId: 'notification',
+        title: 'Notifications',
+        component: Notification,
+        width: 367,
+        height: 476,
+        minWidth: 367,
+        minHeight: 476,
+
+        tool: false,
+        resizeable: false,
     },
 
     winver: {

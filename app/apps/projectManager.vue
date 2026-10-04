@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import badge from '../assets/icons/badge.jpg'
+
 interface Project {
   image?: string
   title: string
@@ -48,11 +50,7 @@ const projects: Project[] = [
               <button class="button">Open</button>
               <button class="button">Edit</button>
               <span class="logged-time">{{ project.hoursLogged }}</span>
-              <img
-                src="https://media.discordapp.net/attachments/811930201424134195/1556016280287584416/0568199a8fd1ed76b595f99b9f062305.jpg?backend=b2&ex=6ac2a096&is=6ac14f16&hm=98ef259a204306b47f34075f025781e1e9dafc5d66af6285158ad04f60a0e0d1&=&format=webp"
-                alt="Logged icon"
-                class="logged-icon"
-              />
+              <img class="logged-icon" :src="badge" alt=""/>
             </div>
           </div>
         </div>
