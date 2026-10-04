@@ -12,3 +12,10 @@ export async function requireAdmin(event: H3Event) {
 
     return session;
 }
+
+export async function isAdmin(event: H3Event) {
+    const session = await requireUserSession(event);
+    const admin = useRuntimeConfig().public.adminIds.includes(session.user.slackId);
+
+    return { admin, session };
+}

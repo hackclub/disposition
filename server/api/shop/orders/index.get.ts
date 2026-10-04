@@ -1,6 +1,6 @@
 import { desc, and, eq } from "drizzle-orm";
 import * as z from "zod";
-import { shopRequests } from "~~/db/schema";
+import { shopOrders } from "~~/db/schema";
 
 export default defineEventHandler(async event => {
     const session = await requireUserSession(event);
@@ -10,10 +10,10 @@ export default defineEventHandler(async event => {
         status: z.string().optional(),
     }).parse);
 
-    return db.select().from(shopRequests)
+    return db.select().from(shopOrders)
         .where(and(
-            userId ? eq(shopRequests.user, userId) : undefined,
-            status ? eq(shopRequests.status, status) : undefined,
+            userId ? eq(shopOrders.user, userId) : undefined,
+            status ? eq(shopOrders.status, status) : undefined,
         ))
-        .orderBy(desc(shopRequests.timestamp));
-})
+        .orderBy(desc(shopOrders.timestamp));
+});

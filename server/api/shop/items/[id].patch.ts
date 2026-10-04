@@ -3,9 +3,9 @@ import * as z from "zod";
 import { shopItems } from "~~/db/schema";
 import { eq } from "drizzle-orm";
 import type { BlobObject } from "@nuxthub/core/blob";
-import { ItemRequestBody, validateImage } from "~~/server/utils/shopItem";
+import { ItemPostBody, validateImage } from "~~/server/utils/shop/item";
 
-const PatchBody = ItemRequestBody.partial();
+const PatchBody = ItemPostBody.partial();
 
 export default defineEventHandler(async event => {
     await requireAdmin(event);
@@ -16,7 +16,7 @@ export default defineEventHandler(async event => {
 
     const form = await readFormData(event);
     const raw: Record<string, unknown> = {}
-    for (const k of ["album", "artist", "genre", "category", "description", "media"])
+    for (const k of ["album", "artist", "genre", "description", "media"])
         if (form.has(k)) raw[k] = form.get(k)
     if (form.has("urls")) raw.urls = form.getAll("urls")
     const parsed = PatchBody.safeParse(raw);
@@ -55,8 +55,9 @@ export default defineEventHandler(async event => {
     }
 
     try {
+        const { urls, ...itemFields } = parsed.data;
         await db.update(shopItems)
-            .set({ ...parsed.data, ...(newImage && { image: newImage.pathname }) })
+            .set({ ...itemFields, ...(urls !== undefined && { urls: JSON.stringify(urls) }), ...(newImage && { image: newImage.pathname }) })
             .where(eq(shopItems.id, id))
     } catch (err) {
         if (newImage) await blob.del(newImage.pathname);
