@@ -42,16 +42,17 @@ const projects: Project[] = [
             />
             <div class="project-main">
               <h2 class="project-title">{{ project.title }}</h2>
-              <div class="project-actions">
-                <button class="button">Open</button>
-                <button class="button">Edit</button>
-                <span class="logged-time">{{ project.hoursLogged }}</span>
-                <img
-                  src="https://media.discordapp.net/attachments/811930201424134195/1556016280287584416/0568199a8fd1ed76b595f99b9f062305.jpg?backend=b2&ex=6ac2a096&is=6ac14f16&hm=98ef259a204306b47f34075f025781e1e9dafc5d66af6285158ad04f60a0e0d1&=&format=webp"
-                  alt="Logged icon"
-                  class="logged-icon"
-                />
-              </div>
+            </div>
+
+            <div class="project-actions">
+              <button class="button">Open</button>
+              <button class="button">Edit</button>
+              <span class="logged-time">{{ project.hoursLogged }}</span>
+              <img
+                src="https://media.discordapp.net/attachments/811930201424134195/1556016280287584416/0568199a8fd1ed76b595f99b9f062305.jpg?backend=b2&ex=6ac2a096&is=6ac14f16&hm=98ef259a204306b47f34075f025781e1e9dafc5d66af6285158ad04f60a0e0d1&=&format=webp"
+                alt="Logged icon"
+                class="logged-icon"
+              />
             </div>
           </div>
         </div>
@@ -91,21 +92,25 @@ const projects: Project[] = [
   box-sizing: border-box;
   border: 1px solid #9f9f9f;
   background: white;
-  padding: 20px;
+  padding: 15px 20px;
   width: 100%;
   min-width: 50px;
 }
 
 .project-row {
-  display: flex;
-  gap: 14px;
-  align-items: flex-start;
+  display: grid;
+  grid-template-columns: 90px 1fr;
+  grid-template-areas:
+    "thumb title"
+    "actions actions";
+  gap: 10px 14px;
+  align-items: start;
 }
 
 .project-thumb {
+  grid-area: thumb;
   width: 90px;
   height: 90px;
-  flex-shrink: 0;
   background-color: #9f9f9f;
   background-size: cover;
   background-position: center;
@@ -113,10 +118,7 @@ const projects: Project[] = [
 }
 
 .project-main {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+  grid-area: title;
 }
 
 .project-title {
@@ -128,9 +130,14 @@ const projects: Project[] = [
 }
 
 .project-actions {
+  grid-area: actions;
   display: flex;
   align-items: center;
   gap: 10px;
+}
+
+.project-actions .button {
+  flex: 1;
 }
 
 .logged-time {

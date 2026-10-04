@@ -10,9 +10,24 @@ import Config from "~/apps/config.vue"
 import Shop from "~/apps/shop.vue"
 import Notification from "~/apps/notification.vue"
 import projectManager from "~/apps/projectManager.vue"
+import profileViewer from "~/apps/profileViewer.vue"
 
 
 export const APPS: { [key: string]: AppDef } = {
+
+    profileViewer: {
+        appId: 'profileViewer',
+        title: 'Profile Viewer',
+        component: profileViewer,
+        width: 500,
+        height: 550,
+        minWidth: 541,
+        minHeight: 550,
+
+        tool: false,
+        resizeable: false,
+
+    },
 
     projectManager: {
         appId: 'projectManager',
