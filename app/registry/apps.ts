@@ -210,7 +210,7 @@ export const APPS: { [key: string]: AppDef } = {
         title: 'DispoAdminShopThing',
         component: AdminShop,
 
-        width: 400,
+        width: 450,
         height: 500,
         minWidth: 450,
         minHeight: 500,
