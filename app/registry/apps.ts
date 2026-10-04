@@ -195,10 +195,10 @@ export const APPS: { [key: string]: AppDef } = {
         title: 'DispoAdminShopThing',
         component: AdminShop,
 
-        width: 380,
-        height: 476,
-        minWidth: 380,
-        minHeight: 476,
+        width: 400,
+        height: 500,
+        minWidth: 450,
+        minHeight: 500,
 
         tool: false,
         resizeable: true,
