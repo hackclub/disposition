@@ -1,4 +1,5 @@
 import * as z from "zod";
+import { sql, type SQL } from "drizzle-orm";
 import { shopItems } from "~~/db/schema";
 import { db } from "~~/server/utils/db";
 import { requireAdmin } from "~~/server/utils/requireAdmin";
@@ -12,11 +13,11 @@ export default defineEventHandler(async event => {
         album: form.get("album"),
         artist: form.get("artist"),
         genre: form.get("genre"),
-        category: form.get("category"),
         description: form.get("description"),
         media: form.get("media"),
-        urls: form.getAll("urls"), // when i implement ts in client: urls.forEach(u => form.append("urls", u))
-        price: form.get("price")
+        urls: form.getAll("urls"),
+        price: form.get("price"),
+        staffPick: form.get("staffPick"),
     });
 
     if (!parsed.success) {
@@ -40,7 +41,7 @@ export default defineEventHandler(async event => {
         prefix: "images",
     });
 
-    const item: typeof shopItems.$inferInsert = {
+    const item: Omit<typeof shopItems.$inferInsert, "staffPickAt"> & { staffPickAt: SQL | null } = {
         album: fields.album,
         artist: fields.artist,
         genre: fields.genre,
@@ -48,7 +49,8 @@ export default defineEventHandler(async event => {
         media: fields.media,
         urls: JSON.stringify(fields.urls), // kinda stupid but it works,
         image: uploaded.pathname,
-        price: fields.price
+        price: fields.price,
+        staffPickAt: fields.staffPick ? sql`now()` : null,
     }
 
     try {

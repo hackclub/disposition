@@ -81,7 +81,7 @@ if (loggedIn.value && useRuntimeConfig().public.adminIds.includes(user.value!.sl
                                 <th>Media</th>
                                 <th>Price</th>
                                 <th>
-                                    <button>add</button>
+                                    <button @click="manager.open('admin_shop_add_item')">Add</button>
                                 </th>
                             </tr>
                             <tr v-for="item in items">

@@ -11,7 +11,8 @@ const ItemPostBody = z.object({
     description: z.string().max(2048),
     media: z.enum(["cd", "vinyl", "cassette", "other"]), // important!!
     urls: z.array(z.url()).max(20),
-    price: z.int().min(1),
+    price: z.coerce.number().int().min(1),
+    staffPick: z.stringbool(),
 })
 
 function validateImage(file: File | undefined) {

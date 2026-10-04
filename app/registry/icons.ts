@@ -10,5 +10,6 @@ export const ICONS: { [key: string]: string } = {
     admin: documentationIcon,
     config: configIcon,
     run: runIcon,
-    shop: shopIcon
+    shop: shopIcon,
+    admin_shop: shopIcon
 }

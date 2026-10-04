@@ -12,6 +12,7 @@ import Notification from "~/apps/notification.vue"
 import projectManager from "~/apps/projectManager.vue"
 import profileViewer from "~/apps/profileViewer.vue"
 import AdminShop from "~/apps/admin/adminShop.vue"
+import AdminShopAddItem from "~/apps/admin/adminShopAddItem.vue"
 
 export const APPS: { [key: string]: AppDef } = {
 
@@ -203,4 +204,19 @@ export const APPS: { [key: string]: AppDef } = {
         resizeable: true,
         hidden: true
     },
+
+    admin_shop_add_item: {
+        appId: 'admin_shop_add_item',
+        title: 'Add Shop Item',
+        component: AdminShopAddItem,
+
+        width: 500,
+        height: 600,
+        minWidth: 500,
+        minHeight: 600,
+
+        tool: true,
+        resizeable: true,
+        hidden: true
+    }
 }

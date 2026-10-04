@@ -21,7 +21,11 @@ const data = await $fetch("/api/shop/items/shelves");
 				<section class="browse-section" v-for="(items, name) in data">
 					<h2 class="section-title">{{ name }}</h2>
 					<div class="row row--5">
-						<div v-for="i in items.length" class="tile" />
+						<div v-for="item in items" class="tile" :key="item.id">
+							<img class="cover" :src="`/images/${item.image}`" :alt="`${item.artist} - ${item.album}`" />
+							<span class="title" :title="`${item.artist} - ${item.album}`">{{ item.artist }} - {{ item.album }}</span>
+							<span class="price">{{ item.price }}</span>
+						</div>
 					</div>
 					<a href="#" class="see-more">See more...</a>
 				</section>
@@ -147,8 +151,32 @@ const data = await $fetch("/api/shop/items/shelves");
 }
 
 .tile {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	min-width: 0;
+}
+
+.cover {
+	width: 100%;
 	aspect-ratio: 1 / 1;
+	object-fit: cover;
 	background-color: #9f9f9f;
+}
+
+.title {
+	font-size: 11px;
+	line-height: 1.2;
+	overflow: hidden;
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	line-clamp: 2;
+	-webkit-box-orient: vertical;
+}
+
+.price {
+	font-size: 11px;
+	font-weight: 700;
 }
 
 .see-more {

@@ -153,7 +153,7 @@ onUnmounted(() => {
     align-items: center;
     width: 100%;
 
-    gap: 5px;
+    gap: 15px;
 }
 
 .left {
