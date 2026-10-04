@@ -1,4 +1,4 @@
-import { RequestRequestBody } from "~~/server/utils/shopRequest";
+import { RequestPostBody } from "~~/server/utils/shop/request";
 import * as z from "zod";
 import { shopRequests } from "~~/db/schema";
 
@@ -7,7 +7,7 @@ export default defineEventHandler(async event => {
     const session = await getUserSession(event);
 
     const form = await readFormData(event);
-    const parsed = RequestRequestBody.safeParse({
+    const parsed = RequestPostBody.safeParse({
         album: form.get("album"),
         artist: form.get("artist"),
         media: form.get("media"),

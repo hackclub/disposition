@@ -1,17 +1,17 @@
 import Welcome from "~/apps/welcome.vue"
 import Documentation from "~/apps/documentation.vue"
 import type { AppDef } from "~/types/window"
-import Winver from "~/apps/winver.vue"
-import Auth from "~/apps/auth.vue"
-import Run from "~/apps/run.vue"
-import Rigby from "~/apps/rigby.vue"
-import Admin from "~/apps/admin.vue"
+import Winver from "~/apps/misc/winver.vue"
+import Auth from "~/apps/misc/auth.vue"
+import Run from "~/apps/misc/run.vue"
+import Rigby from "~/apps/misc/rigby.vue"
+import AdminStats from "~/apps/admin/adminStats.vue"
 import Config from "~/apps/config.vue"
 import Shop from "~/apps/shop.vue"
 import Notification from "~/apps/notification.vue"
 import projectManager from "~/apps/projectManager.vue"
 import profileViewer from "~/apps/profileViewer.vue"
-
+import AdminShop from "~/apps/admin/adminShop.vue"
 
 export const APPS: { [key: string]: AppDef } = {
 
@@ -40,7 +40,6 @@ export const APPS: { [key: string]: AppDef } = {
 
         tool: false,
         resizeable: false,
-
     },
 
     notification: {
@@ -54,7 +53,6 @@ export const APPS: { [key: string]: AppDef } = {
 
         tool: false,
         resizeable: false,
-
     },
 
     shop: {
@@ -68,7 +66,6 @@ export const APPS: { [key: string]: AppDef } = {
 
         tool: false,
         resizeable: false
-
     },
 
     welcome: {
@@ -158,21 +155,6 @@ export const APPS: { [key: string]: AppDef } = {
         resizeable: false
     },
 
-    admin: {
-        appId: 'admin',
-        title: 'DispoStats',
-        component: Admin,
-
-        width: 367,
-        height: 476,
-        minWidth: 367,
-        minHeight: 476,
-
-        tool: false,
-        resizeable: true,
-        hidden: true
-    },
-
     config: {
         appId: 'config',
         title: 'DispoConfig',
@@ -186,5 +168,39 @@ export const APPS: { [key: string]: AppDef } = {
         tool: false,
         resizeable: true,
         hidden: false
+    },
+
+    ///////////////////////////////////////////
+    // admin apps                            //
+    ///////////////////////////////////////////
+
+    admin_stats: {
+        appId: 'admin_stats',
+        title: 'DispoStats',
+        component: AdminStats,
+
+        width: 380,
+        height: 476,
+        minWidth: 380,
+        minHeight: 476,
+
+        tool: false,
+        resizeable: true,
+        hidden: true
+    },
+
+    admin_shop: {
+        appId: 'admin_shop',
+        title: 'DispoAdminShopThing',
+        component: AdminShop,
+
+        width: 380,
+        height: 476,
+        minWidth: 380,
+        minHeight: 476,
+
+        tool: false,
+        resizeable: true,
+        hidden: true
     },
 }

@@ -2,14 +2,13 @@ import * as z from "zod";
 import { shopItems } from "~~/db/schema";
 import { db } from "~~/server/utils/db";
 import { requireAdmin } from "~~/server/utils/requireAdmin";
-import { validateImage } from "~~/server/utils/shopItem";
-import { ItemRequestBody } from "~~/server/utils/shopItem";
+import { validateImage, ItemPostBody } from "~~/server/utils/shop/item";
 
 export default defineEventHandler(async event => {
     await requireAdmin(event);
 
     const form = await readFormData(event);
-    const parsed = ItemRequestBody.safeParse({
+    const parsed = ItemPostBody.safeParse({
         album: form.get("album"),
         artist: form.get("artist"),
         genre: form.get("genre"),
@@ -17,6 +16,7 @@ export default defineEventHandler(async event => {
         description: form.get("description"),
         media: form.get("media"),
         urls: form.getAll("urls"), // when i implement ts in client: urls.forEach(u => form.append("urls", u))
+        price: form.get("price")
     });
 
     if (!parsed.success) {
@@ -44,11 +44,11 @@ export default defineEventHandler(async event => {
         album: fields.album,
         artist: fields.artist,
         genre: fields.genre,
-        category: fields.category,
         description: fields.description,
         media: fields.media,
-        urls: fields.urls, // kinda stupid but it works,
-        image: uploaded.pathname
+        urls: JSON.stringify(fields.urls), // kinda stupid but it works,
+        image: uploaded.pathname,
+        price: fields.price
     }
 
     try {

@@ -88,25 +88,25 @@ if (loggedIn.value && useRuntimeConfig().public.adminIds.includes(user.value!.sl
 }
 
 .header {
-    display: flex;
-    flex-direction: column;
-
-    font-family: 'Joan', serif;
-    user-select: none;
-
-    h2 {
-        font-weight: normal;
-    }
-}
-
-.striped-bg {
-    width: 100%;
-
     background: repeating-linear-gradient(0deg,
             #d7d7d7 0px,
             #d7d7d7 6px,
             #9f9f9f 6px,
             #9f9f9f 7px);
+
+    display: flex;
+    flex-direction: column;
+
+    h2 {
+        font-weight: normal;
+    }
+
+    font-family: 'Joan', serif;
+    user-select: none;
+}
+
+.striped-bg {
+    width: 100%;
     height: 80px;
 
     display: flex;

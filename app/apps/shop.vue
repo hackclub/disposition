@@ -1,15 +1,12 @@
 <script setup lang="ts">
-const trendingCount = 3
-const staffPicksCount = 3
-const cdsCount = 5
-const vinylsCount = 5
+const data = await $fetch("/api/shop/items/shelves");
 </script>
 
 <template>
 	<div class="content">
 		<div class="header">
 			<div class="striped-bg">
-				<img src="~/assets/logos/Disposition.png" alt="DispoShop Logo" class="logo" />
+				<img src="~/assets/logos/Shop.png" alt="DispoShop Logo" class="logo" />
 				<span>
 					<h2>DispoShop</h2>
 					<p>a physical-media based shop</p>
@@ -19,34 +16,12 @@ const vinylsCount = 5
 			<div class="spacer"></div>
 		</div>
 
-<div class="main" style="overflow-y:auto;">
-    <div class="browse">
-      <section class="browse-section">
-        <h2 class="section-title">Trending</h2>
-        <div class="row row--3">
-          <div v-for="i in trendingCount" :key="'trending-' + i" class="tile" />
-        </div>
-      </section>
-
-				<section class="browse-section">
-					<h2 class="section-title">Staff's Picks</h2>
-					<div class="row row--3">
-						<div v-for="i in staffPicksCount" :key="'staff-' + i" class="tile" />
-					</div>
-				</section>
-
-				<section class="browse-section">
-					<h2 class="section-title">CDs</h2>
+		<div class="main" v-if="data">
+			<div class="browse">
+				<section class="browse-section" v-for="(items, name) in data">
+					<h2 class="section-title">{{ name }}</h2>
 					<div class="row row--5">
-						<div v-for="i in cdsCount" :key="'cds-' + i" class="tile" />
-					</div>
-					<a href="#" class="see-more">See more...</a>
-				</section>
-
-				<section class="browse-section">
-					<h2 class="section-title">Vinyls</h2>
-					<div class="row row--5">
-						<div v-for="i in vinylsCount" :key="'vinyls-' + i" class="tile" />
+						<div v-for="i in items.length" class="tile" />
 					</div>
 					<a href="#" class="see-more">See more...</a>
 				</section>
@@ -55,12 +30,22 @@ const vinylsCount = 5
 				<a href="#" class="request-link">Click Here</a>
 			</div>
 		</div>
+		<div class="flex-center" v-else>
+			<p>Error fetching shop data :( (not logged in?)</p>
+		</div>
 	</div>
 </template>
 
 <style scoped>
+.flex-center {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
 .main {
 	padding: 10px;
+	overflow-y: auto;
 
 	pre {
 		font-family: 'Fira Sans', sans-serif;
@@ -131,11 +116,11 @@ const vinylsCount = 5
 }
 
 .browse {
-  max-width: 460px;
-  margin: 0 auto;
-  padding: 16px;
-  background: #d7d7d7;
-  color: black;
+	max-width: 460px;
+	margin: 0 auto;
+	padding: 16px;
+	background: #d7d7d7;
+	color: black;
 }
 
 .browse-section {
@@ -187,10 +172,10 @@ const vinylsCount = 5
 }
 
 .header {
-    display: flex;
-    flex-direction: column;
+	display: flex;
+	flex-direction: column;
 
-    font-family: 'Joan', serif;
-    user-select: none;
+	font-family: 'Joan', serif;
+	user-select: none;
 }
 </style>
