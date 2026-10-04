@@ -1,47 +1,80 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import badge from '~app/assets/icons/badge.jpg'
+import badge from '../assets/icons/badge.jpg'
+import avatar from '../assets/icons/avatar.png'
+import projectImage from '../assets/icons/project.jpg'
 
-const activeTab =ref<'about' | 'projects'>('projects')
-
-const avatar = '~/apps/assets/icons/avatar'
-
+const activeTab = ref<'about' | 'projects'>('projects')
 </script>
 
 <template>
     <div class="content">
         <div class="header">
             <div class="header-bg">
-                <img src="https://media.discordapp.net/attachments/1110811784190906430/1556240400707100702/image_24_1.png?backend=b2&ex=6ac37151&is=6ac21fd1&hm=81e443e13da94bad8bc253640f876cb517c8d8776d8e0265fb102fca85a9801d&=&format=webp&quality=lossless&width=512&height=144">
+                <img src="https://media.discordapp.net/attachments/1110811784190906430/1556240400707100702/image_24_1.png?backend=b2&ex=6ac37151&is=6ac21fd1&hm=81e443e13da94bad8bc253640f876cb517c8d8776d8e0265fb102fca85a9801d&=&format=webp&quality=lossless&width=512&height=144" alt="">
 
-                <button class="back-btn"> < </button>
+                <button class="back-btn">&lt;</button>
 
                 <div class="profile-card">
-                    <img class="avatar" :src="avatar">
+                    <img class="avatar" :src="avatar" alt="">
+                    <div class="profile-info">
+                        <h2>Username <img class="badge" :src="badge" alt=""></h2>
+                        <p>"This is a bio look at me"</p>
+                        <button class="btn">Edit profile</button>
+                    </div>
+                </div>
+
+                <div class="tabs">
+                    <button :class="{ active: activeTab === 'about' }" @click="activeTab = 'about'">About</button>
+                    <button :class="{ active: activeTab === 'projects' }" @click="activeTab = 'projects'">Projects</button>
                 </div>
             </div>
             <div class="spacer"></div>
         </div>
+
+        <div class="main" v-if="activeTab === 'projects'">
+            <h2 class="section-title">User's Projects</h2>
+
+            <div class="project-card">
+                <img class="thumb" :src="projectImage" alt="">
+                <div class="project-title">
+                    <h3>Project title</h3>
+                    <p>By Username</p>
+                </div>
+                <div class="project-footer">
+                    <button class="btn open">Open</button>
+                    <span class="logged">28h Logged <img class="badge" :src="badge" alt=""></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="main" v-else>
+            <h2 class="section-title">User's About</h2>
+            <p>About content here.</p>
+            <p> Shii i'm going INSANE with this fuhhh ahhh third space shii :Sob emoji:</p>
+        </div>
     </div>
-
-
 </template>
 
 <style scoped>
-    .content {
+.content {
     display: flex;
     flex-direction: column;
     font-family: 'Fira Sans', sans-serif;
     user-select: none;
 }
 
+.header {
+    display: flex;
+    flex-direction: column;
+    font-family: 'Joan', serif;
+}
 
 .header-bg {
     position: relative;
     width: 100%;
     height: 150px;
     overflow: hidden;
-
 
     > img {
         position: absolute;
@@ -82,6 +115,7 @@ const avatar = '~/apps/assets/icons/avatar'
         height: 90px;
         object-fit: cover;
         border: 1px solid #777;
+        background: #9f9f9f;
     }
 
     .profile-info {
@@ -91,15 +125,28 @@ const avatar = '~/apps/assets/icons/avatar'
         align-items: center;
         flex: 1;
 
-        h2 { margin: 0; font-weight: 500; font-family: 'Joan', serif; }
-        p  { margin: 0 0 6px; font-size: 12px; }
+        h2 {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin: 0;
+            font-weight: 500;
+            font-family: 'Joan', serif;
+        }
+
+        p {
+            margin: 0 0 6px;
+            font-size: 12px;
+        }
     }
 }
 
-.sticker {
+.badge {
     width: 20px;
     height: 20px;
-    vertical-align: middle;
+    flex-shrink: 0;
+    object-fit: contain;
+    display: block;
 }
 
 .tabs {
@@ -114,11 +161,18 @@ const avatar = '~/apps/assets/icons/avatar'
         height: 18px;
         font-size: 12px;
         background: #f4f4f4;
-        border: 1px solid #9f9f9f;
         border-bottom: none;
         cursor: pointer;
+        border: none;
+        border-radius: 0;
+        border-top-left-radius: 4px;
+        border-top-right-radius: 4px;
 
-        &.active { background: #fff; }
+        user-select: none;
+
+        &.active {
+            background: #fff;
+        }
     }
 }
 
@@ -130,7 +184,6 @@ const avatar = '~/apps/assets/icons/avatar'
     box-sizing: border-box;
 }
 
- 
 .main {
     padding: 10px;
 }
@@ -140,12 +193,12 @@ const avatar = '~/apps/assets/icons/avatar'
     margin: 0 0 10px;
 }
 
-.btn {
-    background: linear-gradient(#fafafa, #dcdcdc);
-    border: 1px solid #aaa;
-    border-radius: 3px;
-    padding: 2px 14px;
-    cursor: pointer;
+.buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+
+    flex-grow: 1;
 }
 
 .project-card {
@@ -159,13 +212,26 @@ const avatar = '~/apps/assets/icons/avatar'
     background: #e8e8e8;
     border: 1px solid #9f9f9f;
 
-    .thumb { grid-area: thumb; width: 72px; height: 72px; object-fit: cover; }
+    .thumb {
+        grid-area: thumb;
+        width: 72px;
+        height: 72px;
+        object-fit: cover;
+        background: #9f9f9f;
+    }
 
     .project-title {
         grid-area: title;
         text-align: center;
-        h3 { margin: 0; font-size: 18px; }
-        p  { margin: 0; }
+
+        h3 {
+            margin: 0;
+            font-size: 18px;
+        }
+
+        p {
+            margin: 0;
+        }
     }
 
     .project-footer {
@@ -174,8 +240,17 @@ const avatar = '~/apps/assets/icons/avatar'
         align-items: center;
         gap: 6px;
 
-        .open { flex: 1; }
-        .logged { font-size: 13px; white-space: nowrap; }
+        .open {
+            flex: 1;
+        }
+
+        .logged {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 13px;
+            white-space: nowrap;
+        }
     }
 }
 </style>

@@ -256,10 +256,11 @@ const projects: Project[] = [
 }
 
 .spacer {
-  width: 100%;
-  height: 12px;
-  border: 1px solid #c6c6c4;
-  background-color: white;
+    width: 100%;
+    height: 12px;
+    border: 1px solid #c6c6c4;
+    background-color: #dedede;
+    box-sizing: border-box;
 }
 
 .content {
