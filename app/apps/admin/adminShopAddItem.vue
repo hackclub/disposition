@@ -99,65 +99,71 @@ function removeURLField(i: number) {
 </script>
 
 <template>
-    <div class="content">
-        <div class="horizontal">
-            <div class="vertical">
-                <input ref="fileInput" type="file" accept="image/jpeg,image/png,image/webp" style="display: none" @change="onFileChange" />
-
-                <img class="drag-and-drop" :class="{ dragging: isDragging }" :src="previewUrl ?? placeholder"
-                    alt="Item image" @dragover.prevent="isDragging = true" @dragleave.prevent="isDragging = false"
-                    @drop.prevent="onDrop" />
-                <button @click="pickFile">Upload from files</button>
-            </div>
-            <div class="vertical fields">
-                <label for="artist">Artist</label>
-                <input type="text" id="artist" v-model="form.artist" placeholder="Artist" />
-
-                <label for="album">Album</label>
-                <input type="text" id="album" v-model="form.album" placeholder="Album" />
-
-                <label for="genre">Genre</label>
-                <input type="text" id="genre" v-model="form.genre" placeholder="Genre" />
-
-                <label for="media">Media</label>
-                <select name="media" id="media" v-model="form.media">
-                    <option value="cd">CD</option>
-                    <option value="vinyl">Vinyl</option>
-                    <option value="cassette">Cassette</option>
-                    <option value="other">Other</option>
-                </select>
-
-                <label for="price">Price</label>
-                <input type="number" min="1" id="price" v-model="form.price" placeholder="Price" />
-
-                <label for="staffPick" class="checkbox">
-                    <input type="checkbox" name="staffPick" v-model="form.staffPick" />
-                    Staff pick
-                </label>
-            </div>
-        </div>
-        <div class="vertical">
-            <label for="description">Description</label>
-            <textarea id="description" class="description" v-model="form.description"
-                placeholder="Description"></textarea>
-
+    <AuthState v-slot="{ loggedIn, user }">
+        <div class="content" v-if="loggedIn && $config.public.adminIds.includes(user.slackId)">
             <div class="horizontal">
                 <div class="vertical">
-                    <label>URLs</label>
-                    <div v-for="(_, i) in urls" :key="i" class="horizontal">
-                        <input v-model="urls[i]" type="url" />
-                        <button v-if="i === urls.length - 1" @click="addURLField">+</button>
-                        <button v-else @click="removeURLField(i)">-</button>
+                    <input ref="fileInput" type="file" accept="image/jpeg,image/png,image/webp" style="display: none"
+                        @change="onFileChange" />
+
+                    <img class="drag-and-drop" :class="{ dragging: isDragging }" :src="previewUrl ?? placeholder"
+                        alt="Item image" @dragover.prevent="isDragging = true" @dragleave.prevent="isDragging = false"
+                        @drop.prevent="onDrop" />
+                    <button @click="pickFile">Upload from files</button>
+                </div>
+                <div class="vertical fields">
+                    <label for="artist">Artist</label>
+                    <input type="text" id="artist" v-model="form.artist" placeholder="Artist" />
+
+                    <label for="album">Album</label>
+                    <input type="text" id="album" v-model="form.album" placeholder="Album" />
+
+                    <label for="genre">Genre</label>
+                    <input type="text" id="genre" v-model="form.genre" placeholder="Genre" />
+
+                    <label for="media">Media</label>
+                    <select name="media" id="media" v-model="form.media">
+                        <option value="cd">CD</option>
+                        <option value="vinyl">Vinyl</option>
+                        <option value="cassette">Cassette</option>
+                        <option value="other">Other</option>
+                    </select>
+
+                    <label for="price">Price</label>
+                    <input type="number" min="1" id="price" v-model="form.price" placeholder="Price" />
+
+                    <label for="staffPick" class="checkbox">
+                        <input type="checkbox" name="staffPick" v-model="form.staffPick" />
+                        Staff pick
+                    </label>
+                </div>
+            </div>
+            <div class="vertical">
+                <label for="description">Description</label>
+                <textarea id="description" class="description" v-model="form.description"
+                    placeholder="Description"></textarea>
+
+                <div class="horizontal">
+                    <div class="vertical">
+                        <label>URLs</label>
+                        <div v-for="(_, i) in urls" :key="i" class="horizontal">
+                            <input v-model="urls[i]" type="url" />
+                            <button v-if="i === urls.length - 1" @click="addURLField">+</button>
+                            <button v-else @click="removeURLField(i)">-</button>
+                        </div>
+
                     </div>
 
-                </div>
-
-                <div class="upload-div">
-                    <button :disabled="submitting" @click="upload">Upload</button>
+                    <div class="upload-div">
+                        <button :disabled="submitting" @click="upload">Upload</button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+        <div v-else style="text-align: center;">
+            <p>sorry, not admin :(</p>
+        </div>
+    </AuthState>
 </template>
 
 <style scoped>
