@@ -28,7 +28,7 @@ export default defineEventHandler(async event => {
         message: parsed.data.message || null
     }
 
-    const [result] = await db.insert(shopOrders).values(order);
+    const [result] = await db.insert(shopOrders).values(order).returning({ id: shopOrders.id });
     setResponseStatus(event, 201);
-    return { id: result.insertId };
+    return { id: result!.id };
 })

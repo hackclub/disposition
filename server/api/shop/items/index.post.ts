@@ -47,17 +47,17 @@ export default defineEventHandler(async event => {
         genre: fields.genre,
         description: fields.description,
         media: fields.media,
-        urls: JSON.stringify(fields.urls), // kinda stupid but it works,
+        urls: fields.urls,
         image: uploaded.pathname,
         price: fields.price,
         staffPickAt: fields.staffPick ? sql`now()` : null,
     }
 
     try {
-        const [result] = await db.insert(shopItems).values(item);
+        const [result] = await db.insert(shopItems).values(item).returning({ id: shopItems.id });
 
         setResponseStatus(event, 201);
-        return { id: result.insertId };
+        return { id: result!.id };
     } catch (err) {
         await blob.del(uploaded.pathname);
         throw err;

@@ -1,6 +1,12 @@
 <script setup lang="ts">
 import type { WindowInstance } from '~/types/window';
 
+const manager = useWindowManager();
+const props = defineProps<{ instance: WindowInstance }>()
+const admin = await isAdmin();
+if (!admin) manager.close(props.instance.id);
+
+// drag and drop bullshit
 const fileInput = ref<HTMLInputElement | null>(null);
 const isDragging = ref(false);
 const imageFile = ref<File | null>(null);
@@ -8,7 +14,7 @@ const previewUrl = ref<string | null>(null);
 const urls = ref<string[]>([""]);
 type Media = "cd" | "vinyl" | "cassette" | "other";
 
-const manager = useWindowManager();
+// form bullshit
 const form = reactive({
     artist: "",
     album: "",
@@ -20,10 +26,10 @@ const form = reactive({
 })
 const submitting = ref(false);
 const error = ref<string | null>(null);
-const props = withDefaults(defineProps<{
-    instance: WindowInstance
-}>(), {
-})
+
+// genre dropdown bullshit
+const genres = ref<string[]>([]);
+if(admin) genres.value = await $fetch<string[]>("/api/shop/genres");
 
 // hi dear reviewers. i know, you might be seeing this very out of place svg and wondering: 
 // did ai write this? yes. it did. sorry. it looks nice. it's only like one file out of 2 bagillion. please forgive this cardinal sin.
@@ -61,6 +67,7 @@ onBeforeUnmount(() => {
 });
 
 async function upload() {
+    if (!admin) return;
     if (!imageFile.value) {
         error.value = "Please choose an image";
         return;

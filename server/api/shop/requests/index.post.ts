@@ -31,8 +31,8 @@ export default defineEventHandler(async event => {
         user: session.user!.id
     }
 
-    const [result] = await db.insert(shopRequests).values(request);
+    const [result] = await db.insert(shopRequests).values(request).returning({ id: shopRequests.id });
 
     setResponseStatus(event, 201);
-    return { id: result.insertId };
+    return { id: result!.id };
 })

@@ -1,16 +1,19 @@
 <script setup lang="ts">
-const { loggedIn, user } = await useUserSession()
+import type { WindowInstance } from '~/types/window';
 
-let info;
-if (loggedIn.value && useRuntimeConfig().public.adminIds.includes(user.value!.slackId)) {
-    interface RsvpStats {
-        total: number,
-        today: number,
-        week: number
-    }
+const manager = useWindowManager();
+const props = defineProps<{ instance: WindowInstance }>()
+const admin = await isAdmin();
+if (!admin) manager.close(props.instance.id);
 
-    info = await $fetch<RsvpStats>("/api/rsvps/stats");
+interface RsvpStats {
+    total: number,
+    today: number,
+    week: number
 }
+
+const info = ref<RsvpStats>();
+if (admin) info.value = await $fetch<RsvpStats>("/api/rsvps/stats");
 </script>
 
 <template>
@@ -101,7 +104,8 @@ if (loggedIn.value && useRuntimeConfig().public.adminIds.includes(user.value!.sl
         font-weight: normal;
     }
 
-    font-family: 'Joan', serif;
+    font-family: 'Joan',
+    serif;
     user-select: none;
 }
 

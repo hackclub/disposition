@@ -12,8 +12,11 @@ Also, even though i can't say that anyone would WANT to self host it, here are s
 ```bash
 pnpm install
 ```
-2. [setup MariaDB](https://wiki.archlinux.org/title/MariaDB) + open `schema.mwb` with [MySQL Workbench](https://www.mysql.com/products/workbench/) and forward engineer the schema to your database.
-3. edit the .env file according to ``.env.example``
+2. [setup PostgreSQL](https://wiki.archlinux.org/title/PostgreSQL) and create a database for the project
+3. edit the .env file according to ``.env.example``, then apply the schema
+```bash
+pnpm drizzle-kit migrate
+```
 4. start dev server
 ```bash
 pnpm run dev

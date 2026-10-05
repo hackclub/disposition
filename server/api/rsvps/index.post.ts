@@ -9,19 +9,16 @@ export default defineEventHandler(async (event) => {
         slackId: session.user.slackId,
         email: session.user.email,
         name: session.user.name,
-        yswsEligible: Number(session.user.yswsEligible),
+        yswsEligible: session.user.yswsEligible,
         verificationStatus: session.user.verificationStatus
     };
 
-    try {
-        await db.insert(rsvps).values(rsvp);
-    } catch (err: any) {
-        // new drizzle shi
-        const code = err?.code ?? err?.cause?.code;
-        if (code === "ER_DUP_ENTRY") {
-            throw createError({ statusCode: 409, message: "RSVP already exists" });
-        }
-        throw err;
+    const inserted = await db.insert(rsvps).values(rsvp)
+        .onConflictDoNothing()
+        .returning({ hcaId: rsvps.hcaId });
+
+    if (!inserted.length) {
+        throw createError({ statusCode: 409, message: "RSVP already exists" });
     }
 
     return { ok: true };

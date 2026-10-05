@@ -1,5 +1,18 @@
 <script setup lang="ts">
-const data = await $fetch("/api/shop/items/shelves");
+interface ShopItem {
+	id: number,
+	album: string,
+	artist: string,
+	genre: string,
+	image: string,
+	description: string,
+	media: string,
+	added: Date,
+	price: number
+}
+
+const data = ref<Record<string, ShopItem[]>>();
+data.value = await $fetch<Record<string, ShopItem[]>>("/api/shop/items/shelves");
 </script>
 
 <template>
@@ -35,7 +48,7 @@ const data = await $fetch("/api/shop/items/shelves");
 			</div>
 		</div>
 		<div class="flex-center" v-else>
-			<p>Error fetching shop data :( (not logged in?)</p>
+			<p>Error fetching shop data :(</p>
 		</div>
 	</div>
 </template>

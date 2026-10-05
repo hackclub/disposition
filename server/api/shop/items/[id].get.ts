@@ -6,7 +6,7 @@ import * as z from "zod";
 export default defineEventHandler(async event => {
     const { admin } = await isAdmin(event);
 
-    // in MY hood, we are type safe!!!
+    // i love typescript
     const id = await getValidatedRouterParams(event, z.object({
         id: z.coerce.number().int().positive(),
     }).parse).then(p => p.id);

@@ -19,41 +19,54 @@ function latestPer(partitionBy: AnyColumn, filter?: SQL) {
     return db.select().from(ranked).where(lte(ranked.rn, shelf_size));
 }
 
-function groupBy<T extends { rn: number }>(rows: T[], key: (r: T) => string, keys: readonly string[]) {
-    const out: Record<string, Omit<T, "rn">[]> = Object.fromEntries(keys.map(k => [k, []]));
-    for (const { rn, ...item } of rows) out[key(item as T)]?.push(item);
+function groupBy<T extends { rn: number }>(
+    rows: T[],
+    key: (r: T) => string,
+    keys: readonly string[],
+    prettyNames?: readonly string[],
+) {
+    const labelByKey = new Map<string, string>();
+    const out: Record<string, Omit<T, "rn">[]> = {};
+
+    keys.forEach((keyValue, index) => {
+        const label = prettyNames?.[index] ?? keyValue;
+        labelByKey.set(keyValue, label);
+        if (!out[label]) out[label] = [];
+    });
+
+    for (const row of rows) {
+        const label = labelByKey.get(key(row));
+        if (!label) continue;
+
+        const bucket = out[label] ?? [];
+        out[label] = bucket;
+
+        const { rn, ...item } = row;
+        bucket.push(item);
+    }
+
     return out;
 }
 
 export default defineEventHandler(async (event) => {
+    // hello this might seem like a nightmare of a function but really im putting together the shop home screen
+    // the client displays the home screen purely based on what the server gives it
+    // the categories are the following:
     /*
-    structure:
-    ----------------------------------------------
-    GENRE
-    ----------------------------------------------
-    trending - based on shop_orders.timestamp from the last week. if no data then just pull random bullshit
-    staff pick - based on shop_items.staff_pick_at
-    ----------------------------------------------
-    LATEST ADITTIONS PER MEDIA
-    ----------------------------------------------
-    cd - based on shop_items.added and shop_items.media
-    vinyl - ditto
-    cassettes - ditto
-    other - ditto
-    ----------------------------------------------
-    LATEST ADITTIONS PER GENRE
-    ----------------------------------------------
-    rock
-    metal
-    electronic
-    pop
-    hiphop
-    jazz (?)
-    R&B
-    latin
-    country
-    k-pop
-    classical
+        trending (based on order count, if there arent enough orders then its just random xdxd)
+        staff picks (in the db staff pick is a timestamp so it goes by latest staff pick)
+        // then a category for every media type //
+        CDs
+        Vinyls
+        Cassettes
+        Other
+        // then every genre sorted by latest addition //
+        // so lets say hip hop has the latest addition //
+        Hip Hop (the items within the category are also sorted by latest addition)
+        Rock
+        Jazz
+        Metal
+        // etc.. //
     */
 
     const staffPicks = await db.select(publicItemColumns).from(shopItems)
@@ -63,7 +76,7 @@ export default defineEventHandler(async (event) => {
 
     const trending = await db.select(publicItemColumns).from(shopOrders)
         .innerJoin(shopItems, eq(shopOrders.item, shopItems.id))
-        .where(and(gte(shopOrders.timestamp, sql`now() - interval 7 day`), ne(shopOrders.status, 'cancelled')))
+        .where(and(gte(shopOrders.timestamp, sql`now() - interval '7 days'`), ne(shopOrders.status, 'cancelled')))
         .groupBy(shopItems.id)
         .orderBy(desc(count()), desc(shopItems.id))
         .limit(shelf_size);
@@ -72,7 +85,7 @@ export default defineEventHandler(async (event) => {
     if (trending.length < shelf_size) {
         const filler = await db.select(publicItemColumns).from(shopItems)
             .where(trending.length ? notInArray(shopItems.id, trending.map(t => t.id)) : undefined)
-            .orderBy(sql`rand()`)
+            .orderBy(sql`random()`)
             .limit(shelf_size - trending.length)
         trending.push(...filler);
     }
@@ -89,6 +102,7 @@ export default defineEventHandler(async (event) => {
         ? await latestPer(shopItems.genre, inArray(shopItems.genre, topGenres))
         : [];
 
+    // i wanna have like categories of categories but im waiting for luca to do the shop rewrite
     // return {
     //     featured: { trending, staffPicks },
     //     media: groupBy(mediaRows, r => r.media, ["cd", "vinyl", "cassette", "other"]),
@@ -96,8 +110,14 @@ export default defineEventHandler(async (event) => {
     // }
 
     return {
-        trending, staffPicks,
-        ...groupBy(mediaRows, r => r.media, ["cd", "vinyl", "cassette", "other"]),
+        "Trending": trending, 
+        "Staff Picks": staffPicks,
+        ...groupBy(
+            mediaRows,
+            r => r.media,
+            ["cd", "vinyl", "cassette", "other"],
+            ["CDs", "Vinyl", "Cassettes", "Other"],
+        ),
         ...groupBy(genreRows, r => r.genre, topGenres),
     }
 });

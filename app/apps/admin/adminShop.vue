@@ -1,8 +1,11 @@
 <script setup lang="ts">
-const { loggedIn, user } = await useUserSession()
+import type { WindowInstance } from '~/types/window';
 
 const manager = useWindowManager();
-let currentTab = ref("items");
+const props = defineProps<{ instance: WindowInstance }>()
+const admin = await isAdmin();
+if (!admin) manager.close(props.instance.id);
+let currentTab = ref<string>("items");
 
 interface Item {
     id: number,
@@ -12,7 +15,7 @@ interface Item {
     image: string,
     description: string,
     media: string,
-    urls: string,
+    urls: string[],
     added: Date,
     price: number,
     staff_pick_at: number
@@ -39,13 +42,14 @@ interface Request {
     message: string
 }
 
-let items: Item[] = [];
-let orders: Order[] = [];
-let requests: Request[] = [];
-if (loggedIn.value && useRuntimeConfig().public.adminIds.includes(user.value!.slackId)) {
-    items = await $fetch<Item[]>("/api/shop/items");
-    orders = await $fetch<Order[]>("/api/shop/orders?user=all");
-    requests = await $fetch<Request[]>("/api/shop/requests?user=all");
+const items = ref<Item[]>([]);
+const orders = ref<Order[]>([]);
+const requests = ref<Request[]>([]);
+
+if (admin) {
+    items.value = await $fetch<Item[]>("/api/shop/items/");
+    orders.value = await $fetch<Order[]>("/api/shop/orders?user=all");
+    requests.value = await $fetch<Request[]>("/api/shop/requests?user=all");
 }
 </script>
 
@@ -104,10 +108,61 @@ if (loggedIn.value && useRuntimeConfig().public.adminIds.includes(user.value!.sl
                         </table>
                     </div>
                     <div v-if="currentTab === 'orders'">
-                        orders
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Item ID</th>
+                                    <th>User ID</th>
+                                    <th>Status</th>
+                                    <th>Timestamp</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="order in orders" :key="order.id">
+                                    <td>{{ order.id }}</td>
+                                    <td @click="manager.open('shop_item', { item: order.item })">{{ order.item }}</td>
+                                    <td @click="manager.open('profile_viewer', { user: order.user })">{{ order.user }}
+                                    </td>
+                                    <td>{{ order.status }}</td>
+                                    <td>{{ order.timestamp }}</td>
+                                    <td>
+                                        <button
+                                            @click="manager.open('admin_shop_order', { order: order.id })">View</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                     <div v-if="currentTab === 'requests'">
-                        requests
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>User ID</th>
+                                    <th>Album</th>
+                                    <th>Artist</th>
+                                    <th>Media</th>
+                                    <th>Status</th>
+                                    <th>Timestamp</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="request in requests" :key="request.id">
+                                    <td>{{ request.id }}</td>
+                                    <td>{{ request.user }}</td>
+                                    <td>{{ request.album }}</td>
+                                    <td>{{ request.artist }}</td>
+                                    <td>{{ request.media }}</td>
+                                    <td>{{ request.status }}</td>
+                                    <td>{{ request.timestamp }}</td>
+                                    <td>
+                                        <button
+                                            @click="manager.open('admin_shop_request', { id: request.id })">View</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
 

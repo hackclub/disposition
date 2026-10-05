@@ -2,7 +2,7 @@ import * as z from "zod";
 import { getTableColumns } from "drizzle-orm";
 import { shopItems } from "~~/db/schema";
 
-const { urls, ...publicItemColumns } = getTableColumns(shopItems);
+const { urls, staffPickAt, ...publicItemColumns } = getTableColumns(shopItems);
 
 const ItemPostBody = z.object({
     album: z.string().min(1).max(255),

@@ -14,12 +14,12 @@ export default defineEventHandler(async (event) => {
     const [{ today } = { today: 0 }] = await db
         .select({ today: count() })
         .from(rsvps)
-        .where(gte(rsvps.timestamp, sql`CURDATE()`));
+        .where(gte(rsvps.timestamp, sql`date_trunc('day', now())`));
 
     const [{ week }= { week: 0 }] = await db
         .select({ week: count() })
         .from(rsvps)
-        .where(gte(rsvps.timestamp, sql`DATE_SUB(CURDATE(), INTERVAL WEEKDAY(CURDATE()) DAY)`));
+        .where(gte(rsvps.timestamp, sql`date_trunc('week', now())`));
 
     return {
         total: total,

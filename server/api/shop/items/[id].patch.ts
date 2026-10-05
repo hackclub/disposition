@@ -9,7 +9,7 @@ const PatchBody = ItemPostBody.partial();
 
 export default defineEventHandler(async event => {
     await requireAdmin(event);
-    // in MY hood, we are type safe!!!
+    // i love typescript
     const id = await getValidatedRouterParams(event, z.object({
         id: z.coerce.number().int().positive(),
     }).parse).then(p => p.id);
@@ -55,9 +55,8 @@ export default defineEventHandler(async event => {
     }
 
     try {
-        const { urls, ...itemFields } = parsed.data;
         await db.update(shopItems)
-            .set({ ...itemFields, ...(urls !== undefined && { urls: JSON.stringify(urls) }), ...(newImage && { image: newImage.pathname }) })
+            .set({ ...parsed.data, ...(newImage && { image: newImage.pathname }) })
             .where(eq(shopItems.id, id))
     } catch (err) {
         if (newImage) await blob.del(newImage.pathname);

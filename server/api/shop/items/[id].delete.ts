@@ -6,7 +6,7 @@ import { eq } from "drizzle-orm";
 export default defineEventHandler(async event => {
     await requireAdmin(event);
 
-    // in MY hood, we are type safe!!!
+    // i love typescript
     const id = await getValidatedRouterParams(event, z.object({
         id: z.coerce.number().int().positive(),
     }).parse).then(p => p.id);
