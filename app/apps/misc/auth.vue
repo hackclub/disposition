@@ -10,7 +10,7 @@ defineProps({
 
 <template>
     <div class="content">
-        <h1>log in with hack club auth first</h1>
+        <h1>log in with hack club auth</h1>
         <form action="/oauth" method="get">
             <input id="email" name="login_hint" type="email" placeholder="enter your email here"
                 pattern="^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$" required>
