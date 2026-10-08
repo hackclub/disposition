@@ -1,6 +1,6 @@
 import type { Component } from 'vue';
 
-export interface WindowInstance {
+export type WindowInstance = {
     id: string; // actual random id
     appId: string; // something like "welcome" or "docs"
     title: string;
@@ -20,7 +20,7 @@ export interface WindowInstance {
     props: Record<string, any>
 }
 
-export interface AppDef {
+export type AppDef = {
     appId: string; // something like "welcome" or "docs"
     title: string;
     component: Component;
