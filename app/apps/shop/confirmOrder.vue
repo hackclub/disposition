@@ -12,6 +12,13 @@ balance.value = await $fetch<number>(`/api/user/balance`);
 
 async function buy() {
     const response = await $fetch(`/api/shop/orders`, { method: "POST" });
+    if(!response) {
+        // error message box
+        return;
+    }
+
+    refreshNuxtData("balance"); // refresh the balance in the taskbar type shit
+    // message box to say order id whatever whatever you can view this anytime in the shop
 }
 </script>
 

@@ -50,5 +50,8 @@ export default defineEventHandler(async event => {
 
     await db.insert(balanceEvents).values(balanceEvent);
     setResponseStatus(event, 201);
-    return { id: result!.id };
+    return { 
+        id: result!.id,
+        balance: balance - item.price
+    };
 })

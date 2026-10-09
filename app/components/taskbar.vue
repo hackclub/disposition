@@ -2,91 +2,75 @@
 import { Transition, onMounted, onUnmounted } from 'vue';
 import StartMenu from './startMenu.vue';
 
-let isOpen = useState("startMenuOpen", () => false);
+const { data: balance } = await useFetch('/api/user/balance', { key: 'balance' });
+const isOpen = ref(false);
+const clockState = ref('');
+const dateState = ref('');
 
-function sopen() {
-    if(isOpen.value) {
-        isOpen.value = false;
-    }
+function tick() {
+    const now = new Date();
+    clockState.value = now.toLocaleTimeString([], { hourCycle: 'h23' });
+    dateState.value = now.toLocaleDateString();
 }
 
-let clockTimeout: ReturnType<typeof setTimeout>;
-let dateTimeout: ReturnType<typeof setTimeout>;
-
-function startTime() {
-    const today = new Date();
-    let h = today.getHours();
-    let m = today.getMinutes();
-    let s = today.getSeconds();
-    m = checkTime(m);
-    s = checkTime(s);
-
-    const clockFunction = document.getElementById('clockFunction');
-    if (clockFunction) {
-        clockFunction.innerHTML = h + ":" + m + ":" + s;
-    }
-    clockTimeout = setTimeout(startTime, 1000);
-}
-
-// @ts-ignore amazing function this one
-function checkTime(i) {
-    if (i < 10) { i = "0" + i };
-    return i;
-}
-
-function startDate() {
-    const today = new Date();
-    const dateEl = document.getElementById('dateFunction');
-    if (dateEl) {
-        dateEl.innerHTML = today.toLocaleDateString();
-    }
-    dateTimeout = setTimeout(startDate, 1000 * 60);
-}
+let timer: ReturnType<typeof setInterval> | undefined;
 
 onMounted(() => {
-    startTime();
-    startDate();
+    tick();
+    timer = setInterval(tick, 1000);
 });
 
-onUnmounted(() => {
-    clearTimeout(clockTimeout);
-    clearTimeout(dateTimeout);
-});
+onUnmounted(() => clearInterval(timer));
 </script>
 
 <template>
-    <div class="start-shell" @click.passive="sopen" :style="{
+    <div class="start-shell" @click.passive="isOpen = isOpen ? false : isOpen" :style="{
         zIndex: isOpen ? 9999 : 0,
     }">
-        <StartMenu v-if="isOpen" />
+        <Transition name="start">
+            <StartMenu v-show="isOpen" />
+        </Transition>
     </div>
 
     <div class="taskbar">
         <div class="left">
-            <button class="start" @click="isOpen=!isOpen"></button>
+            <button class="start" @click="isOpen = !isOpen"></button>
         </div>
 
         <div class="divider"></div>
 
         <div class="middle">
-            <slot/>
+            <slot />
         </div>
 
         <div class="divider"></div>
 
         <div class="right">
             <!-- calendar, clock, announcements, idk -->
+            <div class="balance">
+                {{ balance }}
+            </div>
 
             <div class="clock">
-                <div id="clockFunction"></div>
-                <div id="dateFunction"></div>
+                <div>{{ clockState }}</div>
+                <div>{{ dateState }}</div>
             </div>
-            <div class="hours"></div>
         </div>
     </div>
 </template>
 
 <style>
+.start-enter-active,
+.start-leave-active {
+    transition: all 0.2s ease-out;
+}
+
+.start-enter-from,
+.start-leave-to {
+    transform: translateY(40px);
+    opacity: 0;
+}
+
 .start-shell {
     width: 100%;
     height: 100%;
@@ -135,15 +119,6 @@ onUnmounted(() => {
     flex-direction: column;
     color: white;
     font-size: 10px;
-
-}
-
-#clockFunction {
-    user-select: none;
-
-}
-
-#dateFunction {
     user-select: none;
 }
 
@@ -160,6 +135,15 @@ onUnmounted(() => {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.right {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+
+    color: white;
+    font-size: 15px;
 }
 
 .start {

@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import "./window.css"
-import type {WindowInstance} from "~/types/window"
+import type { WindowInstance } from "~/types/window"
 
 const manager = useWindowManager();
 const props = withDefaults(defineProps<{
-  instance: WindowInstance
+    instance: WindowInstance
 }>(), {
 })
 
@@ -99,39 +99,54 @@ function onDragEnd(event: MouseEvent) {
 </script>
 
 <template>
-    <div class="window active" :style="{
-        width: width + 'px',
-        height: height + 'px',
-        left: posX + 'px',
-        top: posY + 'px',
-        zIndex: instance.z
-    }" @mousedown="manager.focus(instance.id)" v-show="!instance.minimized">
-        <div class="resize-bars" v-if="props.instance.resizeable">
-            <div class="resize-bar left" data-dir="left" @mousedown="resize"></div>
-            <div class="resize-bar right" data-dir="right" @mousedown="resize"></div>
-            <div class="resize-bar top" data-dir="top" @mousedown="resize"></div>
-            <div class="resize-bar bottom" data-dir="bottom" @mousedown="resize"></div>
-            <div class="resize-bar top-left" data-dir="top-left" @mousedown="resize"></div>
-            <div class="resize-bar top-right" data-dir="top-right" @mousedown="resize"></div>
-            <div class="resize-bar bottom-left" data-dir="bottom-left" @mousedown="resize"></div>
-            <div class="resize-bar bottom-right" data-dir="bottom-right" @mousedown="resize"></div>
-        </div>
+    <Transition name="window">
+        <div class="window active" :style="{
+            width: width + 'px',
+            height: height + 'px',
+            left: posX + 'px',
+            top: posY + 'px',
+            zIndex: instance.z
+        }" @mousedown="manager.focus(instance.id)" v-show="!instance.minimized">
+            <div class="resize-bars" v-if="props.instance.resizeable">
+                <div class="resize-bar left" data-dir="left" @mousedown="resize"></div>
+                <div class="resize-bar right" data-dir="right" @mousedown="resize"></div>
+                <div class="resize-bar top" data-dir="top" @mousedown="resize"></div>
+                <div class="resize-bar bottom" data-dir="bottom" @mousedown="resize"></div>
+                <div class="resize-bar top-left" data-dir="top-left" @mousedown="resize"></div>
+                <div class="resize-bar top-right" data-dir="top-right" @mousedown="resize"></div>
+                <div class="resize-bar bottom-left" data-dir="bottom-left" @mousedown="resize"></div>
+                <div class="resize-bar bottom-right" data-dir="bottom-right" @mousedown="resize"></div>
+            </div>
 
-        <div class="title-bar" @mousedown="startDrag" style="background-attachment: local;">
-            <div class="title-bar-text">{{ instance.title }}</div>
-            <div class="title-bar-controls">
-                <button v-if="!props.instance.tool" class="minimize" @mousedown.stop @click="manager.minimize(instance.id)"></button>
-                <button class="close" @mousedown.stop @click="manager.close(instance.id)"></button>
+            <div class="title-bar" @mousedown="startDrag" style="background-attachment: local;">
+                <div class="title-bar-text">{{ instance.title }}</div>
+                <div class="title-bar-controls">
+                    <button v-if="!props.instance.tool" class="minimize" @mousedown.stop
+                        @click="manager.minimize(instance.id)"></button>
+                    <button class="close" @mousedown.stop @click="manager.close(instance.id)"></button>
+                </div>
+            </div>
+
+            <div class="window-body">
+                <slot />
             </div>
         </div>
-
-        <div class="window-body">
-            <slot />
-        </div>
-    </div>
+    </Transition>
 </template>
 
 <style>
+.window-enter-active,
+.window-leave-active {
+    transition: all 0.2s ease;
+}
+
+.window-enter-from,
+.window-leave-to {
+    transform-origin: bottom center;
+    transform: scale(0.2) translateY(400px);
+    opacity: 0;
+}
+
 .title-bar-text {
     user-select: none;
 }
