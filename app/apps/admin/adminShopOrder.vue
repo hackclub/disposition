@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { WindowInstance } from '~/types/window';
-import type {Order, Item, User, OrderStatus, Media} from "~/types/shop";
+import type {Order, Item, User, OrderStatus, Media} from "~/types/database";
 const manager = useWindowManager();
 const props = defineProps<{ instance: WindowInstance, id: number }>()
 const admin = await isAdmin();

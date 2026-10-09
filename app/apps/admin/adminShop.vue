@@ -1,46 +1,12 @@
 <script setup lang="ts">
 import type { WindowInstance } from '~/types/window';
+import type {Item, Order, Request} from "~/types/database";
 
 const manager = useWindowManager();
 const props = defineProps<{ instance: WindowInstance }>()
 const admin = await isAdmin();
 if (!admin) manager.close(props.instance.id);
 let currentTab = ref<string>("items");
-
-interface Item {
-    id: number,
-    album: string,
-    artist: string,
-    genre: string,
-    image: string,
-    description: string,
-    media: string,
-    urls: string[],
-    added: Date,
-    price: number,
-    staff_pick_at: number
-}
-
-interface Order {
-    id: number,
-    user: number,
-    item: number,
-    status: string,
-    admin_message: string,
-    message: string,
-    timestamp: Date
-}
-
-interface Request {
-    id: number,
-    user: number,
-    timestamp: Date,
-    album: string,
-    artist: string,
-    media: string,
-    status: string,
-    message: string
-}
 
 const items = ref<Item[]>([]);
 const orders = ref<Order[]>([]);

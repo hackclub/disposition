@@ -1,5 +1,7 @@
 export type Media = "cd" | "cassette" | "vinyl" | "other";
 export type OrderStatus = "idle" | "claimed" | "fulfilled" | "cancelled";
+export type RequestStatus = "idle" | "claimed" | "accepted" | "rejected";
+
 export type Order = {
     id: number,
     user: number,
@@ -32,4 +34,15 @@ export type User = {
     created: Date,
     yswsEligible: boolean,
     verificationStatus: string
+}
+
+export type Request = {
+    id: number,
+    user: string,
+    timestamp: Date,
+    album: string,
+    artist: string,
+    media: Media,
+    status: RequestStatus,
+    message: string
 }
