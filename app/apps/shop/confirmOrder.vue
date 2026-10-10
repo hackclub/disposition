@@ -11,8 +11,10 @@ item.value = await $fetch<Item>(`/api/shop/items/${props.id}`)
 balance.value = await $fetch<number>(`/api/user/balance`);
 
 async function buy() {
-    const response = await $fetch(`/api/shop/orders`, { method: "POST" });
-    if(!response) {
+    const response = await $fetch(`/api/shop/orders`, {
+        method: "POST", body: {}
+    });
+    if (!response) {
         // error message box
         return;
     }

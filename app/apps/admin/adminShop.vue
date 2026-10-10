@@ -58,7 +58,7 @@ if (admin) {
                             </thead>
                             <tbody>
                                 <tr v-for="item in items" :key="item.id">
-                                    <td>{{ item.id }}</td>
+                                    <td><a @click="manager.open('view_item', { id: item.id })">{{ item.id }}</a></td>
                                     <td>{{ item.album }}</td>
                                     <td>{{ item.artist }}</td>
                                     <td>{{ item.genre }}</td>
@@ -141,6 +141,15 @@ if (admin) {
 </template>
 
 <style scoped>
+a {
+    color: blue;
+    text-decoration: underline;
+}
+
+a:hover {
+    cursor: pointer;
+}
+
 .center {
     display: flex;
     justify-content: center;

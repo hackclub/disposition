@@ -5,9 +5,13 @@ const OrderPostBody = z.object({
     message: z.string().max(2048).optional(),
 })
 
-const OrderPatchBody = z.object({
+const OrderAdminPatchBody = z.object({
     status: z.enum(["idle", "claimed", "cancelled", "fulfilled"]),
     adminMessage: z.string(),
 })
 
-export { OrderPostBody, OrderPatchBody }
+const OrderPatchBody = z.object({
+    message: z.string(),
+})
+
+export { OrderPostBody, OrderAdminPatchBody, OrderPatchBody }

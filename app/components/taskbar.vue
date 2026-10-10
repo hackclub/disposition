@@ -24,7 +24,7 @@ onUnmounted(() => clearInterval(timer));
 </script>
 
 <template>
-    <div class="start-shell" @click.passive="isOpen = isOpen ? false : isOpen" :style="{
+    <div class="start-shell" @click="isOpen = isOpen ? false : isOpen" :style="{
         zIndex: isOpen ? 9999 : 0,
     }">
         <Transition name="start">

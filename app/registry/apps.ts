@@ -14,6 +14,8 @@ import profileViewer from "~/apps/profileViewer.vue"
 import AdminShop from "~/apps/admin/adminShop.vue"
 import ProfileEdit from "~/apps/profileEdit.vue"
 import AdminShopAddItem from "~/apps/admin/adminShopAddItem.vue"
+import ConfirmOrder from "~/apps/shop/confirmOrder.vue"
+import ViewItem from "~/apps/shop/viewItem.vue"
 
 export const APPS: { [key: string]: AppDef } = {
 
@@ -70,19 +72,6 @@ export const APPS: { [key: string]: AppDef } = {
 
         tool: false,
         resizeable: false,
-    },
-
-    shop: {
-        appId: 'shop',
-        title: 'DispoShop',
-        component: Shop,
-        width: 500,
-        height: 650,
-        minWidth: 600,
-        minHeight: 310,
-
-        tool: false,
-        resizeable: false
     },
 
     profileViewer: {
@@ -233,5 +222,49 @@ export const APPS: { [key: string]: AppDef } = {
         tool: true,
         resizeable: true,
         hidden: true
+    },
+
+    ///////////////////////////////////////////
+    // shop                                  //
+    ///////////////////////////////////////////
+    
+    shop: {
+        appId: 'shop',
+        title: 'DispoShop',
+        component: Shop,
+        width: 500,
+        height: 650,
+        minWidth: 600,
+        minHeight: 310,
+
+        tool: false,
+        resizeable: false
+    },
+
+    confirm_order: {
+        appId: 'confirm_order',
+        title: 'Confirm Order',
+        component: ConfirmOrder,
+        width: 300,
+        height: 200,
+        minWidth: 300,
+        minHeight: 200,
+
+        tool: true,
+        resizeable: false,
+    },
+
+    view_item: {
+        appId: 'view_item',
+        title: 'View Item',
+        component: ViewItem,
+        
+        width: 670,
+        height: 550,
+        minWidth: 671,
+        minHeight: 550,
+
+        tool: true,
+        resizeable: true
     }
 }

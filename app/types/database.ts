@@ -8,7 +8,7 @@ export type Order = {
     item: number,
     status: OrderStatus,
     message: string,
-    adminMessage: string,
+    adminMessage?: string,
     timestamp: Date
 }
 
@@ -20,7 +20,7 @@ export type Item = {
     image: string,
     description: string,
     media: Media,
-    urls: string[],
+    urls?: string[],
     added: Date,
     price: number,
     staffPickAt: Date
