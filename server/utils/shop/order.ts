@@ -8,6 +8,7 @@ const OrderPostBody = z.object({
 const OrderAdminPatchBody = z.object({
     status: z.enum(["idle", "claimed", "cancelled", "fulfilled"]),
     adminMessage: z.string(),
+    tracking: z.string(),
 })
 
 const OrderPatchBody = z.object({

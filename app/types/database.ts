@@ -10,6 +10,7 @@ export type Order = {
     message: string,
     adminMessage?: string,
     timestamp: Date
+    tracking?: string,
 }
 
 export type Item = {

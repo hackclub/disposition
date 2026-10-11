@@ -11,8 +11,12 @@ item.value = await $fetch<Item>(`/api/shop/items/${props.id}`)
 balance.value = await $fetch<number>(`/api/user/balance`);
 
 async function buy() {
+    const data = new FormData();
+    data.append("item", String(props.id));
+    data.append("message", "");
+
     const response = await $fetch(`/api/shop/orders`, {
-        method: "POST", body: {}
+        method: "POST", body: data
     });
     if (!response) {
         // error message box
@@ -21,6 +25,7 @@ async function buy() {
 
     refreshNuxtData("balance"); // refresh the balance in the taskbar type shit
     // message box to say order id whatever whatever you can view this anytime in the shop
+    manager.close(props.instance.id);
 }
 </script>
 
@@ -41,7 +46,17 @@ async function buy() {
 </template>
 
 <style scoped>
+h1 {
+    margin: 0;
+}
+
 .content {
+    span {
+        display: flex;
+        flex-direction: row;
+        gap: 5px;
+    }
+
     padding: 10px;
     gap: 5px;
 

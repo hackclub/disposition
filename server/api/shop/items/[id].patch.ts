@@ -14,7 +14,7 @@ export default defineEventHandler(async event => {
         id: z.coerce.number().int().positive(),
     }).parse).then(p => p.id);
 
-    const form = await readBody(event);
+    const form = await readFormData(event);
     const raw: Record<string, unknown> = {}
     for (const k of ["album", "artist", "genre", "description", "media"])
         if (form.has(k)) raw[k] = form.get(k)

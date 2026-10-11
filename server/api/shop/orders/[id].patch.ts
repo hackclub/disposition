@@ -10,18 +10,29 @@ export default defineEventHandler(async event => {
     const id = await getValidatedRouterParams(event, z.object({
         id: z.coerce.number().int().positive(),
     }).parse).then(p => p.id);
-    
+
+    const body = await readFormData(event);
     let parsed;
     if (admin) { // i dont like this if statement either
-        parsed = readValidatedBody(event, OrderAdminPatchBody.safeParse);
+        parsed = OrderAdminPatchBody.safeParse(Object.entries(event));
+        if (!parsed.success) throw createError({
+            statusCode: 400,
+            message: "Invalid input",
+            data: z.flattenError(parsed.error)
+        })
     } else {
-        parsed = readValidatedBody(event, OrderAdminPatchBody.safeParse);
+        parsed = OrderPatchBody.safeParse(Object.entries(body));
+        if (!parsed.success) throw createError({
+            statusCode: 400,
+            message: "Invalid input",
+            data: z.flattenError(parsed.error)
+        })
     }
 
     const [existing] = await db.select().from(shopOrders)
         .where(eq(shopOrders.id, id));
     if (!existing) throw createError({ statusCode: 404, message: "Order not found" });
-    if (!admin && existing.user != session.user.id) throw createError({ statusCode: 403, message: "Forbidden from pathing this order" })
+    if (!admin && existing.user != session.user.id) throw createError({ statusCode: 403, message: "Forbidden from patching this order" })
 
     await db.update(shopOrders)
         .set(parsed.data)

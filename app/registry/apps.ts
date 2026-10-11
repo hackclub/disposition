@@ -7,15 +7,17 @@ import Run from "~/apps/misc/run.vue"
 import Rigby from "~/apps/misc/rigby.vue"
 import AdminStats from "~/apps/admin/adminStats.vue"
 import Config from "~/apps/config.vue"
-import Shop from "~/apps/shop.vue"
+import Shop from "~/apps/shop/shop.vue"
 import Notification from "~/apps/notification.vue"
 import projectManager from "~/apps/projectManager.vue"
 import profileViewer from "~/apps/profileViewer.vue"
 import AdminShop from "~/apps/admin/adminShop.vue"
 import ProfileEdit from "~/apps/profileEdit.vue"
 import AdminShopAddItem from "~/apps/admin/adminShopAddItem.vue"
-import ConfirmOrder from "~/apps/shop/confirmOrder.vue"
-import ViewItem from "~/apps/shop/viewItem.vue"
+import ConfirmOrder from "~/apps/shop/order/confirmOrder.vue"
+import Item from "~/apps/shop/item.vue"
+import Orders from "~/apps/shop/order/orders.vue"
+import AdminShopOrder from "~/apps/admin/adminShopOrder.vue"
 
 export const APPS: { [key: string]: AppDef } = {
 
@@ -224,6 +226,21 @@ export const APPS: { [key: string]: AppDef } = {
         hidden: true
     },
 
+    admin_shop_view_order: {
+        appId: 'admin_shop_view_order',
+        title: 'View Order (admin)',
+        component: AdminShopOrder,
+
+        width: 500,
+        height: 600,
+        minWidth: 500,
+        minHeight: 600,
+
+        tool: true,
+        resizeable: true,
+        hidden: true
+    },
+
     ///////////////////////////////////////////
     // shop                                  //
     ///////////////////////////////////////////
@@ -238,33 +255,49 @@ export const APPS: { [key: string]: AppDef } = {
         minHeight: 310,
 
         tool: false,
-        resizeable: false
+        resizeable: true
     },
 
     confirm_order: {
         appId: 'confirm_order',
         title: 'Confirm Order',
         component: ConfirmOrder,
-        width: 300,
-        height: 200,
-        minWidth: 300,
-        minHeight: 200,
+        width: 550,
+        height: 120,
+        minWidth: 550,
+        minHeight: 120,
 
         tool: true,
         resizeable: false,
     },
 
-    view_item: {
-        appId: 'view_item',
+    item: {
+        appId: 'item',
         title: 'View Item',
-        component: ViewItem,
+        component: Item,
         
-        width: 670,
+        width: 671,
         height: 550,
         minWidth: 671,
         minHeight: 550,
 
         tool: true,
         resizeable: true
-    }
+    },
+
+    orders: {
+        appId: 'orders',
+        title: 'My orders',
+        component: Orders,
+
+        width: 670,
+        height: 550,
+        minWidth: 670,
+        minHeight: 550,
+
+        tool: true,
+        resizeable: false
+    },
+
+
 }

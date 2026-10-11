@@ -58,7 +58,7 @@ if (admin) {
                             </thead>
                             <tbody>
                                 <tr v-for="item in items" :key="item.id">
-                                    <td><a @click="manager.open('view_item', { id: item.id })">{{ item.id }}</a></td>
+                                    <td><a @click="manager.open('item', { id: item.id })">{{ item.id }}</a></td>
                                     <td>{{ item.album }}</td>
                                     <td>{{ item.artist }}</td>
                                     <td>{{ item.genre }}</td>
@@ -87,14 +87,14 @@ if (admin) {
                             <tbody>
                                 <tr v-for="order in orders" :key="order.id">
                                     <td>{{ order.id }}</td>
-                                    <td @click="manager.open('shop_item', { item: order.item })">{{ order.item }}</td>
-                                    <td @click="manager.open('profile_viewer', { user: order.user })">{{ order.user }}
+                                    <td @click="manager.open('item', { id: order.item })">{{ order.item }}</td>
+                                    <td @click="manager.open('profile_viewer', { id: order.user })">{{ order.user }}
                                     </td>
                                     <td>{{ order.status }}</td>
                                     <td>{{ order.timestamp }}</td>
                                     <td>
                                         <button
-                                            @click="manager.open('admin_shop_order', { order: order.id })">View</button>
+                                            @click="manager.open('admin_shop_view_order', { id: order.id })">View</button>
                                     </td>
                                 </tr>
                             </tbody>
