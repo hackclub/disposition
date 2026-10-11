@@ -30,9 +30,9 @@ balance.value = await $fetch<number>("/api/user/balance");
                         <b>Release date: </b>9/11/2001
                     </p>
 
-                    <p>
-                    <h3>Price: </h3>{{ item.price }}
-                    </p>
+                    <div>
+                        <h3>Price: </h3>{{ item.price }}
+                    </div>
 
                     <!-- todo: add some tags here like staff pick, trending, most bought item, etc -->
                     <b>Tags:</b>
@@ -45,7 +45,7 @@ balance.value = await $fetch<number>("/api/user/balance");
             <div class="horizontal">
                 <div class="vertical">
                     <h2 v-if="item.media == 'other'">{{ item.album }}</h2>
-                    <h2 v-else>{{ item.artist }} - {{ item.album }} ({{ item.media }})</h2>
+                    <h2 v-else>{{ item.album }} - {{ item.artist }} ({{ item.media }})</h2>
 
                     <p>{{ item.description }}</p>
 
@@ -161,5 +161,9 @@ p {
 
     display: flex;
     flex-direction: column;
+
+    min-height: 0;
+    max-height: 100%;
+    overflow-y: auto;
 }
 </style>

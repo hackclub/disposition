@@ -158,11 +158,16 @@ a:hover {
 
 .main {
     padding: 10px;
+
+    min-height: 0;
+    max-height: 100%;
+    overflow-y: auto;
 }
 
 .flex {
     display: flex;
     flex-direction: column;
+    width: 100%;
 
     span h1 {
         margin: 0;
@@ -258,5 +263,7 @@ a:hover {
 .content {
     display: flex;
     flex-direction: column;
+
+    height: 100%;
 }
 </style>

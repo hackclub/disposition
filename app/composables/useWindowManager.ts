@@ -69,6 +69,39 @@ export const useWindowManager = () => {
         return windows.value.find(w => w.appId === appId);
     }
 
+    function messagebox(title: string, message: string, info: boolean = false, warning: boolean = false, error: boolean = false) {
+        let posX = 200;
+        let posY = 200;
+
+        const width = getTextWidth(message, "bold 20pt Joan");
+
+        if (import.meta.client) {
+            posX = window.innerWidth / 2 - width / 2;
+            posY = window.innerHeight / 2 - 120 / 2;
+        }
+
+        windows.value.push({
+            id: (Math.random() * 10000).toString(),
+            appId: "messagebox",
+            title: title,
+            z: nextZ.value++,
+            minimized: false,
+
+            width: width,
+            height: 120,
+            minWidth: width,
+            minHeight: 120,
+
+            tool: true,
+            resizeable: false,
+
+            posX,
+            posY,
+
+            props: { title, message, info, warning, error }
+        });
+    }
+
     return {
         windows: readonly(windows),
         focused,

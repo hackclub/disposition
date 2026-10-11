@@ -20,13 +20,13 @@ orders.value.forEach(async order => {
             <img :src="`/images/${items[i]?.image}`" class="cover" />
             <div>
                 <h2 v-if="items[i]?.media == 'other'">{{ items[i]?.album }}</h2>
-                <h2 v-else>{{ items[i]?.artist }} - {{ items[i]?.artist }} ({{ items[i]?.media }})</h2>
+                <h2 v-else>{{ items[i]?.album }} - {{ items[i]?.artist }} ({{ items[i]?.media }})</h2>
 
-                <p>{{ new Date(order.timestamp) }}</p>
+                <p>{{ new Date(order.timestamp).getDate() }}/{{ new Date(order.timestamp).getMonth() }}/{{ new Date(order.timestamp).getFullYear() }} | {{ order.status }}</p>
 
                 <div>
-                    <button @click="manager.open('view_order', { id: order.id })">View</button>
-                    <button v-if="order.status == 'fulfilled' || order.status == 'claimed'" disabled>Cancel</button>
+                    <button @click="manager.open('order', { id: order.id })">View</button>
+                    <button v-if="order.status != 'idle'" disabled>Cancel</button>
                     <button v-else @click="manager.open('cancel_order', { id: order.id })">Cancel</button>
                 </div>
             </div>
@@ -78,5 +78,6 @@ orders.value.forEach(async order => {
 
     overflow-y: auto;
     min-height: 0;
+    max-height: 100%;
 }
 </style>

@@ -18,6 +18,8 @@ import ConfirmOrder from "~/apps/shop/order/confirmOrder.vue"
 import Item from "~/apps/shop/item.vue"
 import Orders from "~/apps/shop/order/orders.vue"
 import AdminShopOrder from "~/apps/admin/adminShopOrder.vue"
+import order from "~/apps/shop/order/order.vue"
+import Order from "~/apps/shop/order/order.vue"
 
 export const APPS: { [key: string]: AppDef } = {
 
@@ -299,5 +301,17 @@ export const APPS: { [key: string]: AppDef } = {
         resizeable: false
     },
 
+    order: {
+        appId: 'order',
+        title: 'View Order',
+        component: Order,
+        
+        width: 670,
+        height: 550,
+        minWidth: 670,
+        minHeight: 550,
 
+        tool: true,
+        resizeable: true
+    }
 }
