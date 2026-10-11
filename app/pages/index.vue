@@ -6,6 +6,7 @@ import StartMenu from "~/components/startMenu.vue";
 import Taskbar from '~/components/taskbar.vue';
 import TaskbarItem from '~/components/taskbarItem.vue';
 import BenjiBuddy from "~/components/benjiBuddy.vue";
+import AugustBuddy from "~/components/augustBuddy.vue";
 import { APPS } from "~/registry/apps";
 import { onMounted, nextTick, computed } from "vue";
 
@@ -52,6 +53,7 @@ const wallpaper = computed(() =>
 
     <ClientOnly>
         <BenjiBuddy v-if="useConfiguration('settings').read('showBuddy')" />
+        <AugustBuddy v-if="useConfiguration('settings').read('showBuddy')" />
     </ClientOnly>
 </template>
 

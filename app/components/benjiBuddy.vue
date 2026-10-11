@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted, onBeforeUnmount } from 'vue'
 
-import idleImg from "~/assets/benjiBuddy/idle.jpg"
-import walkImg from "~/assets/benjiBuddy/walk.jpg"
+import idleImg from "~/assets/benjiBuddy/idleBenji.png"
+import walkImg from "~/assets/benjiBuddy/walkBenji.png"
 import emoteImg from "~/assets/benjiBuddy/emote.png"
 
 const emojis = ['hello!', '👀', 'hi...', 'what\'cha cooking?']
 
 // how far up from the very bottom of the screen he sits (px)
 const BOTTOM_OFFSET = 25
-const BUDDY_SIZE = 64
+const BUDDY_SIZE = 120
 
 const pos = reactive({ x: 625 })
 
@@ -104,8 +104,8 @@ onBeforeUnmount(() => {
 
 .desktop-buddy {
     position: fixed;
-    width: 150px;
-    height: 150px;
+    width: 190px;
+    height: 190px;
     z-index: 9998;
     transition: left 0.35s ease-in-out;
 }
