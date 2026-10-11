@@ -25,7 +25,7 @@ export const APPS: { [key: string]: AppDef } = {
         component: ProfileEdit,
 
         width: 542,
-        height: 307,
+        height: 400,
         minWidth: 542,
         minHeight: 307,
 
@@ -227,7 +227,7 @@ export const APPS: { [key: string]: AppDef } = {
     ///////////////////////////////////////////
     // shop                                  //
     ///////////////////////////////////////////
-    
+
     shop: {
         appId: 'shop',
         title: 'DispoShop',
@@ -258,7 +258,7 @@ export const APPS: { [key: string]: AppDef } = {
         appId: 'view_item',
         title: 'View Item',
         component: ViewItem,
-        
+
         width: 670,
         height: 550,
         minWidth: 671,

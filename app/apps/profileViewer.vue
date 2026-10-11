@@ -11,7 +11,7 @@ const activeTab = ref<'about' | 'projects'>('projects')
     <div class="content">
         <div class="header">
             <div class="header-bg">
-                <img src="https://media.discordapp.net/attachments/1110811784190906430/1556240400707100702/image_24_1.png?backend=b2&ex=6ac37151&is=6ac21fd1&hm=81e443e13da94bad8bc253640f876cb517c8d8776d8e0265fb102fca85a9801d&=&format=webp&quality=lossless&width=512&height=144" alt="">
+                <img src="" alt="">
 
                 <button class="back-btn">&lt;</button>
 
