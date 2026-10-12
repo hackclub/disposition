@@ -86,11 +86,12 @@ async function upload() {
     submitting.value = true;
     error.value = null;
     try {
-        await $fetch("/api/shop/items", { method: "POST", body });
+        const response = await $fetch("/api/shop/items", { method: "POST", body });
+        manager.messagebox("Success!", `Item id ${response} uploaded successfully!`, true);
         manager.close(props.instance.id);
     } catch (e: any) {
         error.value = e.data?.message ?? "Upload failed";
-        alert(error);
+        manager.messagebox("Error!", error.value!, false, false, true);
     } finally {
         submitting.value = false;
     }

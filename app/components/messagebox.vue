@@ -31,6 +31,8 @@ const props = withDefaults(defineProps<{
 
 <style scoped>
 .content {
+    padding: 10px;
+
     display: flex;
     flex-direction: row;
 
@@ -39,11 +41,20 @@ const props = withDefaults(defineProps<{
     gap: 10px;
 
     img {
-        width: 100px;
-        height: 100px;
+        width: 50px;
+        height: 50px;
     }
 
     div {
+        h2 {
+            margin: 0;
+        }
+        
+        button {
+            max-width: 100px;
+        }
+
+
         display: flex;
         flex-direction: column;
         gap: 10px;

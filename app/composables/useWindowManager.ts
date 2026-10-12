@@ -18,7 +18,7 @@ export const useWindowManager = () => {
             posX = window.innerWidth / 2 - APPS[appId].width / 2;
             posY = window.innerHeight / 2 - APPS[appId].height / 2;
         }
-
+        
         windows.value.push({
             id: (Math.random() * 10000).toString(),
             appId: appId.toString(),
@@ -73,7 +73,7 @@ export const useWindowManager = () => {
         let posX = 200;
         let posY = 200;
 
-        const width = getTextWidth(message, "bold 20pt Joan");
+        const width = getTextWidth(message, "bold 20pt Joan") + 100;
 
         if (import.meta.client) {
             posX = window.innerWidth / 2 - width / 2;
@@ -93,7 +93,7 @@ export const useWindowManager = () => {
             minHeight: 120,
 
             tool: true,
-            resizeable: false,
+            resizeable: true,
 
             posX,
             posY,
@@ -113,5 +113,6 @@ export const useWindowManager = () => {
         isFocused,
         get,
         isTypeOpen,
+        messagebox
     }
 }
