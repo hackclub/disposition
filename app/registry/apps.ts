@@ -21,6 +21,7 @@ import AdminShopOrder from "~/apps/admin/adminShopOrder.vue"
 import order from "~/apps/shop/order/order.vue"
 import Order from "~/apps/shop/order/order.vue"
 import Messagebox from "~/components/messagebox.vue"
+import Dialogbox from "~/components/dialogbox.vue"
 
 export const APPS: { [key: string]: AppDef } = {
 
@@ -184,6 +185,21 @@ export const APPS: { [key: string]: AppDef } = {
         appId: 'messagebox',
         title: 'messagebox',
         component: Messagebox,
+
+        width: 1,
+        height: 1,
+        minWidth: 1,
+        minHeight: 1,
+
+        tool: true,
+        resizeable: true,
+        hidden: true
+    },
+
+    dialogbox: {
+        appId: 'dialogbox',
+        title: 'dialogbox',
+        component: Dialogbox,
 
         width: 1,
         height: 1,

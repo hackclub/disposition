@@ -1,6 +1,7 @@
 import { rsvps } from "~~/db/schema";
 import { db } from "~~/server/utils/db";
 import { eq } from "drizzle-orm";
+import { users } from "~~/db/schema";
 
 export default defineEventHandler(async (event) => {
     const config = useRuntimeConfig();
@@ -17,6 +18,7 @@ export default defineEventHandler(async (event) => {
         })
     }
 
+    // get bearer token
     const tokens = await $fetch<{ access_token: string; refresh_token: string }>(
         "https://auth.hackclub.com/oauth/token",
         {
@@ -31,6 +33,7 @@ export default defineEventHandler(async (event) => {
         }
     );
 
+    // get info about user & set it to the user session
     const response = await $fetch<{
         identity: {
             id: string;
@@ -61,6 +64,23 @@ export default defineEventHandler(async (event) => {
         secure: { hcRefreshToken: tokens.refresh_token }, // not exposed to client
     })
 
+    // create user row
+    const [existing] = await db.select({ hcaId: users.hcaId }).from(users).where(eq(users.hcaId, identity.id));
+    if (!existing) {
+        const user: typeof users.$inferInsert = {
+            hcaId: identity.id,
+            email: identity.primary_email,
+            slackId: identity.slack_id,
+            name: `${identity.first_name} ${identity.last_name}`,
+
+            yswsEligible: identity.ysws_eligible,
+            verificationStatus: identity.verification_status
+        }
+
+        await db.insert(users).values(user).returning({ id: users.hcaId });
+    }
+
+    // insert rsvp if needed
     if (rsvpState) {
         await db.insert(rsvps).values({
             hcaId: identity.id,

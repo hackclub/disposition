@@ -44,6 +44,7 @@ if (loggedIn.value) {
 
         <div class="right">
             <!-- here we can put some tool apps like dispover. not all of the tool apps tho -->
+            <div class="menu-item" @click="manager.dialogbox('hello', 'are you sure you want to nuke north korea', console.log, false, true, false)">secret 2</div>
             <div class="menu-item" @click="manager.open('rigby')">Secret...</div>
             <div class="menu-item" @click="manager.open('winver')">DispoVer</div>
             <AuthState v-slot="{ loggedIn, clear }">

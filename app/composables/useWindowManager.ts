@@ -18,7 +18,7 @@ export const useWindowManager = () => {
             posX = window.innerWidth / 2 - APPS[appId].width / 2;
             posY = window.innerHeight / 2 - APPS[appId].height / 2;
         }
-        
+
         windows.value.push({
             id: (Math.random() * 10000).toString(),
             appId: appId.toString(),
@@ -102,6 +102,39 @@ export const useWindowManager = () => {
         });
     }
 
+    function dialogbox(title: string, message: string, callback: Function, info: boolean = false, warning: boolean = false, error: boolean = false) {
+        let posX = 200;
+        let posY = 200;
+
+        const width = getTextWidth(message, "bold 20pt Joan") + 100;
+
+        if (import.meta.client) {
+            posX = window.innerWidth / 2 - width / 2;
+            posY = window.innerHeight / 2 - 120 / 2;
+        }
+
+        windows.value.push({
+            id: (Math.random() * 10000).toString(),
+            appId: "dialogbox",
+            title: title,
+            z: nextZ.value++,
+            minimized: false,
+
+            width: width,
+            height: 120,
+            minWidth: width,
+            minHeight: 120,
+
+            tool: true,
+            resizeable: true,
+
+            posX,
+            posY,
+
+            props: { title, message, callback, info, warning, error }
+        });
+    }
+
     return {
         windows: readonly(windows),
         focused,
@@ -113,6 +146,7 @@ export const useWindowManager = () => {
         isFocused,
         get,
         isTypeOpen,
-        messagebox
+        messagebox,
+        dialogbox
     }
 }
