@@ -1,26 +1,27 @@
 <script setup lang="ts">
 import type { WindowInstance } from '~/types/window';
 
-const manager = useWindowManager();
-const props = withDefaults(defineProps<{
-    instance: WindowInstance,
-    message?: string,
+export type MessageBoxOptions = {
     info?: boolean,
     warning?: boolean,
-    error?: boolean
-}>(), {
-    message: "",
-    info: false,
-    warning: false,
-    error: false
-})
+    error?: boolean,
+    question?: boolean
+}
+
+const manager = useWindowManager();
+const props = defineProps<{
+    instance: WindowInstance,
+    message?: string,
+    options?: MessageBoxOptions
+}>()
 </script>
 
 <template>
     <div class="content">
-        <img v-if="props.info" src="~/assets/icons/info.png" />
-        <img v-else-if="props.warning" src="~/assets/icons/warning.png" />
-        <img v-else-if="props.error" src="~/assets/icons/error.png" />
+        <img v-if="props.options?.info" src="~/assets/icons/info.png" />
+        <img v-else-if="props.options?.warning" src="~/assets/icons/warning.png" />
+        <img v-else-if="props.options?.error" src="~/assets/icons/error.png" />
+        <img v-else-if="props.options?.question" src="~/assets/icons/info.png" /> <!-- ditto from dialogBox.vue -->
 
         <div>
             <h2>{{ props.message }}</h2>

@@ -14,14 +14,12 @@ import profileViewer from "~/apps/profileViewer.vue"
 import AdminShop from "~/apps/admin/adminShop.vue"
 import ProfileEdit from "~/apps/profileEdit.vue"
 import AdminShopAddItem from "~/apps/admin/adminShopAddItem.vue"
-import ConfirmOrder from "~/apps/shop/order/confirmOrder.vue"
 import Item from "~/apps/shop/item.vue"
-import Orders from "~/apps/shop/order/orders.vue"
+import Orders from "~/apps/shop/orders.vue"
 import AdminShopOrder from "~/apps/admin/adminShopOrder.vue"
-import order from "~/apps/shop/order/order.vue"
-import Order from "~/apps/shop/order/order.vue"
-import Messagebox from "~/components/messagebox.vue"
-import Dialogbox from "~/components/dialogbox.vue"
+import Order from "~/apps/shop/order.vue"
+import Messagebox from "~/components/messageBox.vue"
+import Dialogbox from "~/components/dialogBox.vue"
 
 export const APPS: { [key: string]: AppDef } = {
 
@@ -181,9 +179,9 @@ export const APPS: { [key: string]: AppDef } = {
         hidden: false
     },
 
-    messagebox: {
-        appId: 'messagebox',
-        title: 'messagebox',
+    messageBox: {
+        appId: 'messageBox',
+        title: 'messageBox',
         component: Messagebox,
 
         width: 1,
@@ -196,9 +194,9 @@ export const APPS: { [key: string]: AppDef } = {
         hidden: true
     },
 
-    dialogbox: {
-        appId: 'dialogbox',
-        title: 'dialogbox',
+    dialogBox: {
+        appId: 'dialogBox',
+        title: 'dialogBox',
         component: Dialogbox,
 
         width: 1,
@@ -290,19 +288,6 @@ export const APPS: { [key: string]: AppDef } = {
 
         tool: false,
         resizeable: true
-    },
-
-    confirm_order: {
-        appId: 'confirm_order',
-        title: 'Confirm Order',
-        component: ConfirmOrder,
-        width: 550,
-        height: 120,
-        minWidth: 550,
-        minHeight: 120,
-
-        tool: true,
-        resizeable: false,
     },
 
     item: {

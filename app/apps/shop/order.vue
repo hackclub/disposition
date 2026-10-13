@@ -4,15 +4,12 @@ import type { Order, Item, User, OrderStatus, Media } from "~/types/database";
 const manager = useWindowManager();
 const props = defineProps<{ instance: WindowInstance, id: number }>()
 
-const item = ref<Item>();
-const order = ref<Order>();
-
-order.value = await $fetch<Order>(`/api/shop/orders/${props.id}`);
-item.value = await $fetch<Item>(`/api/shop/items/${order.value.item}`);
+const { data: order } = await useFetch<Order>(`/api/shop/orders/${props.id}`);
+const { data: item } = await useFetch<Item>(`/api/shop/items/${order.value!.item}`);
 
 // form bullshit
 const form = reactive({
-    message: order.value.message
+    message: order.value!.message
 })
 const submitting = ref(false);
 
@@ -39,7 +36,7 @@ async function save() {
                 <p><b>Price: </b>{{ item.price }}</p>
                 <p><b>Shipping address: </b>todo</p>
                 <p><b>Ordered on: </b>{{ new Date(order.timestamp).getDate() }}/{{ new Date(order.timestamp).getMonth()
-                }}/{{ new Date(order.timestamp).getFullYear() }}</p>
+                    }}/{{ new Date(order.timestamp).getFullYear() }}</p>
                 <p v-if="order.tracking"><b>Tracking: </b>{{ order.tracking }}</p>
                 <p><b>Status: </b>{{ order.status }}</p>
 

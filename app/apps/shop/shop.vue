@@ -2,9 +2,7 @@
 import type { Item } from '~/types/database';
 
 const manager = useWindowManager();
-
-const data = ref<Record<string, Item[]>>();
-data.value = await $fetch<Record<string, Item[]>>("/api/shop/items/shelves");
+const { data } = await useFetch<Record<string, Item[]>>("/api/shop/items/shelves");
 </script>
 
 <template>
@@ -33,7 +31,8 @@ data.value = await $fetch<Record<string, Item[]>>("/api/shop/items/shelves");
 				<section class="browse-section" v-if="items.length > 0">
 					<h2>{{ name }}</h2>
 					<div class="items">
-						<div v-for="item in items" class="item" @click="manager.open('item', { id: item.id })" :key="item.id">
+						<div v-for="item in items" class="item" @click="manager.open('item', { id: item.id })"
+							:key="item.id">
 							<img class="cover" :src="`/images/${item.image}`" :alt="`${item.artist} - ${item.album}`" />
 							<p class="album" v-if="item.media == 'other'">{{ item.album }}</p>
 							<p class="album" v-else>{{ item.album }} ({{ item.media }})</p>

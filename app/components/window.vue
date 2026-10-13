@@ -146,8 +146,4 @@ function onDragEnd(event: MouseEvent) {
     transform: scale(0.2) translateY(400px);
     opacity: 0;
 }
-
-.title-bar-text {
-    user-select: none;
-}
 </style>

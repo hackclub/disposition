@@ -2,14 +2,13 @@
 import type { Order, Item } from '~/types/database';
 
 const manager = useWindowManager();
-const orders = ref<Order[]>([]);
-orders.value = await $fetch<Order[]>("/api/shop/orders");
+const { data: orders } = await useFetch<Order[]>("/api/shop/orders");
 
 // should i make the server return the item info from the db?
 // db fetch is cheap but server fetch isnt very cheap. well, for now im kinda lazy so im just gonna do it like this
 
 const items = ref<Item[]>([]);
-orders.value.forEach(async order => {
+orders.value!.forEach(async order => {
     items.value.push(await $fetch<Item>(`/api/shop/items/${order.item}`));
 })
 </script>
@@ -22,7 +21,8 @@ orders.value.forEach(async order => {
                 <h2 v-if="items[i]?.media == 'other'">{{ items[i]?.album }}</h2>
                 <h2 v-else>{{ items[i]?.album }} - {{ items[i]?.artist }} ({{ items[i]?.media }})</h2>
 
-                <p>{{ new Date(order.timestamp).getDate() }}/{{ new Date(order.timestamp).getMonth() }}/{{ new Date(order.timestamp).getFullYear() }} | {{ order.status }}</p>
+                <p>{{ new Date(order.timestamp).getDate() }}/{{ new Date(order.timestamp).getMonth() }}/{{ new
+                    Date(order.timestamp).getFullYear() }} | {{ order.status }}</p>
 
                 <div>
                     <button @click="manager.open('order', { id: order.id })">View</button>

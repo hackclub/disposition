@@ -1,26 +1,28 @@
 <script setup lang="ts">
 import type { WindowInstance } from '~/types/window';
 
+export type DialogBoxOptions = {
+    info?: boolean,
+    warning?: boolean,
+    error?: boolean,
+    question?: boolean
+}
+
 const manager = useWindowManager();
-const props = withDefaults(defineProps<{
+const props = defineProps<{
     instance: WindowInstance,
     message: string,
     callback: Function,
-    info?: boolean,
-    warning?: boolean,
-    error?: boolean
-}>(), {
-    info: false,
-    warning: false,
-    error: false
-})
+    options?: DialogBoxOptions,
+}>();
 </script>
 
 <template>
     <div class="content">
-        <img v-if="props.info" src="~/assets/icons/info.png" />
-        <img v-else-if="props.warning" src="~/assets/icons/warning.png" />
-        <img v-else-if="props.error" src="~/assets/icons/error.png" />
+        <img v-if="props.options?.info" src="~/assets/icons/info.png" />
+        <img v-else-if="props.options?.warning" src="~/assets/icons/warning.png" />
+        <img v-else-if="props.options?.error" src="~/assets/icons/error.png" />
+        <img v-else-if="props.options?.question" src="~/assets/icons/info.png" /> <!-- for now its the info icon but its on the todo list -->
 
         <div>
             <h2>{{ props.message }}</h2>

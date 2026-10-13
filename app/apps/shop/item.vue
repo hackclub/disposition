@@ -6,15 +6,31 @@ const manager = useWindowManager();
 const props = defineProps<{ instance: WindowInstance, id: number }>()
 const admin = await isAdmin();
 
-const item = ref<Item>();
-const balance = ref<number>(0);
-item.value = await $fetch<Item>(`/api/shop/items/${props.id}`);
-balance.value = await $fetch<number>("/api/user/balance");
+const { data: balance } = await useFetch<number>("/api/user/balance", { key: "balance" });
+const { data: item } = await useFetch<Item>(`/api/shop/items/${props.id}`);
+
+async function callback(result: boolean) {
+    if(!result) return;
+    const data = new FormData();
+    data.append("item", String(props.id));
+    data.append("message", "");
+
+    const response = await $fetch(`/api/shop/orders`, {
+        method: "POST", body: data
+    });
+    if (!response) {
+        await manager.messageBox("Error!", `There was an error placing your order,\nplease check the browser console and report this to #disposition-help!`, { error: true });
+        return;
+    }
+
+    await manager.messageBox("Success!", `Order ID ${response.id} placed successfully! You can check it's status in the future from the "my orders" buttons in the shop!`, { info: true });
+    refreshNuxtData("balance");
+}
 </script>
 
 <template>
     <AuthState v-slot="{ loggedIn }">
-        <div class="content">
+        <div class="content" v-if="item && balance">
             <div class="horizontal">
                 <div class="vertical">
                     <img class="image" :src="`/images/${item.image}`" alt="Item image" />
@@ -81,10 +97,21 @@ balance.value = await $fetch<number>("/api/user/balance");
                         <p><b>Balance after purchase: {{ balance - item.price }}</b></p>
                     </div>
 
-                    <button v-if="item.price > balance" disabled>You need {{ item.price - balance }} more coins!</button>
-                    <button v-else @click="manager.open('confirm_order', { id: props.id })">Buy {{ item.album }}</button>
+                    <button v-if="item.price > balance" disabled>You need {{ item.price - balance }} more
+                        coins!</button>
+                    <button v-else @click="manager.dialogBox(
+                        'Confirm order',
+                        `Are you sure you want to buy ${item.album} for ${item.price}C?`,
+                        callback,
+                        {
+                            question: true
+                        })">Buy {{ item.album
+                        }}</button>
                 </div>
             </div>
+        </div>
+        <div v-else class="content">
+            <p>Sorry, app went boom boom trying to load this item :(</p>
         </div>
     </AuthState>
 </template>

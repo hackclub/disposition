@@ -10,7 +10,7 @@ const emojis = [ 'Hi!!', 'What\'s up?', 'Doing much?' ]
 const BOTTOM_OFFSET = 17
 const BUDDY_SIZE = 100
 
-const pos = reactive ({ x: 1000})
+const pos = reactive ({ x: 1000 })
 
 const isMoving = ref<boolean>(false)
 const emote = ref<string>("")

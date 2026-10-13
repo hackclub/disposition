@@ -2,6 +2,8 @@ import Documentation from "~/apps/documentation.vue";
 import Welcome from "~/apps/welcome.vue";
 import type { WindowInstance } from "~/types/window"
 import { APPS } from "~/registry/apps.ts"
+import type { DialogBoxOptions } from "~/components/dialogBox.vue";
+import type { MessageBoxOptions } from "~/components/messageBox.vue";
 
 export const useWindowManager = () => {
     const windows = useState<WindowInstance[]>('wm-windows', () => []);
@@ -69,7 +71,7 @@ export const useWindowManager = () => {
         return windows.value.find(w => w.appId === appId);
     }
 
-    function messagebox(title: string, message: string, info: boolean = false, warning: boolean = false, error: boolean = false) {
+    function messageBox(title: string, message: string, options?: MessageBoxOptions) {
         let posX = 200;
         let posY = 200;
 
@@ -82,7 +84,7 @@ export const useWindowManager = () => {
 
         windows.value.push({
             id: (Math.random() * 10000).toString(),
-            appId: "messagebox",
+            appId: "messageBox",
             title: title,
             z: nextZ.value++,
             minimized: false,
@@ -98,11 +100,11 @@ export const useWindowManager = () => {
             posX,
             posY,
 
-            props: { title, message, info, warning, error }
+            props: { title, message, options }
         });
     }
 
-    function dialogbox(title: string, message: string, callback: Function, info: boolean = false, warning: boolean = false, error: boolean = false) {
+    function dialogBox(title: string, message: string, callback: Function, options?: DialogBoxOptions) {
         let posX = 200;
         let posY = 200;
 
@@ -115,7 +117,7 @@ export const useWindowManager = () => {
 
         windows.value.push({
             id: (Math.random() * 10000).toString(),
-            appId: "dialogbox",
+            appId: "dialogBox",
             title: title,
             z: nextZ.value++,
             minimized: false,
@@ -131,7 +133,7 @@ export const useWindowManager = () => {
             posX,
             posY,
 
-            props: { title, message, callback, info, warning, error }
+            props: { title, message, callback, options }
         });
     }
 
@@ -146,7 +148,7 @@ export const useWindowManager = () => {
         isFocused,
         get,
         isTypeOpen,
-        messagebox,
-        dialogbox
+        messageBox,
+        dialogBox
     }
 }
