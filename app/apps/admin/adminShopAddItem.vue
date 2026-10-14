@@ -41,20 +41,12 @@ const placeholder =
         `font-family="sans-serif" font-size="16" fill="#888">Drag and drop your image in here</text></svg>`
     );
 
-function pickFile() {
-    fileInput.value?.click();
-}
-
 function setImage(file: File | undefined) {
     if (!file || !file.type.startsWith("image/")) return;
 
     if (previewUrl.value) URL.revokeObjectURL(previewUrl.value);
     imageFile.value = file;
     previewUrl.value = URL.createObjectURL(file);
-}
-
-function onFileChange(e: Event) {
-    setImage((e.target as HTMLInputElement).files?.[0]);
 }
 
 function onDrop(e: DragEvent) {
@@ -96,27 +88,19 @@ async function upload() {
         submitting.value = false;
     }
 }
-
-function addURLField() {
-    urls.value.push("");
-}
-
-function removeURLField(i: number) {
-    urls.value.splice(i, 1);
-}
 </script>
 
 <template>
     <div class="content" v-if="admin">
         <div class="horizontal">
             <div class="vertical">
-                <input ref="fileInput" type="file" accept="image/jpeg,image/png,image/webp" style="display: none"
-                    @change="onFileChange" />
+                <input ref="fileInput" type="file" accept="image/jpeg,image/png,image/webp" v-show="false"
+                    @change="(e) => setImage((e.target as HTMLInputElement).files?.[0])" />
 
                 <img class="drag-and-drop" :class="{ dragging: isDragging }" :src="previewUrl ?? placeholder"
                     alt="Item image" @dragover.prevent="isDragging = true" @dragleave.prevent="isDragging = false"
                     @drop.prevent="onDrop" />
-                <button @click="pickFile">Upload from files</button>
+                <button @click="fileInput?.click()">Upload from files</button>
             </div>
             <div class="vertical fields">
                 <label for="artist">Artist</label>
@@ -155,8 +139,8 @@ function removeURLField(i: number) {
                     <label>URLs</label>
                     <div v-for="(_, i) in urls" :key="i" class="horizontal">
                         <input v-model="urls[i]" type="url" />
-                        <button v-if="i === urls.length - 1" @click="addURLField">+</button>
-                        <button v-else @click="removeURLField(i)">-</button>
+                        <button v-if="i === urls.length - 1" @click="urls.push('')">+</button>
+                        <button v-else @click="urls.splice(i, 1)">-</button>
                     </div>
 
                 </div>

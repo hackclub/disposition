@@ -27,6 +27,26 @@ export type Item = {
     staffPickAt: Date
 }
 
+/* basically this is just the item that you get from shop/item/[id].get.ts. it includes extra data from last.fm & musicbrainz */
+export type ServerItem = {
+    id: number,
+    album: string,
+    artist: string,
+    genre: string,
+    image: string,
+    description: string,
+    media: Media,
+    urls?: string[],
+    added: Date,
+    price: number,
+    staffPickAt: Date,
+
+    tracks: number,
+    length: number,
+    releaseDate: string,
+    tags: string[],
+}
+
 export type User = {
     hcaId: string,
     slackId: string,

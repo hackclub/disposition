@@ -1,16 +1,18 @@
 <script setup lang="ts">
 import type { WindowInstance } from '~/types/window';
-import type { Item } from '~/types/database';
+import type { ServerItem } from '~/types/database';
 
 const manager = useWindowManager();
 const props = defineProps<{ instance: WindowInstance, id: number }>()
 const admin = await isAdmin();
 
 const { data: balance } = await useFetch<number>("/api/user/balance", { key: "balance" });
-const { data: item } = await useFetch<Item>(`/api/shop/items/${props.id}`);
+const { data: item } = await useFetch<ServerItem>(`/api/shop/items/${props.id}`);
+
+console.log(await $fetch(`/api/shop/items/${props.id}`))
 
 async function callback(result: boolean) {
-    if(!result) return;
+    if (!result) return;
     const data = new FormData();
     data.append("item", String(props.id));
     data.append("message", "");
@@ -37,21 +39,23 @@ async function callback(result: boolean) {
                 </div>
                 <div class="vertical fields">
                     <p>
+                        <b>Price: </b>{{ item.price }}
+                    </p>
+                    <p>
                         <b>Genre: </b>{{ item.genre }}
                     </p>
+
                     <p>
-                        <b>Length: </b>13 tracks, 85:13
+                        <b>Length: </b>{{ item.tracks }} tracks, {{ formatDuration(item.length) }}
                     </p>
                     <p>
-                        <b>Release date: </b>9/11/2001
+                        <b>Release date: </b>{{ item.releaseDate }}
                     </p>
 
-                    <div>
-                        <h3>Price: </h3>{{ item.price }}
-                    </div>
 
+                    <!-- add some concrete way of counting tags so if no tags the tags: text doesnt show up -->
                     <!-- todo: add some tags here like staff pick, trending, most bought item, etc -->
-                    <b>Tags:</b>
+                    <b v-if="item.tags.length > 0">Tags:</b>
                     <div class="tags">
                         <p v-if="item.staffPickAt">Staff pick</p>
                     </div>
@@ -173,8 +177,8 @@ p {
 .image {
     width: 200px;
     height: 200px;
-    object-fit: contain;
-    border: 2px dashed var(--color-gray-muted);
+    /* object-fit: contain; */
+    /* border: 2px dashed var(--color-gray-muted); */
     box-sizing: border-box;
 }
 
