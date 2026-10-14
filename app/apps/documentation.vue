@@ -76,7 +76,7 @@ function selectArticle(path: string) {
     overflow-y: auto;
 
     h3 {
-        background-color: #D9D9D9;
+        background-color: var(--color-info-bg);
         padding: 2px;
     }
 
@@ -88,7 +88,7 @@ function selectArticle(path: string) {
 
 .divider {
     flex: 0 0 2px;
-    background-color: #D9D9D9;
+    background-color: var(--color-info-bg);
 }
 
 .content {
@@ -102,7 +102,7 @@ function selectArticle(path: string) {
     width: 60px;
     height: 60px;
 
-    filter: drop-shadow(0 0 0.2rem black);
+    filter: drop-shadow(0 0 0.2rem var(--color-black));
 }
 
 .header {
@@ -123,22 +123,22 @@ function selectArticle(path: string) {
         h2 {
             margin: 0;
             font-weight: normal;
-            filter: drop-shadow(1px 1px 5px #000000);
+            filter: drop-shadow(1px 1px 5px var(--color-black));
         }
 
         p {
             margin: 0;
-            filter: drop-shadow(1px 1px 5px #000000);
+            filter: drop-shadow(1px 1px 5px var(--color-black));
         }
     }
 
     width: 100%;
 
     background: repeating-linear-gradient(0deg,
-        #d7d7d7 0px,
-        #d7d7d7 6px,
-        #9f9f9f 6px,
-        #9f9f9f 7px);
+        var(--color-gray-light) 0px,
+        var(--color-gray-light) 6px,
+        var(--color-gray-medium) 6px,
+        var(--color-gray-medium) 7px);
     height: 80px;
 
     display: flex;
@@ -152,7 +152,7 @@ function selectArticle(path: string) {
 .spacer {
     width: 100%;
     height: 12px;
-    border: 1px solid #c6c6c4;
-    background-color: #dedede;
+    border: 1px solid var(--color-border-light);
+    background-color: var(--color-panel-bg);
 }
 </style>

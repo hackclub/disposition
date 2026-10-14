@@ -92,8 +92,8 @@ const activeTab = ref<'about' | 'projects'>('projects')
     left: 4px;
     width: 30px;
     height: 30px;
-    background: #fff;
-    border: 1px solid #888;
+    background: var(--color-white);
+    border: 1px solid var(--color-gray-muted);
     font-weight: bold;
     cursor: pointer;
 }
@@ -107,15 +107,15 @@ const activeTab = ref<'about' | 'projects'>('projects')
     display: flex;
     gap: 12px;
     padding: 6px;
-    background: #e3e3e3;
-    border: 1px solid #9f9f9f;
+    background: var(--color-card-bg);
+    border: 1px solid var(--color-gray-medium);
 
     .avatar {
         width: 90px;
         height: 90px;
         object-fit: cover;
-        border: 1px solid #777;
-        background: #9f9f9f;
+        border: 1px solid var(--color-gray-dark);
+        background: var(--color-gray-medium);
     }
 
     .profile-info {
@@ -160,7 +160,7 @@ const activeTab = ref<'about' | 'projects'>('projects')
         width: 90px;
         height: 18px;
         font-size: 12px;
-        background: #f4f4f4;
+        background: var(--color-tab-bg);
         border-bottom: none;
         cursor: pointer;
         border: none;
@@ -171,7 +171,7 @@ const activeTab = ref<'about' | 'projects'>('projects')
         user-select: none;
 
         &.active {
-            background: #fff;
+            background: var(--color-white);
         }
     }
 }
@@ -179,8 +179,8 @@ const activeTab = ref<'about' | 'projects'>('projects')
 .spacer {
     width: 100%;
     height: 12px;
-    border: 1px solid #c6c6c4;
-    background-color: #dedede;
+    border: 1px solid var(--color-border-light);
+    background-color: var(--color-panel-bg);
     box-sizing: border-box;
 }
 
@@ -209,15 +209,15 @@ const activeTab = ref<'about' | 'projects'>('projects')
         "footer footer";
     gap: 6px 12px;
     padding: 10px;
-    background: #e8e8e8;
-    border: 1px solid #9f9f9f;
+    background: var(--color-card-bg-light);
+    border: 1px solid var(--color-gray-medium);
 
     .thumb {
         grid-area: thumb;
         width: 72px;
         height: 72px;
         object-fit: cover;
-        background: #9f9f9f;
+        background: var(--color-gray-medium);
     }
 
     .project-title {

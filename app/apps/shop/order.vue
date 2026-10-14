@@ -106,18 +106,6 @@ async function save() {
     }
 }
 
-.drag-and-drop {
-    width: 250px;
-    height: 250px;
-    object-fit: contain;
-    border: 2px dashed #888;
-    box-sizing: border-box;
-}
-
-.drag-and-drop.dragging {
-    border-color: #4a90e2;
-}
-
 .content {
     padding: 10px;
     gap: 5px;

@@ -24,9 +24,9 @@ export default defineNuxtConfig({
 				},
 
 				settings: {
-					showBuddy: true,
+					showBuddies: true,
 					wallpaperSource: "/wallpaper/default.png",
-					configVersion: "1.0.0"
+					configVersion: "1.0.1"
 				}
 			},
 

@@ -212,12 +212,12 @@ function removeURLField(i: number) {
     width: 250px;
     height: 250px;
     object-fit: contain;
-    border: 2px dashed #888;
+    border: 2px dashed var(--color-gray-muted);
     box-sizing: border-box;
 }
 
 .drag-and-drop.dragging {
-    border-color: #4a90e2;
+    border-color: var(--color-accent-blue);
 }
 
 .content {

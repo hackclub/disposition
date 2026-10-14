@@ -80,7 +80,7 @@ onMounted(async () => {
     width: 83px;
     height: 46px;
 
-    filter: drop-shadow(0 0 0.2rem black);
+    filter: drop-shadow(0 0 0.2rem var(--color-black));
 }
 
 .header {
@@ -101,22 +101,22 @@ onMounted(async () => {
         h2 {
             margin: 0;
             font-weight: normal;
-            filter: drop-shadow(1px 1px 5px #000000);
+            filter: drop-shadow(1px 1px 5px var(--color-black));
         }
 
         p {
             margin: 0;
-            filter: drop-shadow(1px 1px 5px #000000);
+            filter: drop-shadow(1px 1px 5px var(--color-black));
         }
     }
 
     width: 100%;
 
     background: repeating-linear-gradient(0deg,
-        #d7d7d7 0px,
-        #d7d7d7 6px,
-        #9f9f9f 6px,
-        #9f9f9f 7px);
+        var(--color-gray-light) 0px,
+        var(--color-gray-light) 6px,
+        var(--color-gray-medium) 6px,
+        var(--color-gray-medium) 7px);
     height: 80px;
 
     display: flex;
@@ -131,8 +131,8 @@ onMounted(async () => {
 .spacer {
     width: 100%;
     height: 12px;
-    border: 1px solid #c6c6c4;
-    background-color: #dedede;
+    border: 1px solid var(--color-border-light);
+    background-color: var(--color-panel-bg);
 }
 
 .content {

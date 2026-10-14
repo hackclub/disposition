@@ -44,7 +44,6 @@ if (loggedIn.value) {
 
         <div class="right">
             <!-- here we can put some tool apps like dispover. not all of the tool apps tho -->
-            <div class="menu-item" @click="manager.dialogBox('hello', 'are you sure you want to nuke north korea', console.log, false, true, false)">secret 2</div>
             <div class="menu-item" @click="manager.open('rigby')">Secret...</div>
             <div class="menu-item" @click="manager.open('winver')">DispoVer</div>
             <AuthState v-slot="{ loggedIn, clear }">
@@ -76,10 +75,10 @@ if (loggedIn.value) {
 }
 
 .startMenu {
-    background: linear-gradient(0deg, #525252 0%, #050505 100%);
+    background: linear-gradient(0deg, var(--color-menu-gradient-top) 0%, var(--color-menu-gradient-bottom) 100%);
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
-    border: 2px solid #797979;
+    border: 2px solid var(--color-border-dark);
 
     width: 350px;
     height: 450px;
@@ -94,7 +93,7 @@ if (loggedIn.value) {
 
     padding: 2px;
 
-    color: white;
+    color: var(--color-white);
 
     display: flex;
     flex-direction: column;
@@ -127,7 +126,7 @@ if (loggedIn.value) {
     height: 100%;
     width: 35%;
 
-    color: white;
+    color: var(--color-white);
 
     display: flex;
     flex-direction: column;
@@ -172,9 +171,9 @@ if (loggedIn.value) {
 }
 
 .apps {
-    border: 2px solid #797979;
-    background-color: white;
-    color: black;
+    border: 2px solid var(--color-border-dark);
+    background-color: var(--color-white);
+    color: var(--color-black);
     display: flex;
     flex-direction: column;
 
@@ -211,9 +210,9 @@ if (loggedIn.value) {
     }
 
     &:hover {
-        background-color: #1F1F1F;
+        background-color: var(--color-menu-hover);
         font-weight: bold;
-        color: white;
+        color: var(--color-white);
         cursor: pointer;
     }
 }

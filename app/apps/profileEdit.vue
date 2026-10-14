@@ -100,15 +100,15 @@ function save() {
     display: flex;
     gap: 12px;
     padding: 6px;
-    background: #e3e3e3;
-    border: 1px solid #9f9f9f;
+    background: var(--color-card-bg);
+    border: 1px solid var(--color-gray-medium);
 
     .avatar {
         width: 90px;
         height: 90px;
         object-fit: cover;
-        border: 1px solid #777;
-        background: #9f9f9f;
+        border: 1px solid var(--color-gray-dark);
+        background: var(--color-gray-medium);
     }
 
     .profile-info {
@@ -145,8 +145,8 @@ function save() {
 .spacer {
     width: 100%;
     height: 12px;
-    border: 1px solid #c6c6c4;
-    background-color: #dedede;
+    border: 1px solid var(--color-border-light);
+    background-color: var(--color-panel-bg);
     box-sizing: border-box;
 }
 
@@ -155,8 +155,8 @@ function save() {
 }
 
 .btn {
-    background: linear-gradient(#fafafa, #dcdcdc);
-    border: 1px solid #aaa;
+    background: linear-gradient(var(--color-btn-gradient-top), var(--color-btn-gradient-bottom));
+    border: 1px solid var(--color-gray-border);
     border-radius: 3px;
     padding: 2px 14px;
     cursor: pointer;
@@ -170,8 +170,8 @@ function save() {
     max-width: 100%;
     box-sizing: border-box;
     padding: 2px 6px;
-    background: white;
-    box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.25);
+    background: var(--color-white);
+    box-shadow: inset 0 0 8px var(--color-shadow-inset);
     font-family: 'Fira Sans', sans-serif;
     font-size: 14px;
     user-select: none;
@@ -191,7 +191,7 @@ function save() {
 }
 
 .preview {
-    background: #9f9f9f;
+    background: var(--color-gray-medium);
 }
 
 .preview.large {
@@ -216,15 +216,15 @@ function save() {
     padding: 0 5px;
     font-family: inherit;
     font-size: 13px;
-    background: linear-gradient(#fafafa, #e4e4e4);
-    border: 1px solid #333;
+    background: linear-gradient(var(--color-btn-gradient-top), var(--color-btn-gradient-bottom-alt));
+    border: 1px solid var(--color-gray-800);
     border-radius: 3px;
     cursor: pointer;
     white-space: nowrap;
 }
 
 .hint {
-    color: #777;
+    color: var(--color-gray-dark);
     font-size: 11px;
 }
 
@@ -244,19 +244,19 @@ function save() {
     font-family: inherit;
     font-size: 14px;
     line-height: 1.2;
-    color: #111;
-    background: white;
-    border: 1px solid #777;
+    color: var(--color-gray-900);
+    background: var(--color-white);
+    border: 1px solid var(--color-gray-dark);
     border-radius: 0;
     outline: none;
 }
 
 .field::placeholder {
-    color: #888;
+    color: var(--color-gray-muted);
 }
 
 .field:focus {
-    border-color: #333;
+    border-color: var(--color-gray-800);
 }
 
 .username {

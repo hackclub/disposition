@@ -82,13 +82,13 @@ const notifications: AppNotification[] = [
 
         p {
             margin: 0;
-            filter: drop-shadow(1px 1px 5px #000000);
+            filter: drop-shadow(1px 1px 5px var(--color-black));
         }
 
         h2 {
             margin-left: 5px;
             font-weight: normal;
-            filter: drop-shadow(1px 1px 5px #000000);
+            filter: drop-shadow(1px 1px 5px var(--color-black));
         }
     }
 }
@@ -98,16 +98,16 @@ const notifications: AppNotification[] = [
     width: 25px;
     height: 60px;
 
-    filter: drop-shadow(0 0 0.2rem black);
+    filter: drop-shadow(0 0 0.2rem var(--color-black));
 }
 
 
 .header {
     background: repeating-linear-gradient(0deg,
-            #d7d7d7 0px,
-            #d7d7d7 6px,
-            #9f9f9f 6px,
-            #9f9f9f 7px);
+            var(--color-gray-light) 0px,
+            var(--color-gray-light) 6px,
+            var(--color-gray-medium) 6px,
+            var(--color-gray-medium) 7px);
 
     display: flex;
     flex-direction: column;
@@ -125,8 +125,8 @@ const notifications: AppNotification[] = [
 .spacer {
     width: 100%;
     height: 12px;
-    border: 1px solid #c6c6c4;
-    background-color: #dedede;
+    border: 1px solid var(--color-border-light);
+    background-color: var(--color-panel-bg);
 }
 
 
@@ -144,7 +144,7 @@ const notifications: AppNotification[] = [
     padding-left: 5px;
 
     button {
-        background-color: #F2F2F2;
+        background-color: var(--color-bg-light);
         border: none;
         border-radius: 0;
         border-top-left-radius: 4px;
@@ -155,7 +155,7 @@ const notifications: AppNotification[] = [
 }
  
 .tab.active {
-  background: #d0d0d0;
+  background: var(--color-tab-active);
 }
  
 .notification {
@@ -166,22 +166,22 @@ const notifications: AppNotification[] = [
   margin: 0 0 6px;
   font-weight: 700;
   font-size: 16px;
-  color: #3c4f5c;
+  color: var(--color-notif-date);
 }
  
 .notification-card {
-  border: 1px solid #b7b7b5;
+  border: 1px solid var(--color-notif-border);
 }
  
 .notification-title {
-  background: #c9c9c9;
+  background: var(--color-notif-title-bg);
   font-weight: 700;
   font-size: 17px;
   padding: 5px 6px;
 }
  
 .notification-body {
-  background: #fff;
+  background: var(--color-white);
   padding: 12px;
 }
  

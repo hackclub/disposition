@@ -41,8 +41,8 @@ orders.value!.forEach(async order => {
     gap: 5px;
 
     padding: 5px;
-    border: 2px solid #c6c6c4;
-    background-color: #dedede;
+    border: 2px solid var(--color-border-light);
+    background-color: var(--color-panel-bg);
 
     img {
         width: 80px;

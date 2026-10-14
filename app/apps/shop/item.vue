@@ -124,8 +124,8 @@ async function callback(result: boolean) {
 
 .summary {
     padding: 10px;
-    border: 1px solid #c6c6c4;
-    background-color: #dedede;
+    border: 1px solid var(--color-border-light);
+    background-color: var(--color-panel-bg);
 }
 
 h3 {
@@ -143,8 +143,8 @@ p {
 
     p {
         padding: 3px;
-        border: 1px solid #c6c6c4;
-        background-color: #dedede;
+        border: 1px solid var(--color-border-light);
+        background-color: var(--color-panel-bg);
     }
 }
 
@@ -174,12 +174,8 @@ p {
     width: 200px;
     height: 200px;
     object-fit: contain;
-    border: 2px dashed #888;
+    border: 2px dashed var(--color-gray-muted);
     box-sizing: border-box;
-}
-
-.drag-and-drop.dragging {
-    border-color: #4a90e2;
 }
 
 .content {
