@@ -62,7 +62,7 @@ async function callback(result: boolean) {
                 </div>
             </div>
 
-            <div class="horizontal">
+            <div class="horizontal2">
                 <div class="vertical">
                     <h2 v-if="item.media == 'other'">{{ item.album }}</h2>
                     <h2 v-else>{{ item.album }} - {{ item.artist }} ({{ item.media }})</h2>
@@ -124,12 +124,20 @@ async function callback(result: boolean) {
 .order {
     justify-content: space-evenly;
     min-width: 300px;
+
+    background-color: var(--color-panel-bg);
+    border: 2px solid var(--color-border-light);
+    padding: 5px;
+
+    h2 {
+        margin: 0;
+    }
 }
 
 .summary {
     padding: 10px;
     border: 1px solid var(--color-border-light);
-    background-color: var(--color-panel-bg);
+    background-color: var(--color-white);
 }
 
 h3 {
@@ -159,6 +167,13 @@ p {
     width: 100%;
     min-width: 100%;
     max-width: 100%;
+}
+
+.horizontal2 {
+    display: flex;
+    flex-direction: row;
+    gap: 3px;
+    justify-content: space-around;
 }
 
 .horizontal {

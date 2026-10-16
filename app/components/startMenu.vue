@@ -38,7 +38,6 @@ if (loggedIn.value) {
                         <p>{{ app.title }}</p>
                     </div>
                 </template>
-
             </div>
         </div>
 
