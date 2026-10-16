@@ -1,31 +1,47 @@
 <script setup lang="ts">
 import type { WindowInstance } from '~/types/window';
+import { useForm } from "vee-validate";
+import { toTypedSchema } from '@vee-validate/zod'
+import * as z from "zod";
 
 const manager = useWindowManager();
 const props = defineProps<{ instance: WindowInstance }>()
 const admin = await isAdmin();
 if (!admin) manager.close(props.instance.id);
 
+const { defineField, errors, handleSubmit, setFieldValue, isSubmitting } = useForm({
+    validationSchema: toTypedSchema(z.object({
+        image: z.instanceof(File, { message: "Please choose an image" }),
+        artist: z.string().trim().min(1, "Artist is required"),
+        album: z.string().trim().min(1, "Album is required"),
+        genre: z.string().trim().min(1, "Genre is required"),
+        media: z.enum(["cd", "vinyl", "cassette", "other"]),
+        price: z.number({ error: "Price is required" }).min(1, "Price must be at least 1"),
+        description: z.string(),
+        staffPick: z.boolean(),
+        urls: z.array(z.url({ error: "Invalid URL" }).or(z.literal(""))),
+    })),
+    initialValues: {
+        media: "cd",
+        description: "",
+        staffPick: false,
+        urls: [""],
+    },
+});
+
+const [artist] = defineField("artist");
+const [album] = defineField("album");
+const [genre] = defineField("genre");
+const [media] = defineField("media");
+const [price] = defineField("price");
+const [description] = defineField("description");
+const [staffPick] = defineField("staffPick");
+const [urls] = defineField("urls");
+
 // drag and drop bullshit
 const fileInput = ref<HTMLInputElement | null>(null);
 const isDragging = ref(false);
-const imageFile = ref<File | null>(null);
 const previewUrl = ref<string | null>(null);
-const urls = ref<string[]>([""]);
-type Media = "cd" | "vinyl" | "cassette" | "other";
-
-// form bullshit
-const form = reactive({
-    artist: "",
-    album: "",
-    genre: "",
-    media: "cd" as Media,
-    price: "",
-    description: "",
-    staffPick: false,
-})
-const submitting = ref(false);
-const error = ref<string | null>(null);
 
 // genre dropdown bullshit
 const genres = ref<string[]>([]);
@@ -45,8 +61,8 @@ function setImage(file: File | undefined) {
     if (!file || !file.type.startsWith("image/")) return;
 
     if (previewUrl.value) URL.revokeObjectURL(previewUrl.value);
-    imageFile.value = file;
     previewUrl.value = URL.createObjectURL(file);
+    setFieldValue("image", file); // validates against the schema
 }
 
 function onDrop(e: DragEvent) {
@@ -54,44 +70,48 @@ function onDrop(e: DragEvent) {
     setImage(e.dataTransfer?.files?.[0]);
 }
 
+function addUrl() {
+    urls.value = [...(urls.value ?? []), ""];
+}
+
+function removeUrl(i: number) {
+    urls.value = (urls.value ?? []).filter((_, idx) => idx !== i);
+}
+
 onBeforeUnmount(() => {
     if (previewUrl.value) URL.revokeObjectURL(previewUrl.value);
 });
 
-async function upload() {
+// only runs if validation passes
+const onSubmit = handleSubmit(async (values) => {
     if (!admin) return;
-    if (!imageFile.value) {
-        error.value = "Please choose an image";
-        return;
-    }
 
     const body = new FormData();
-    body.append("image", imageFile.value);
-    for (const [key, value] of Object.entries(form)) {
-        body.append(key, String(value));
-    }
-    urls.value
+    body.append("image", values.image);
+    body.append("artist", values.artist);
+    body.append("album", values.album);
+    body.append("genre", values.genre);
+    body.append("media", values.media);
+    body.append("price", String(values.price));
+    body.append("description", values.description);
+    body.append("staffPick", String(values.staffPick));
+    values.urls
         .map(u => u.trim())
         .filter(Boolean)
         .forEach(u => body.append("urls", u));
 
-    submitting.value = true;
-    error.value = null;
     try {
         const response = await $fetch("/api/shop/items", { method: "POST", body });
-        manager.messageBox("Success!", `Item id ${response} uploaded successfully!`, { info: true });
+        manager.messageBox("Success!", `Item id ${response.id} uploaded successfully!`, { info: true });
         manager.close(props.instance.id);
     } catch (e: any) {
-        error.value = e.data?.message ?? "Upload failed";
-        manager.messageBox("Error!", error.value!, { error: true });
-    } finally {
-        submitting.value = false;
+        manager.messageBox("Error!", e.data?.message ?? "Upload failed", { error: true });
     }
-}
+});
 </script>
 
 <template>
-    <div class="content" v-if="admin">
+    <form class="content" v-if="admin" @submit.prevent="onSubmit">
         <div class="horizontal">
             <div class="vertical">
                 <input ref="fileInput" type="file" accept="image/jpeg,image/png,image/webp" v-show="false"
@@ -100,20 +120,27 @@ async function upload() {
                 <img class="drag-and-drop" :class="{ dragging: isDragging }" :src="previewUrl ?? placeholder"
                     alt="Item image" @dragover.prevent="isDragging = true" @dragleave.prevent="isDragging = false"
                     @drop.prevent="onDrop" />
-                <button @click="fileInput?.click()">Upload from files</button>
+                <button type="button" @click="fileInput?.click()">Upload from files</button>
+                <span class="error" v-if="errors.image">{{ errors.image }}</span>
             </div>
             <div class="vertical fields">
                 <label for="artist">Artist</label>
-                <input type="text" id="artist" v-model="form.artist" placeholder="Artist" />
+                <input type="text" id="artist" v-model="artist" placeholder="Artist" />
+                <span class="error" v-if="errors.artist">{{ errors.artist }}</span>
 
                 <label for="album">Album</label>
-                <input type="text" id="album" v-model="form.album" placeholder="Album" />
+                <input type="text" id="album" v-model="album" placeholder="Album" />
+                <span class="error" v-if="errors.album">{{ errors.album }}</span>
 
                 <label for="genre">Genre</label>
-                <input type="text" id="genre" v-model="form.genre" placeholder="Genre" />
+                <input type="text" id="genre" v-model="genre" placeholder="Genre" list="genre-list" />
+                <datalist id="genre-list">
+                    <option v-for="g in genres" :key="g" :value="g" />
+                </datalist>
+                <span class="error" v-if="errors.genre">{{ errors.genre }}</span>
 
                 <label for="media">Media</label>
-                <select name="media" id="media" v-model="form.media">
+                <select name="media" id="media" v-model="media">
                     <option value="cd">CD</option>
                     <option value="vinyl">Vinyl</option>
                     <option value="cassette">Cassette</option>
@@ -121,36 +148,38 @@ async function upload() {
                 </select>
 
                 <label for="price">Price</label>
-                <input type="number" min="1" id="price" v-model="form.price" placeholder="Price" />
+                <input type="number" min="1" id="price" v-model.number="price" placeholder="Price" />
+                <span class="error" v-if="errors.price">{{ errors.price }}</span>
 
                 <label for="staffPick" class="checkbox">
-                    <input type="checkbox" name="staffPick" v-model="form.staffPick" />
+                    <input type="checkbox" id="staffPick" name="staffPick" v-model="staffPick" />
                     Staff pick
                 </label>
             </div>
         </div>
         <div class="vertical">
             <label for="description">Description</label>
-            <textarea id="description" class="description" v-model="form.description"
-                placeholder="Description"></textarea>
+            <textarea id="description" class="description" v-model="description" placeholder="Description"></textarea>
 
             <div class="horizontal">
                 <div class="vertical">
                     <label>URLs</label>
-                    <div v-for="(_, i) in urls" :key="i" class="horizontal">
-                        <input v-model="urls[i]" type="url" />
-                        <button v-if="i === urls.length - 1" @click="urls.push('')">+</button>
-                        <button v-else @click="urls.splice(i, 1)">-</button>
-                    </div>
-
+                    <template v-for="(_, i) in urls" :key="i">
+                        <div class="horizontal">
+                            <input v-model="urls![i]" type="url" />
+                            <button type="button" v-if="i === urls!.length - 1" @click="addUrl">+</button>
+                            <button type="button" v-else @click="removeUrl(i)">-</button>
+                        </div>
+                        <span class="error" v-if="errors[`urls[${i}]`]">{{ errors[`urls[${i}]`] }}</span>
+                    </template>
                 </div>
 
                 <div class="upload-div">
-                    <button :disabled="submitting" @click="upload">Upload</button>
+                    <button type="submit" :disabled="isSubmitting">Upload</button>
                 </div>
             </div>
         </div>
-    </div>
+    </form>
     <div v-else style="text-align: center;">
         <p>sorry, not admin :(</p>
     </div>
@@ -195,7 +224,6 @@ async function upload() {
 .drag-and-drop {
     width: 250px;
     height: 250px;
-    object-fit: contain;
     border: 2px dashed var(--color-gray-muted);
     box-sizing: border-box;
 }
@@ -210,5 +238,10 @@ async function upload() {
 
     display: flex;
     flex-direction: column;
+}
+
+.error {
+    color: var(--color-accent-red, #c33);
+    font-size: 0.85em;
 }
 </style>
