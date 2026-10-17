@@ -182,7 +182,9 @@ const notifications: AppNotification[] = [
  
 .notification-body {
   background: #fff;
-  padding: 12px;
+  padding-bottom: 5px;
+  padding-left: 2px;
+  padding-top: 2px;
 }
  
 .notification-body p {
