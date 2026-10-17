@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { WindowInstance } from '~/types/window';
-import type {Order, Item, User, OrderStatus, Media} from "~/types/database";
+import type { Order, Item, User, OrderStatus, Media } from "~/types/database";
 const manager = useWindowManager();
 const props = defineProps<{ instance: WindowInstance, id: number }>()
 const admin = await isAdmin();
@@ -20,13 +20,25 @@ if (admin) {
 // form bullshit
 const form = reactive({
     status: order.value?.status as OrderStatus,
-    adminMessage: order.value?.adminMessage
+    adminMessage: order.value?.adminMessage,
+    tracking: order.value?.tracking
 })
 const submitting = ref(false);
-const error = ref<string | null>(null);
 
-function save() {
+async function save() {
+    if(!admin) return;
 
+    const data = new FormData();
+    data.append("status", form.status);
+    if (form.adminMessage) data.append("adminMessage", form.adminMessage);
+    if (form.tracking) data.append("tracking", form.tracking);
+
+    const response = await $fetch(`/api/shop/orders/${props.id}`, {
+        method: "PATCH",
+        body: data
+    })
+
+    if(response.id) manager.close(props.instance.id);
 }
 </script>
 
@@ -37,40 +49,43 @@ function save() {
                 <img class="image" :src="`/images/${item!.image}`" alt="Item image" />
             </div>
             <div class="vertical fields">
-                <label>Artist</label>
+                <label>Artist:</label>
                 <p>{{ item.artist }}</p>
 
-                <label>Album</label>
+                <label>Album:</label>
                 <p>{{ item.album }}</p>
 
-                <label>Genre</label>
+                <label>Genre:</label>
                 <p>{{ item.genre }}</p>
 
-                <label>Media</label>
+                <label>Media:</label>
                 <p>{{ item.media }}</p>
 
-                <label>Price</label>
+                <label>Price:</label>
                 <p>{{ item.price }}</p>
             </div>
         </div>
         <div class="vertical">
-            <label>User message</label>
-            <p>{{ order.message }}</p>
+            <label for="status">Status</label>
+            <select name="status" v-model="form.status">
+                <option value="idle">Idle</option>
+                <option value="claimed">Claimed</option>
+                <option value="fulfilled">Fulfilled</option>
+                <option value="cancelled">Cancelled</option>
+            </select>
+
+            <label v-if="order.message">User message</label>
+            <p v-if="order.message">{{ order.message }}</p>
 
             <label for="adminMessage">Admin notes</label>
             <textarea v-model="form.adminMessage"></textarea>
 
-            <div class="horizontal">
-                <label for="status">Status</label>
-                <select name="status" v-model="form.status">
-                    <option value="idle">Idle</option>
-                    <option value="claimed">Claimed</option>
-                    <option value="fulfilled">Fulfilled</option>
-                    <option value="cancelled">Cancelled</option>
-                </select>
+            <label for="tracking">Tracking</label>
+            <input type="text" v-model="form.tracking"/>
 
+            <div class="horizontal">
                 <div class="vertical">
-                    <label>URLs</label>
+                    <label>Item URLs</label>
                     <template v-for="url in item.urls">
                         <a :href="url">{{ url }}</a>
                     </template>
@@ -88,6 +103,11 @@ function save() {
 </template>
 
 <style scoped>
+.image {
+    width: 200px;
+    height: 200px;
+}
+
 .upload-div {
     display: flex;
     justify-content: end;
@@ -121,18 +141,15 @@ function save() {
     flex-direction: column;
 
     gap: 3px;
-}
 
-.drag-and-drop {
-    width: 250px;
-    height: 250px;
-    object-fit: contain;
-    border: 2px dashed #888;
-    box-sizing: border-box;
-}
+    label {
+        margin: 0;
+        font-weight: bold;
+    }
 
-.drag-and-drop.dragging {
-    border-color: #4a90e2;
+    p {
+        margin: 0;
+    }
 }
 
 .content {

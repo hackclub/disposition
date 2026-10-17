@@ -10,7 +10,7 @@ const emojis = [ 'Hi!!', 'What\'s up?', 'Doing much?' ]
 const BOTTOM_OFFSET = 17
 const BUDDY_SIZE = 100
 
-const pos = reactive ({ x: 1000})
+const pos = reactive ({ x: 1000 })
 
 const isMoving = ref<boolean>(false)
 const emote = ref<string>("")
@@ -115,14 +115,14 @@ onBeforeUnmount(() => {
     user-select: none;
 
     text-shadow:
-        -1px -1px 0 #FFF,
-        0 -1px 0 #FFF,
-        1px -1px 0 #FFF,
-        1px 0 0 #FFF,
-        1px 1px 0 #FFF,
-        0 1px 0 #FFF,
-        -1px 1px 0 #FFF,
-        -1px 0 0 #FFF;
+        -1px -1px 0 var(--color-white),
+        0 -1px 0 var(--color-white),
+        1px -1px 0 var(--color-white),
+        1px 0 0 var(--color-white),
+        1px 1px 0 var(--color-white),
+        0 1px 0 var(--color-white),
+        -1px 1px 0 var(--color-white),
+        -1px 0 0 var(--color-white);
 }
 
 .desktop-buddy {
@@ -140,7 +140,7 @@ onBeforeUnmount(() => {
     background-repeat: no-repeat;
     background-position: center;
     transform-origin: center;
-    filter: drop-shadow(2px 5px 4px #070707);
+    filter: drop-shadow(2px 5px 4px var(--color-shadow-buddy));
     user-select: none;
     pointer-events: none;
 

@@ -6,8 +6,12 @@ export const users = pgTable("users", {
 	slackId: varchar("slack_id", { length: 16 }).notNull(),
 	name: varchar({ length: 255 }).notNull(),
 	created: timestamp({ withTimezone: true, mode: 'date' }).defaultNow().notNull(),
+
 	yswsEligible: boolean("ysws_eligible").notNull(),
 	verificationStatus: varchar("verification_status", { length: 16 }).notNull(),
+
+	banner: text(),
+	bio: text(),
 },
 (table) => [
 	unique("users_slack_id_unique").on(table.slackId),
@@ -87,6 +91,7 @@ export const shopOrders = pgTable("shop_orders", {
 	status: varchar({ length: 64 }).default('idle').notNull(),
 	message: text(),
 	adminMessage: text("admin_message"),
+	tracking: text(),
 	timestamp: timestamp({ withTimezone: true, mode: 'date' }).defaultNow().notNull(),
 },
 (table) => [

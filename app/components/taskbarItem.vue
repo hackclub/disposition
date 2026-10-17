@@ -54,7 +54,7 @@ function open() {
 .open {
     bottom: 0;
     width: 20px;
-    background-color: white;
+    background-color: var(--color-white);
 
     height: 3px;
     border-top-left-radius: 3px;
@@ -64,7 +64,7 @@ function open() {
 .minimized {
     bottom: 0;
     width: 5px;
-    background-color: white;
+    background-color: var(--color-white);
 
     height: 3px;
     border-top-left-radius: 3px;

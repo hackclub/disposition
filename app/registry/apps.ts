@@ -7,16 +7,25 @@ import Run from "~/apps/misc/run.vue"
 import Rigby from "~/apps/misc/rigby.vue"
 import AdminStats from "~/apps/admin/adminStats.vue"
 import Config from "~/apps/config.vue"
-import Shop from "~/apps/shop.vue"
+import Shop from "~/apps/shop/shop.vue"
 import Notification from "~/apps/notification.vue"
 import projectManager from "~/apps/projectManager.vue"
 import profileViewer from "~/apps/profileViewer.vue"
 import AdminShop from "~/apps/admin/adminShop.vue"
 import ProfileEdit from "~/apps/profileEdit.vue"
 import AdminShopAddItem from "~/apps/admin/adminShopAddItem.vue"
+<<<<<<< HEAD
 import ConfirmOrder from "~/apps/shop/confirmOrder.vue"
 import ViewItem from "~/apps/shop/viewItem.vue"
 import adminAnnouncePanel from "~/apps/admin/adminAnnouncePanel.vue"
+=======
+import Item from "~/apps/shop/item.vue"
+import Orders from "~/apps/shop/orders.vue"
+import AdminShopOrder from "~/apps/admin/adminShopOrder.vue"
+import Order from "~/apps/shop/order.vue"
+import Messagebox from "~/components/messageBox.vue"
+import Dialogbox from "~/components/dialogBox.vue"
+>>>>>>> 83d94802d37b32497a2b0f364d5a4b4af6afc057
 
 export const APPS: { [key: string]: AppDef } = {
 
@@ -191,6 +200,36 @@ export const APPS: { [key: string]: AppDef } = {
         hidden: false
     },
 
+    messageBox: {
+        appId: 'messageBox',
+        title: 'messageBox',
+        component: Messagebox,
+
+        width: 1,
+        height: 1,
+        minWidth: 1,
+        minHeight: 1,
+
+        tool: true,
+        resizeable: true,
+        hidden: true
+    },
+
+    dialogBox: {
+        appId: 'dialogBox',
+        title: 'dialogBox',
+        component: Dialogbox,
+
+        width: 1,
+        height: 1,
+        minWidth: 1,
+        minHeight: 1,
+
+        tool: true,
+        resizeable: true,
+        hidden: true
+    },
+
     ///////////////////////////////////////////
     // admin apps                            //
     ///////////////////////////////////////////
@@ -240,6 +279,21 @@ export const APPS: { [key: string]: AppDef } = {
         hidden: true
     },
 
+    admin_shop_view_order: {
+        appId: 'admin_shop_view_order',
+        title: 'View Order (admin)',
+        component: AdminShopOrder,
+
+        width: 500,
+        height: 600,
+        minWidth: 500,
+        minHeight: 600,
+
+        tool: true,
+        resizeable: true,
+        hidden: true
+    },
+
     ///////////////////////////////////////////
     // shop                                  //
     ///////////////////////////////////////////
@@ -254,30 +308,45 @@ export const APPS: { [key: string]: AppDef } = {
         minHeight: 310,
 
         tool: false,
-        resizeable: false
+        resizeable: true
     },
 
-    confirm_order: {
-        appId: 'confirm_order',
-        title: 'Confirm Order',
-        component: ConfirmOrder,
-        width: 300,
-        height: 200,
-        minWidth: 300,
-        minHeight: 200,
+    item: {
+        appId: 'item',
+        title: 'View Item',
+        component: Item,
+        
+        width: 671,
+        height: 550,
+        minWidth: 671,
+        minHeight: 550,
 
         tool: true,
-        resizeable: false,
+        resizeable: true
     },
 
-    view_item: {
-        appId: 'view_item',
-        title: 'View Item',
-        component: ViewItem,
+    orders: {
+        appId: 'orders',
+        title: 'My orders',
+        component: Orders,
 
         width: 670,
         height: 550,
-        minWidth: 671,
+        minWidth: 670,
+        minHeight: 550,
+
+        tool: true,
+        resizeable: false
+    },
+
+    order: {
+        appId: 'order',
+        title: 'View Order',
+        component: Order,
+        
+        width: 670,
+        height: 550,
+        minWidth: 670,
         minHeight: 550,
 
         tool: true,

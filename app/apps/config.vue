@@ -7,7 +7,7 @@ function save(key: string, value: any) {
     write(key, value);
 }
 
-const showBuddy = ref(read("showBuddy"));
+const showBuddies = ref(read("showBuddies"));
 
 // wallpaper stuff //
 const fileInput = ref<HTMLInputElement | null>(null);
@@ -63,14 +63,12 @@ function handleImageFile(file: File) {
         <div class="main">
             <div v-if="currentTab == 'general'">
                 <label>
-                    <input type="checkbox" v-model="showBuddy" @change="save('showBuddy', showBuddy)" />
-                    Show desktop buddy
+                    <input type="checkbox" v-model="showBuddies" @change="save('showBuddies', showBuddies)" />
+                    Show desktop buddies
                 </label>
             </div>
 
             <div v-if="currentTab == 'appearance'">
-                <!-- here i somehow give the user the ability to change the wallpaper :sob: -->
-
                 <span class="wallpaper">
                     <h2>Wallpaper</h2>
                     <p>Add a little spark to your desktop when browsing through Disposition :)</p>
@@ -111,8 +109,8 @@ function handleImageFile(file: File) {
 }
 
 .drag-and-drop {
-    background-color: #F2F2F2;
-    border: 1px solid #7B7B7B;
+    background-color: var(--color-bg-light);
+    border: 1px solid var(--color-border-input);
 
     display: flex;
     justify-content: center;
@@ -121,7 +119,7 @@ function handleImageFile(file: File) {
     height: 100px;
 
     p {
-        color: #AEAEAE;
+        color: var(--color-text-hint);
     }
 
     user-select: none;
@@ -134,7 +132,7 @@ function handleImageFile(file: File) {
     padding-left: 5px;
 
     button {
-        background-color: #F2F2F2;
+        background-color: var(--color-bg-light);
         border: none;
         border-radius: 0;
         border-top-left-radius: 4px;
@@ -148,15 +146,15 @@ function handleImageFile(file: File) {
     width: 25px;
     height: 60px;
 
-    filter: drop-shadow(0 0 0.2rem black);
+    filter: drop-shadow(0 0 0.2rem var(--color-black));
 }
 
 .header {
     background: repeating-linear-gradient(0deg,
-            #d7d7d7 0px,
-            #d7d7d7 6px,
-            #9f9f9f 6px,
-            #9f9f9f 7px);
+            var(--color-gray-light) 0px,
+            var(--color-gray-light) 6px,
+            var(--color-gray-medium) 6px,
+            var(--color-gray-medium) 7px);
 
     display: flex;
     flex-direction: column;
@@ -189,13 +187,13 @@ function handleImageFile(file: File) {
 
         p {
             margin: 0;
-            filter: drop-shadow(1px 1px 5px #000000);
+            filter: drop-shadow(1px 1px 5px var(--color-black));
         }
 
         h2 {
             margin: 0;
             font-weight: normal;
-            filter: drop-shadow(1px 1px 5px #000000);
+            filter: drop-shadow(1px 1px 5px var(--color-black));
         }
     }
 }
@@ -203,8 +201,8 @@ function handleImageFile(file: File) {
 .spacer {
     width: 100%;
     height: 12px;
-    border: 1px solid #c6c6c4;
-    background-color: #dedede;
+    border: 1px solid var(--color-border-light);
+    background-color: var(--color-panel-bg);
 }
 
 .content {

@@ -2,6 +2,8 @@ import Documentation from "~/apps/documentation.vue";
 import Welcome from "~/apps/welcome.vue";
 import type { WindowInstance } from "~/types/window"
 import { APPS } from "~/registry/apps.ts"
+import type { DialogBoxOptions } from "~/components/dialogBox.vue";
+import type { MessageBoxOptions } from "~/components/messageBox.vue";
 
 export const useWindowManager = () => {
     const windows = useState<WindowInstance[]>('wm-windows', () => []);
@@ -69,6 +71,72 @@ export const useWindowManager = () => {
         return windows.value.find(w => w.appId === appId);
     }
 
+    function messageBox(title: string, message: string, options?: MessageBoxOptions) {
+        let posX = 200;
+        let posY = 200;
+
+        const width = getTextWidth(message, "bold 20pt Joan") + 100;
+
+        if (import.meta.client) {
+            posX = window.innerWidth / 2 - width / 2;
+            posY = window.innerHeight / 2 - 120 / 2;
+        }
+
+        windows.value.push({
+            id: (Math.random() * 10000).toString(),
+            appId: "messageBox",
+            title: title,
+            z: nextZ.value++,
+            minimized: false,
+
+            width: width,
+            height: 120,
+            minWidth: width,
+            minHeight: 120,
+
+            tool: true,
+            resizeable: true,
+
+            posX,
+            posY,
+
+            props: { title, message, options }
+        });
+    }
+
+    function dialogBox(title: string, message: string, callback: Function, options?: DialogBoxOptions) {
+        let posX = 200;
+        let posY = 200;
+
+        const width = getTextWidth(message, "bold 20pt Joan") + 100;
+
+        if (import.meta.client) {
+            posX = window.innerWidth / 2 - width / 2;
+            posY = window.innerHeight / 2 - 120 / 2;
+        }
+
+        windows.value.push({
+            id: (Math.random() * 10000).toString(),
+            appId: "dialogBox",
+            title: title,
+            z: nextZ.value++,
+            minimized: false,
+
+            width: width,
+            height: 120,
+            minWidth: width,
+            minHeight: 120,
+
+            tool: true,
+            resizeable: true,
+
+            posX,
+            posY,
+
+            props: { title, message, callback, options }
+        });
+    }
+
     return {
         windows: readonly(windows),
         focused,
@@ -80,5 +148,7 @@ export const useWindowManager = () => {
         isFocused,
         get,
         isTypeOpen,
+        messageBox,
+        dialogBox
     }
 }

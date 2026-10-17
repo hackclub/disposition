@@ -15,6 +15,13 @@
       "when": 1791221364194,
       "tag": "0001_balance_events_append_only",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1791720556435,
+      "tag": "0002_aromatic_rick_jones",
+      "breakpoints": true
     }
   ]
 }

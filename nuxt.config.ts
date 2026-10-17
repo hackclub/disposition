@@ -14,6 +14,10 @@ export default defineNuxtConfig({
 			clientSecret: process.env.HCA_CLIENT_SECRET,
 		},
 
+		lastfm: {
+			apiKey: process.env.LASTFM_API_KEY
+		},
+
 		public: {
 			baseUrl: "http://localhost:3000",
 			adminIds: ["U0A9S13HQF3", "U0AFWJX9CP2", "U0A9M9LC5PV"], // org slack ids
@@ -24,9 +28,9 @@ export default defineNuxtConfig({
 				},
 
 				settings: {
-					showBuddy: true,
+					showBuddies: true,
 					wallpaperSource: "/wallpaper/default.png",
-					configVersion: "1.0.0"
+					configVersion: "1.0.1"
 				}
 			},
 

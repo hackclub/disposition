@@ -10,6 +10,7 @@ export type Order = {
     message: string,
     adminMessage?: string,
     timestamp: Date
+    tracking?: string,
 }
 
 export type Item = {
@@ -24,6 +25,26 @@ export type Item = {
     added: Date,
     price: number,
     staffPickAt: Date
+}
+
+/* basically this is just the item that you get from shop/item/[id].get.ts. it includes extra data from last.fm & musicbrainz */
+export type ServerItem = {
+    id: number,
+    album: string,
+    artist: string,
+    genre: string,
+    image: string,
+    description: string,
+    media: Media,
+    urls?: string[],
+    added: Date,
+    price: number,
+    staffPickAt: Date,
+
+    tracks: number,
+    length: number,
+    releaseDate: string,
+    tags: string[],
 }
 
 export type User = {

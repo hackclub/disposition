@@ -92,8 +92,8 @@ onUnmounted(() => clearInterval(timer));
     left: 0;
 
     height: 35px;
-    background: linear-gradient(180deg, #525252 0%, #000000 100%);
-    border-top: 2px solid #797979;
+    background: linear-gradient(180deg, var(--color-gradient-dark-top) 0%, var(--color-gradient-dark-bottom) 100%);
+    border-top: 2px solid var(--color-border-dark);
 
     display: flex;
     flex-direction: row;
@@ -111,13 +111,13 @@ onUnmounted(() => clearInterval(timer));
 .divider {
     height: 100%;
     width: 2px;
-    background-color: #797979;
+    background-color: var(--color-border-dark);
 }
 
 .clock {
     display: flex;
     flex-direction: column;
-    color: white;
+    color: var(--color-white);
     font-size: 10px;
     user-select: none;
 }
@@ -142,7 +142,7 @@ onUnmounted(() => clearInterval(timer));
     flex-direction: row;
     gap: 5px;
 
-    color: white;
+    color: var(--color-white);
     font-size: 15px;
 }
 
