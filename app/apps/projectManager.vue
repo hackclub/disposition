@@ -54,13 +54,14 @@ const projects: Project[] = [
             </div>
           </div>
         </div>
-         <div class="user-bar">
+         
+        </div>
+        <div class="user-bar">
           <div class="user-info">
             <div class="user-avatar" />
             <span>Logged in as Username</span>
           </div>
           <button class="button">Open Profile</button>
-        </div>
         </div>
       </div>
      
@@ -80,10 +81,10 @@ const projects: Project[] = [
 }
 
 .page-title {
+  height: 100%;
   text-align: center;
   font-size: 26px;
   font-weight: 700;
-  margin: -16px 0 8px;
 }
 
 .projects-panel {
