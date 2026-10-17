@@ -163,6 +163,7 @@ function save() {
 }
 
 .edit-panel {
+    margin: 0px;
     display: grid;
     grid-template-columns: auto 190px;
     gap: 0 8px;
@@ -171,7 +172,6 @@ function save() {
     box-sizing: border-box;
     padding: 2px 6px;
     background: white;
-    box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.25);
     font-family: 'Fira Sans', sans-serif;
     font-size: 14px;
     user-select: none;

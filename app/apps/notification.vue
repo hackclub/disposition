@@ -159,24 +159,25 @@ const notifications: AppNotification[] = [
 }
  
 .notification {
-  margin-bottom: 16px;
+  margin-bottom: 10px;
 }
  
 .notification-date {
-  margin: 0 0 6px;
+  margin: 0 0 2px;
   font-weight: 700;
-  font-size: 16px;
-  color: #3c4f5c;
+  font-size: 15px;
+  color: #525252;
 }
  
 .notification-card {
-  border: 1px solid #b7b7b5;
+  border: 1px solid #8E8F90;
 }
  
 .notification-title {
-  background: #c9c9c9;
-  font-weight: 700;
-  font-size: 17px;
+  background: #E6E6E6;
+  color: #333333;
+  font-weight: 600;
+  font-size: 15px;
   padding: 5px 6px;
 }
  

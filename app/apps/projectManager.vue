@@ -54,7 +54,6 @@ const projects: Project[] = [
             </div>
           </div>
         </div>
-         
         </div>
         <div class="user-bar">
           <div class="user-info">
@@ -72,19 +71,22 @@ const projects: Project[] = [
 .projects-page {
   max-width: 1000px;
   margin: 0 0;
-  min-height: 490px;
+  height: 440px;
   display: flex;
   flex-direction: column;
-  padding: 16px;
+  padding: 5px;
+  padding-top: 10px;
   background: white;
-  overflow-y: scroll;
+  overflow-y: hidden;
 }
 
 .page-title {
-  height: 100%;
+  height: 50px;
   text-align: center;
   font-size: 26px;
   font-weight: 700;
+  margin: 5px;
+  
 }
 
 .projects-panel {
@@ -152,7 +154,7 @@ const projects: Project[] = [
 
 .user-bar {
   margin-top: auto;
-  padding-top: 16px;
+  margin: 2px;
   display: flex;
   align-items: center;
   justify-content: space-between;

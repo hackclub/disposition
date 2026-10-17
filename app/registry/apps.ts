@@ -16,8 +16,24 @@ import ProfileEdit from "~/apps/profileEdit.vue"
 import AdminShopAddItem from "~/apps/admin/adminShopAddItem.vue"
 import ConfirmOrder from "~/apps/shop/confirmOrder.vue"
 import ViewItem from "~/apps/shop/viewItem.vue"
+import adminAnnouncePanel from "~/apps/admin/adminAnnouncePanel.vue"
 
 export const APPS: { [key: string]: AppDef } = {
+
+    adminAnnouncePanel: {
+        appId: 'adminAnnouncePanel',
+        title: "Admin Announcer Panel",
+        component: adminAnnouncePanel,
+
+        width: 400,
+        height: 510,
+        minWidth: 542,
+        minHeight: 500,
+
+        tool: false,
+        resizeable: false,
+
+    },
 
     profileEdit: {
         appId: 'profileEdit',
@@ -25,7 +41,7 @@ export const APPS: { [key: string]: AppDef } = {
         component: ProfileEdit,
 
         width: 542,
-        height: 400,
+        height: 410,
         minWidth: 542,
         minHeight: 307,
 
