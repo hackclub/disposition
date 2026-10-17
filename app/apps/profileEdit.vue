@@ -100,7 +100,7 @@ function save() {
     display: flex;
     gap: 12px;
     padding: 6px;
-    background: var(--color-card-bg);
+    background: var(--color-panel-bg);
     border: 1px solid var(--color-gray-medium);
 
     .avatar {
@@ -156,7 +156,7 @@ function save() {
 
 .btn {
     background: linear-gradient(var(--color-btn-gradient-top), var(--color-btn-gradient-bottom));
-    border: 1px solid var(--color-gray-border);
+    border: 1px solid var(--color-border-light);
     border-radius: 3px;
     padding: 2px 14px;
     cursor: pointer;
@@ -171,12 +171,8 @@ function save() {
     max-width: 100%;
     box-sizing: border-box;
     padding: 2px 6px;
-<<<<<<< HEAD
-    background: white;
-=======
     background: var(--color-white);
     box-shadow: inset 0 0 8px var(--color-shadow-inset);
->>>>>>> 83d94802d37b32497a2b0f364d5a4b4af6afc057
     font-family: 'Fira Sans', sans-serif;
     font-size: 14px;
     user-select: none;
@@ -257,7 +253,7 @@ function save() {
 }
 
 .field::placeholder {
-    color: var(--color-gray-muted);
+    color: var(--color-gray-dark);
 }
 
 .field:focus {

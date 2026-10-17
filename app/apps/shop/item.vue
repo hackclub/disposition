@@ -193,7 +193,7 @@ p {
     width: 200px;
     height: 200px;
     /* object-fit: contain; */
-    /* border: 2px dashed var(--color-gray-muted); */
+    /* border: 2px dashed var(--color-gray-dark); */
     box-sizing: border-box;
 }
 

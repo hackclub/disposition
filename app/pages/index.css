@@ -1,64 +1,38 @@
 :root {
-    /* todo remove a bunch of these values and make the colors more consistent across places */
-
-    /* Base colors */
     --color-white: #ffffff;
     --color-black: #000000;
-    --color-link: blue;
-    --color-accent-blue: #4a90e2; /* todo remove this shi */
 
-    /* Borders */
     --color-border-dark: #797979;
     --color-border-light: #C6C6C4;
-    --color-border-input: #7B7B7B;
-    --color-gray-border: #aaa;
-    --color-admin-border: #8E8F90;
-    --color-notif-border: #b7b7b5;
 
-    /* Backgrounds / panels */
     --color-bg-light: #F2F2F2;
     --color-bg-medium: #EDEDED;
     --color-bg-dark: #DDDDDD;
     --color-panel-bg: #dedede;
-    --color-admin-bg: #E6E6E6;
-    --color-card-bg: #e3e3e3;
-    --color-card-bg-light: #e8e8e8;
-    --color-info-bg: #D9D9D9;
-    --color-tab-bg: #f4f4f4;
-    --color-tab-active: #d0d0d0;
-    --color-notif-title-bg: #c9c9c9; /* todo remove this shi */
 
-    /* Grays */
-    --color-gray-50: #fafafa;
     --color-gray-light: #d7d7d7;
     --color-gray-medium: #9f9f9f;
-    --color-gray-muted: #888;
     --color-gray-dark: #777;
     --color-gray-800: #333;
+    /* todo remove this shi */
     --color-gray-900: #111;
+    /* todo remove this shi */
 
-    /* Buttons */
     --color-btn-gradient-top: #fafafa;
     --color-btn-gradient-bottom: #dcdcdc;
     --color-btn-gradient-bottom-alt: #e4e4e4;
 
-    /* Text */
-    --color-notif-date: #3c4f5c; /* todo remove this shi */
+    --color-notif-date: #3c4f5c;
+    /* todo remove this shi */
 
-    /* Gradients */
     --color-gradient-dark: #525252;
     --color-gradient-dark-top: #525252;
     --color-gradient-dark-bottom: #000000;
     --color-menu-gradient-top: #525252;
     --color-menu-gradient-bottom: #050505;
 
-    /* Shadows */
     --color-shadow-dark: #0000006d;
-    --color-shadow-buddy: #070707;
     --color-shadow-inset: rgba(0, 0, 0, 0.25);
-
-    /* Menu */
-    --color-menu-hover: #1F1F1F;
 }
 
 @font-face {
@@ -238,7 +212,7 @@ label:has(input[type="checkbox"]) {
 input[type="text"] {
     outline: none;
     background-color: var(--color-bg-light);
-    border: 1px solid var(--color-border-input);
+    border: 1px solid var(--color-border-dark);
     font-family: 'Fira Sans', sans-serif;
 
     &:active {
@@ -250,7 +224,7 @@ input[type="email"] {
     outline: none;
 
     background-color: var(--color-bg-light);
-    border: 1px solid var(--color-border-input);
+    border: 1px solid var(--color-border-dark);
     font-family: 'Fira Sans', sans-serif;
 
     &:active {

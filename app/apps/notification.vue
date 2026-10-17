@@ -155,7 +155,7 @@ const notifications: AppNotification[] = [
 }
  
 .tab.active {
-  background: var(--color-tab-active);
+  background: var(--color-panel-bg);
 }
  
 .notification {
@@ -165,47 +165,24 @@ const notifications: AppNotification[] = [
 .notification-date {
   margin: 0 0 2px;
   font-weight: 700;
-<<<<<<< HEAD
-  font-size: 15px;
-  color: #525252;
-}
- 
-.notification-card {
-  border: 1px solid #8E8F90;
-}
- 
-.notification-title {
-  background: #E6E6E6;
-  color: #333333;
-  font-weight: 600;
-  font-size: 15px;
-=======
   font-size: 16px;
   color: var(--color-notif-date);
 }
  
 .notification-card {
-  border: 1px solid var(--color-notif-border);
+  border: 1px solid var(--color-border-light);
 }
  
 .notification-title {
-  background: var(--color-notif-title-bg);
+  background: var(--color-panel-bg);
   font-weight: 700;
   font-size: 17px;
->>>>>>> 83d94802d37b32497a2b0f364d5a4b4af6afc057
   padding: 5px 6px;
 }
  
 .notification-body {
-<<<<<<< HEAD
-  background: #fff;
-  padding-bottom: 5px;
-  padding-left: 2px;
-  padding-top: 2px;
-=======
   background: var(--color-white);
   padding: 12px;
->>>>>>> 83d94802d37b32497a2b0f364d5a4b4af6afc057
 }
  
 .notification-body p {
@@ -216,7 +193,5 @@ const notifications: AppNotification[] = [
  
 .notification-body p:last-of-type {
   margin-bottom: 0;
-}
-
- 
+} 
 </style>

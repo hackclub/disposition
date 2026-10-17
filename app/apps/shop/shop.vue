@@ -66,7 +66,8 @@ const { data } = await useFetch<Record<string, Item[]>>("/api/shop/items/shelves
 	.items {
 		display: flex;
 		flex-direction: row;
-
+		gap: 5px;
+		
 		.item {
 			border: 2px solid var(--color-border-light);
 			background-color: var(--color-panel-bg);

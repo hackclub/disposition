@@ -14,25 +14,20 @@ import profileViewer from "~/apps/profileViewer.vue"
 import AdminShop from "~/apps/admin/adminShop.vue"
 import ProfileEdit from "~/apps/profileEdit.vue"
 import AdminShopAddItem from "~/apps/admin/adminShopAddItem.vue"
-<<<<<<< HEAD
-import ConfirmOrder from "~/apps/shop/confirmOrder.vue"
-import ViewItem from "~/apps/shop/viewItem.vue"
-import adminAnnouncePanel from "~/apps/admin/adminAnnouncePanel.vue"
-=======
 import Item from "~/apps/shop/item.vue"
 import Orders from "~/apps/shop/orders.vue"
 import AdminShopOrder from "~/apps/admin/adminShopOrder.vue"
 import Order from "~/apps/shop/order.vue"
 import Messagebox from "~/components/messageBox.vue"
 import Dialogbox from "~/components/dialogBox.vue"
->>>>>>> 83d94802d37b32497a2b0f364d5a4b4af6afc057
+import AdminAnnouncePanel from "~/apps/admin/adminAnnouncePanel.vue"
 
 export const APPS: { [key: string]: AppDef } = {
 
     adminAnnouncePanel: {
         appId: 'adminAnnouncePanel',
         title: "Admin Announcer Panel",
-        component: adminAnnouncePanel,
+        component: AdminAnnouncePanel,
 
         width: 400,
         height: 510,

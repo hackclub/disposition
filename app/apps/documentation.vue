@@ -76,7 +76,7 @@ function selectArticle(path: string) {
     overflow-y: auto;
 
     h3 {
-        background-color: var(--color-info-bg);
+		background-color: var(--color-panel-bg);
         padding: 2px;
     }
 
@@ -88,7 +88,7 @@ function selectArticle(path: string) {
 
 .divider {
     flex: 0 0 2px;
-    background-color: var(--color-info-bg);
+    background-color: var(--color-panel-bg);
 }
 
 .content {

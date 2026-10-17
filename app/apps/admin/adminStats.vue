@@ -78,8 +78,8 @@ if (admin) info.value = await $fetch<RsvpStats>("/api/rsvps/stats");
 }
 
 .data {
-    background-color: var(--color-admin-bg);
-    border: 2px solid var(--color-admin-border);
+    background-color: var(--color-panel-bg);
+    border: 2px solid var(--color-border-dark);
     padding: 5px;
 }
 

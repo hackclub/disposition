@@ -140,7 +140,7 @@ onBeforeUnmount(() => {
     background-repeat: no-repeat;
     background-position: center;
     transform-origin: center;
-    filter: drop-shadow(2px 5px 4px var(--color-shadow-buddy));
+    filter: drop-shadow(2px 5px 4px var(--color-shadow-dark));
     user-select: none;
     pointer-events: none;
 

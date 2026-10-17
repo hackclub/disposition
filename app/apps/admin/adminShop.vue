@@ -142,7 +142,7 @@ if (admin) {
 
 <style scoped>
 a {
-    color: var(--color-link);
+    color: blue;
     text-decoration: underline;
 }
 

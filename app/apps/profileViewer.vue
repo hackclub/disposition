@@ -93,7 +93,7 @@ const activeTab = ref<'about' | 'projects'>('projects')
     width: 30px;
     height: 30px;
     background: var(--color-white);
-    border: 1px solid var(--color-gray-muted);
+    border: 1px solid var(--color-gray-dark);
     font-weight: bold;
     cursor: pointer;
 }
@@ -107,7 +107,7 @@ const activeTab = ref<'about' | 'projects'>('projects')
     display: flex;
     gap: 12px;
     padding: 6px;
-    background: var(--color-card-bg);
+    background: var(--color-panel-bg);
     border: 1px solid var(--color-gray-medium);
 
     .avatar {
@@ -160,7 +160,7 @@ const activeTab = ref<'about' | 'projects'>('projects')
         width: 90px;
         height: 18px;
         font-size: 12px;
-        background: var(--color-tab-bg);
+        background: var(--color-bg-light);
         border-bottom: none;
         cursor: pointer;
         border: none;
@@ -209,7 +209,7 @@ const activeTab = ref<'about' | 'projects'>('projects')
         "footer footer";
     gap: 6px 12px;
     padding: 10px;
-    background: var(--color-card-bg-light);
+    background: var(--color-panel-bg-light);
     border: 1px solid var(--color-gray-medium);
 
     .thumb {

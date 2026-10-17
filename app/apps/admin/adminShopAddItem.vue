@@ -224,12 +224,12 @@ const onSubmit = handleSubmit(async (values) => {
 .drag-and-drop {
     width: 250px;
     height: 250px;
-    border: 2px dashed var(--color-gray-muted);
+    border: 2px dashed var(--color-gray-dark);
     box-sizing: border-box;
 }
 
 .drag-and-drop.dragging {
-    border-color: var(--color-accent-blue);
+    border-color: blue;
 }
 
 .content {

@@ -93,7 +93,8 @@ function openNextChanged() {
     flex-grow: 5;
 
     border-style: none;
-    background-color: var(--color-info-bg);
+    border: 2px solid var(--color-border-light);
+    background-color: var(--color-panel-bg);
 
     display: flex;
     flex-direction: column;

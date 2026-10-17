@@ -110,7 +110,7 @@ function handleImageFile(file: File) {
 
 .drag-and-drop {
     background-color: var(--color-bg-light);
-    border: 1px solid var(--color-border-input);
+    border: 1px solid var(--color-border-dark);
 
     display: flex;
     justify-content: center;
