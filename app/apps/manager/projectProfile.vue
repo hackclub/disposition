@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import rigby from '~/assets/icons/rigby.png'
-import badge from '~/assets/icons/badge.jpg'
+import badge from '~/assets/icons/badge.png'
 
 const aboutText = 'My cat Rigby has been corrupted by the cruel evil and now he wants to destroy me so i am currently developing a very genius machine to suck out the evil within him'
 const photoCaption = 'This is a photo of Rigby'
@@ -131,8 +131,8 @@ const devlogs = [1, 2, 3, 4, 5]
 }
 
 .badge {
-    width: 20px;
-    height: 20px;
+    width: 40px;
+    height: 40px;
     flex-shrink: 0;
     object-fit: contain;
     display: block;

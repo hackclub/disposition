@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import badge from '../assets/icons/badge.jpg'
-import avatar from '../assets/icons/avatar.png'
-import headerbg from '../assets/misc/header.png'
+import badge from '~/assets/icons/badge.png'
+import avatar from '~/assets/icons/avatar.png'
+import headerbg from '~/assets/misc/header.png'
 
 const username = ref('')
 const bio = ref('')

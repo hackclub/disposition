@@ -12,7 +12,7 @@ import Notification from "~/apps/notification.vue"
 import projectManager from "~/apps/manager/projectManager.vue"
 import profileViewer from "~/apps/manager/profileViewer.vue"
 import AdminShop from "~/apps/admin/adminShop.vue"
-import ProfileEdit from "~/apps/profileEdit.vue"
+import ProfileEdit from "~/apps/manager/profileEdit.vue"
 import AdminShopAddItem from "~/apps/admin/adminShopAddItem.vue"
 import Item from "~/apps/shop/item.vue"
 import Orders from "~/apps/shop/orders.vue"
@@ -24,8 +24,23 @@ import AdminAnnouncePanel from "~/apps/admin/adminAnnouncePanel.vue"
 import AdminShopEditItem from "~/apps/admin/adminShopEditItem.vue"
 import Category from "~/apps/shop/category.vue"
 import ProjectProfile from "~/apps/manager/projectProfile.vue"
+import ProjectBrowse from "~/apps/manager/projectBrowse.vue"
 
 export const APPS: { [key: string]: AppDef } = {
+
+    projectBrowse: {
+        appId: 'projectBrowse',
+        title: "Project Browser",
+        component: ProjectBrowse,
+
+        width: 500,
+        height: 680,
+        minHeight: 700,
+        minWidth: 450,
+
+        tool: false,
+        resizeable: false,
+    },
 
     projectProfile: {
         appId: 'projectProfile',
