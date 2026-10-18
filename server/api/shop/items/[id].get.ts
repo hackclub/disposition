@@ -27,10 +27,10 @@ export default defineEventHandler(async event => {
         v == null ? [] : Array.isArray(v) ? v : [v];
 
     try {
-        const album = (await getAlbumInfo(item.album, item.artist))?.album ?? {};
+        const album = (await getAlbumInfo(item.album, item.artist!))?.album ?? {};
         const tracks = asArray<any>(album.tracks?.track);
         const lfmSeconds = tracks.reduce((sum, t) => sum + (Number(t.duration) || 0), 0);
-        const mbInfo = await getReleaseInfo(item.album, item.artist, album.mbid).catch(() => null);
+        const mbInfo = await getReleaseInfo(item.album, item.artist!, album.mbid).catch(() => null);
 
         return {
             ...item,

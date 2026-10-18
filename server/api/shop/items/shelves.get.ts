@@ -92,19 +92,20 @@ export default defineEventHandler(async (event) => {
 
     const mediaRows = await latestPer(shopItems.media);
 
-    const topGenres = await db.select({ genre: shopItems.genre }).from(shopItems)
+    const topGenres = await db.select({ genre: shopItems.genre! }).from(shopItems)
+        .where(isNotNull(shopItems.genre))
         .groupBy(shopItems.genre)
         .orderBy(desc(count()), shopItems.genre)
         .limit(genre_shelves)
-        .then(rows => rows.map(r => r.genre))
+        .then(rows => rows.map(r => r.genre).filter((genre): genre is string => genre !== null))
 
     const genreRows = topGenres.length
-        ? await latestPer(shopItems.genre, inArray(shopItems.genre, topGenres))
+        ? await latestPer(shopItems.genre, inArray(shopItems!.genre!, topGenres))
         : [];
 
     return {
         "Featured": { "Trending": trending, "Staff Picks": staffPicks },
         "By Media": groupBy(mediaRows, r => r.media, ["cd", "vinyl", "cassette", "other"], ["CDs", "Vinyl", "Cassette", "Other"]),
-        "By Genre": groupBy(genreRows, r => r.genre, topGenres),
+        "By Genre": groupBy(genreRows, r => r!.genre!, topGenres),
     }
 });

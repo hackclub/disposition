@@ -14,9 +14,9 @@ const { data: item } = await useFetch<Item>(`/api/shop/items/${props.id}`);
 const { defineField, errors, handleSubmit, setFieldValue, isSubmitting } = useForm({
     validationSchema: toTypedSchema(z.object({
         image: z.instanceof(File, { message: "Please choose an image" }).optional(),
-        artist: z.string().trim().min(1, "Artist is required").optional(),
+        artist: z.string().optional().nullish(),
         album: z.string().trim().min(1, "Album is required").optional(),
-        genre: z.string().trim().min(1, "Genre is required").optional(),
+        genre: z.string().optional().nullish(),
         media: z.enum(["cd", "vinyl", "cassette", "other"]).optional(),
         price: z.number({ error: "Price is required" }).min(1, "Price must be at least 1").optional(),
         description: z.string().optional(),
@@ -108,9 +108,9 @@ const onSubmit = handleSubmit(async (values) => {
     const current = item.value!;
 
     if (values.image) body.append("image", values.image);
-    if (values.artist !== undefined && values.artist !== current.artist) body.append("artist", values.artist);
+    if (values.artist && values.artist !== undefined && values.artist !== current.artist) body.append("artist", values.artist);
     if (values.album !== undefined && values.album !== current.album) body.append("album", values.album);
-    if (values.genre !== undefined && values.genre !== current.genre) body.append("genre", values.genre);
+    if (values.genre && values.genre !== undefined && values.genre !== current.genre) body.append("genre", values.genre);
     if (values.media !== undefined && values.media !== current.media) body.append("media", values.media);
     if (values.price !== undefined && values.price !== current.price) body.append("price", String(values.price));
     if (values.description !== undefined && values.description !== current.description) body.append("description", values.description);
@@ -149,20 +149,31 @@ const onSubmit = handleSubmit(async (values) => {
                 <span class="error" v-if="errors.image">{{ errors.image }}</span>
             </div>
             <div class="vertical fields">
-                <label for="artist">Artist</label>
-                <input type="text" id="artist" v-model="artist" placeholder="Artist" />
-                <span class="error" v-if="errors.artist">{{ errors.artist }}</span>
+                <template v-if="media != 'other'">
+                    <label for="artist">Artist</label>
+                    <input type="text" id="artist" v-model="artist" placeholder="Artist" />
+                    <span class="error" v-if="errors.artist">{{ errors.artist }}</span>
+                </template>
 
-                <label for="album">Album</label>
-                <input type="text" id="album" v-model="album" placeholder="Album" />
-                <span class="error" v-if="errors.album">{{ errors.album }}</span>
+                <template v-if="media == 'other'">
+                    <label for="album">Item name</label>
+                    <input type="text" id="album" v-model="album" placeholder="Item name" />
+                    <span class="error" v-if="errors.album">{{ errors.album }}</span>
+                </template>
+                <template v-else>
+                    <label for="album">Album</label>
+                    <input type="text" id="album" v-model="album" placeholder="Album" />
+                    <span class="error" v-if="errors.album">{{ errors.album }}</span>
+                </template>
 
-                <label for="genre">Genre</label>
-                <input type="text" id="genre" v-model="genre" placeholder="Genre" list="genre-list" />
-                <datalist id="genre-list">
-                    <option v-for="g in genres" :key="g" :value="g" />
-                </datalist>
-                <span class="error" v-if="errors.genre">{{ errors.genre }}</span>
+                <template v-if="media != 'other'">
+                    <label for="genre">Genre</label>
+                    <input type="text" id="genre" v-model="genre" placeholder="Genre" list="genre-list" />
+                    <datalist id="genre-list">
+                        <option v-for="g in genres" :key="g" :value="g" />
+                    </datalist>
+                    <span class="error" v-if="errors.genre">{{ errors.genre }}</span>
+                </template>
 
                 <label for="media">Media</label>
                 <select name="media" id="media" v-model="media">

@@ -3,6 +3,7 @@ import type { WindowInstance } from '~/types/window';
 import { useForm } from "vee-validate";
 import { toTypedSchema } from '@vee-validate/zod'
 import * as z from "zod";
+import Item from '../shop/item.vue';
 
 const manager = useWindowManager();
 const props = defineProps<{ instance: WindowInstance }>()
@@ -12,9 +13,9 @@ if (!admin) manager.close(props.instance.id);
 const { defineField, errors, handleSubmit, setFieldValue, isSubmitting } = useForm({
     validationSchema: toTypedSchema(z.object({
         image: z.instanceof(File, { message: "Please choose an image" }),
-        artist: z.string().trim().min(1, "Artist is required"),
+        artist: z.string().trim().optional(),
         album: z.string().trim().min(1, "Album is required"),
-        genre: z.string().trim().min(1, "Genre is required"),
+        genre: z.string().trim().optional(),
         media: z.enum(["cd", "vinyl", "cassette", "other"]),
         price: z.number({ error: "Price is required" }).min(1, "Price must be at least 1"),
         description: z.string(),
@@ -44,17 +45,15 @@ const isDragging = ref(false);
 const previewUrl = ref<string | null>(null);
 
 const canSubmit = computed(() => {
-    if (!previewUrl.value || !previewUrl.value.startsWith("blob:")) return false;
+    if (!previewUrl.value) return false;
+    if (!album.value?.trim()) return false;
+    if (!price.value || price.value < 1) return false;
 
-    return (
-        artist.value != "" ||
-        album.value != "" ||
-        genre.value != "" ||
-        media.value != null ||
-        price.value != null ||
-        description.value != "" ||
-        staffPick.value != null
-    );
+    if (media.value !== "other") {
+        if (!artist.value?.trim()) return false;
+        if (!genre.value?.trim()) return false;
+    }
+    return true;
 });
 
 // genre dropdown bullshit
@@ -102,9 +101,9 @@ const onSubmit = handleSubmit(async (values) => {
 
     const body = new FormData();
     body.append("image", values.image);
-    body.append("artist", values.artist);
+    if(values.artist) body.append("artist", values.artist);
     body.append("album", values.album);
-    body.append("genre", values.genre);
+    if(values.genre) body.append("genre", values.genre);
     body.append("media", values.media);
     body.append("price", String(values.price));
     body.append("description", values.description);
@@ -138,22 +137,31 @@ const onSubmit = handleSubmit(async (values) => {
                 <span class="error" v-if="errors.image">{{ errors.image }}</span>
             </div>
             <div class="vertical fields">
-                <template>
+                <template v-if="media != 'other'">
                     <label for="artist">Artist</label>
                     <input type="text" id="artist" v-model="artist" placeholder="Artist" />
                     <span class="error" v-if="errors.artist">{{ errors.artist }}</span>
                 </template>
 
-                <label for="album">Album</label>
-                <input type="text" id="album" v-model="album" placeholder="Album" />
-                <span class="error" v-if="errors.album">{{ errors.album }}</span>
+                <template v-if="media == 'other'">
+                    <label for="album">Item name</label>
+                    <input type="text" id="album" v-model="album" placeholder="Item name" />
+                    <span class="error" v-if="errors.album">{{ errors.album }}</span>
+                </template>
+                <template v-else>
+                    <label for="album">Album</label>
+                    <input type="text" id="album" v-model="album" placeholder="Album" />
+                    <span class="error" v-if="errors.album">{{ errors.album }}</span>
+                </template>
 
-                <label for="genre">Genre</label>
-                <input type="text" id="genre" v-model="genre" placeholder="Genre" list="genre-list" />
-                <datalist id="genre-list">
-                    <option v-for="g in genres" :key="g" :value="g" />
-                </datalist>
-                <span class="error" v-if="errors.genre">{{ errors.genre }}</span>
+                <template v-if="media != 'other'">
+                    <label for="genre">Genre</label>
+                    <input type="text" id="genre" v-model="genre" placeholder="Genre" list="genre-list" />
+                    <datalist id="genre-list">
+                        <option v-for="g in genres" :key="g" :value="g" />
+                    </datalist>
+                    <span class="error" v-if="errors.genre">{{ errors.genre }}</span>
+                </template>
 
                 <label for="media">Media</label>
                 <select name="media" id="media" v-model="media">
@@ -191,7 +199,7 @@ const onSubmit = handleSubmit(async (values) => {
                 </div>
 
                 <div class="upload-div">
-                    <button type="submit" :disabled="isSubmitting || canSubmit">Upload</button>
+                    <button type="submit" :disabled="isSubmitting || !canSubmit">Upload</button>
                 </div>
             </div>
         </div>
