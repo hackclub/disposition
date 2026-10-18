@@ -22,6 +22,7 @@ import Messagebox from "~/components/messageBox.vue"
 import Dialogbox from "~/components/dialogBox.vue"
 import AdminAnnouncePanel from "~/apps/admin/adminAnnouncePanel.vue"
 import AdminShopEditItem from "~/apps/admin/adminShopEditItem.vue"
+import Category from "~/apps/shop/category.vue"
 
 export const APPS: { [key: string]: AppDef } = {
 
@@ -359,6 +360,20 @@ export const APPS: { [key: string]: AppDef } = {
         height: 550,
         minWidth: 670,
         minHeight: 550,
+
+        tool: true,
+        resizeable: true
+    },
+
+    category: {
+        appId: 'category',
+        title: 'View Category',
+        component: Category,
+
+        width: 500,
+        height: 600,
+        minWidth: 500,
+        minHeight: 600,
 
         tool: true,
         resizeable: true

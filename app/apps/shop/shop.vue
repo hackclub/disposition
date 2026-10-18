@@ -34,7 +34,8 @@ const { data } = await useFetch<Record<string, Record<string, Item[]>>>("/api/sh
 
 					<template v-for="(items, name) in categories">
 						<section class="browse-category" v-if="items.length > 0">
-							<h2 @click="manager.open('category', { category: name })">{{ name }}</h2>
+							<h2 v-if="section == 'By Genre'" @click="manager.open('category', { category: name })" class="a">{{ name }}↗</h2>
+							<h2 v-else>{{ name }}</h2>
 							<div class="items">
 								<div v-for="item in items" class="item" @click="manager.open('item', { id: item.id })"
 									:key="item.id">
@@ -59,6 +60,11 @@ const { data } = await useFetch<Record<string, Record<string, Item[]>>>("/api/sh
 </template>
 
 <style scoped>
+.a:hover {
+	cursor: pointer;
+	text-decoration: underline;
+}
+
 .divider {
 	width: 100%;
 	height: 2px;

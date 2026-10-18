@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm/relations";
-import { announcements, announcementReads, users, balanceEvents, pendingNotifications, shopItems, shopOrders, shopRequests } from "./schema";
+import { announcements, announcementReads, users, balanceEvents, pendingNotifications, shopItems, shopOrders, shopRequests, addresses } from "./schema";
 
 export const announcementReadsRelations = relations(announcementReads, ({one}) => ({
 	announcement: one(announcements, {
@@ -12,6 +12,14 @@ export const announcementReadsRelations = relations(announcementReads, ({one}) =
 	}),
 }));
 
+export const addressesRelations = relations(addresses, ({one, many}) => ({
+	user: one(users, {
+		fields: [addresses.user],
+		references: [users.hcaId]
+	}),
+	shopOrders: many(shopOrders),
+}));
+
 export const announcementsRelations = relations(announcements, ({many}) => ({
 	announcementReads: many(announcementReads),
 }));
@@ -22,6 +30,7 @@ export const usersRelations = relations(users, ({many}) => ({
 	pendingNotifications: many(pendingNotifications),
 	shopOrders: many(shopOrders),
 	shopRequests: many(shopRequests),
+	addresses: many(addresses)
 }));
 
 export const balanceEventsRelations = relations(balanceEvents, ({one}) => ({
@@ -46,6 +55,10 @@ export const shopOrdersRelations = relations(shopOrders, ({one}) => ({
 	user: one(users, {
 		fields: [shopOrders.user],
 		references: [users.hcaId]
+	}),
+	shippingAddress: one(addresses, {
+		fields: [shopOrders.shippingAddress],
+		references: [addresses.id]
 	}),
 }));
 

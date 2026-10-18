@@ -10,24 +10,30 @@ export default defineEventHandler(async (event) => {
         genre: z.coerce.string().min(1),
     }).parse).then(p => p.genre);
 
-    const { cursor, limit } = await getValidatedQuery(event, z.object({
-        cursor: z.coerce.number().int().positive().optional(),
-        limit: z.coerce.number().int().min(1).max(100).default(15),
-    }).parse);
+    // const { cursor, limit } = await getValidatedQuery(event, z.object({
+    //     cursor: z.coerce.number().int().positive().optional(),
+    //     limit: z.coerce.number().int().min(1).max(100).default(15),
+    // }).parse);
 
-    const rows = await db.select(publicItemColumns).from(shopItems)
-        .where(and(
-            eq(shopItems.genre, genre),
-            cursor ? lt(shopItems.id, cursor) : undefined,
-        ))
-        .orderBy(desc(shopItems.id))
-        .limit(limit + 1);
+    // const rows = await db.select(publicItemColumns).from(shopItems)
+    //     .where(and(
+    //         eq(shopItems.genre, genre),
+    //         cursor ? lt(shopItems.id, cursor) : undefined,
+    //     ))
+    //     .orderBy(desc(shopItems.id))
+    //     .limit(limit + 1);
+    const rows = await db.select(publicItemColumns).from(shopItems).where(eq(shopItems.genre, genre)).orderBy(desc(shopItems.id));
+    if(!rows) throw createError({
+        statusCode: 400,
+        message: "Genre not found."
+    })
 
-    const hasMore = rows.length > limit;
-    const items = hasMore ? rows.slice(0, limit) : rows;
+    // const hasMore = rows.length > limit;
+    // const items = hasMore ? rows.slice(0, limit) : rows;
 
-    return {
-        items,
-        nextCursor: hasMore ? items[items.length - 1]!.id : null,
-    };
+    // return {
+    //     items,
+    //     nextCursor: hasMore ? items[items.length - 1]!.id : null,
+    // };
+    return rows;
 });
