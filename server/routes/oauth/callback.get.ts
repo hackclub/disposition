@@ -43,6 +43,24 @@ export default defineEventHandler(async (event) => {
             slack_id: string;
             ysws_eligible: boolean;
             verification_status: string;
+
+            birthday?: string,
+            legal_first_name?: string,
+            legal_last_name?: string,
+            phone_number?: string,
+            addresses?: {
+                id: string,
+                first_name: string,
+                last_name: string,
+                line_1: string,
+                line_2: string,
+                city: string,
+                state: string,
+                postal_code: string,
+                country: string,
+                phone_number: string,
+                primary: boolean
+            }[]
         };
         scopes: string[];
     }>("https://auth.hackclub.com/api/v1/me", {
@@ -55,11 +73,30 @@ export default defineEventHandler(async (event) => {
     await setUserSession(event, {
         user: {
             id: identity.id,
-            name: `${identity.first_name} ${identity.last_name}`,
+            firstName: identity.first_name,
+            lastName: identity.last_name,
             email: identity.primary_email,
             slackId: identity.slack_id,
             yswsEligible: identity.ysws_eligible,
-            verificationStatus: identity.verification_status
+            verificationStatus: identity.verification_status,
+
+            birthday: identity.birthday,
+            legalFirstName: identity.legal_first_name,
+            legalLastName: identity.legal_last_name,
+            phoneNumber: identity.phone_number,
+            addresses: identity.addresses?.map((address) => ({
+                id: address.id,
+                firstName: address.first_name,
+                lastName: address.last_name,
+                line1: address.line_1,
+                line2: address.line_2,
+                city: address.city,
+                state: address.state,
+                postalCode: address.postal_code,
+                country: address.country,
+                phoneNumber: address.phone_number,
+                primary: address.primary,
+            })),
         },
         secure: { hcRefreshToken: tokens.refresh_token }, // not exposed to client
     })

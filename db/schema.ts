@@ -12,6 +12,12 @@ export const users = pgTable("users", {
 
 	banner: text(),
 	bio: text(),
+
+	// sensitive info !!!! :scream:
+	birthday: timestamp({ mode: 'date' }),
+	legalFirstName: text("legal_first_name"),
+	legalLastName: text("legal_last_name"),
+	phoneNumber: text("phone_number"),
 },
 	(table) => [
 		unique("users_slack_id_unique").on(table.slackId),
@@ -89,8 +95,8 @@ export const pendingNotifications = pgTable("pending_notifications", {
 export const shopItems = pgTable("shop_items", {
 	id: integer().primaryKey().generatedByDefaultAsIdentity(),
 	album: varchar({ length: 255 }).notNull(),
-	artist: varchar({ length: 255 }).notNull(),
-	genre: varchar({ length: 255 }).notNull(),
+	artist: varchar({ length: 255 }),
+	genre: varchar({ length: 255 }),
 	image: text().notNull(),
 	description: text().notNull(),
 	// vinyl | cassette | cd | other

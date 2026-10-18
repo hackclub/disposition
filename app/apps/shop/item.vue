@@ -41,7 +41,7 @@ async function callback(result: boolean) {
                     <p>
                         <b>Price: </b>{{ item.price }}
                     </p>
-                    <p>
+                    <p v-if="item.genre">
                         <b>Genre: </b>{{ item.genre }}
                     </p>
 
@@ -55,7 +55,7 @@ async function callback(result: boolean) {
 
                     <!-- add some concrete way of counting tags so if no tags the tags: text doesnt show up -->
                     <!-- todo: add some tags here like staff pick, trending, most bought item, etc -->
-                    <b v-if="item.tags.length > 0">Tags:</b>
+                    <b v-if="item.tags && item.tags.length > 0">Tags:</b>
                     <div class="tags">
                         <p v-if="item.staffPickAt">Staff pick</p>
                     </div>
