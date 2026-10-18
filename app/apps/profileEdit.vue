@@ -100,7 +100,7 @@ function save() {
     display: flex;
     gap: 12px;
     padding: 6px;
-    background: var(--color-panel-bg);
+    background: white;
     border: 1px solid var(--color-gray-medium);
 
     .avatar {
@@ -155,11 +155,14 @@ function save() {
 }
 
 .btn {
-    background: linear-gradient(var(--color-btn-gradient-top), var(--color-btn-gradient-bottom));
-    border: 1px solid var(--color-border-light);
-    border-radius: 3px;
-    padding: 2px 14px;
-    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+    gap: 5px;
+
+    button {
+        width: 100px;
+    }
 }
 
 .edit-panel {
@@ -171,8 +174,7 @@ function save() {
     max-width: 100%;
     box-sizing: border-box;
     padding: 2px 6px;
-    background: var(--color-white);
-    box-shadow: inset 0 0 8px var(--color-shadow-inset);
+    background: white;
     font-family: 'Fira Sans', sans-serif;
     font-size: 14px;
     user-select: none;
@@ -253,7 +255,7 @@ function save() {
 }
 
 .field::placeholder {
-    color: var(--color-gray-dark);
+    color: var(--color-gray-muted);
 }
 
 .field:focus {
