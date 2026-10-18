@@ -38,7 +38,8 @@ export default defineEventHandler(async event => {
     const order: typeof shopOrders.$inferInsert = {
         user: session.user.id,
         item: item.id,
-        message: parsed.data.message || null
+        message: parsed.data.message || null,
+        shippingAddress: parsed.data.address,
     }
 
     const [result] = await db.insert(shopOrders).values(order).returning({ id: shopOrders.id });

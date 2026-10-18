@@ -3,6 +3,7 @@ import * as z from "zod";
 const OrderPostBody = z.object({
     item: z.coerce.number().int().positive(),
     message: z.string().max(2048).optional(),
+    address: z.string().min(1).max(12),
 })
 
 const OrderAdminPatchBody = z.object({

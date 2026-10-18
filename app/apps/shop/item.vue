@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { WindowInstance } from '~/types/window';
-import type { ServerItem } from '~/types/database';
+import type { ServerItem, Address } from '~/types/database';
 
 const manager = useWindowManager();
 const props = defineProps<{ instance: WindowInstance, id: number }>()
@@ -9,19 +9,20 @@ const admin = await isAdmin();
 const { data: balance } = await useFetch<number>("/api/user/balance", { key: "balance" });
 const { data: item } = await useFetch<ServerItem>(`/api/shop/items/${props.id}`);
 
-console.log(await $fetch(`/api/shop/items/${props.id}`))
-
+const address = ref<String>();
 async function callback(result: boolean) {
     if (!result) return;
+    if (!address.value) return;
     const data = new FormData();
     data.append("item", String(props.id));
     data.append("message", "");
+    data.append("address", String(address.value));
 
     const response = await $fetch(`/api/shop/orders`, {
         method: "POST", body: data
     });
     if (!response) {
-        await manager.messageBox("Error!", `There was an error placing your order,\nplease check the browser console and report this to #disposition-help!`, { error: true });
+        await manager.messageBox("Error!", `There was an error placing your order,\nplease check the browser console and report this to @sl4shed!`, { error: true });
         return;
     }
 
@@ -87,10 +88,13 @@ async function callback(result: boolean) {
                     <h2>Finish your order</h2>
 
                     <b>Shipping address</b>
-                    <select v-if="user.addresses">
-                        <option>308 Arroyo Negra Lane, New Mexico, USA, 540080</option>
+                    <select v-if="user.addresses" v-model="address">
+                        <template v-for="address in user.addresses">
+                            <option :value="address.id">{{ address.line1 }}, {{ address.city }}, {{ address.state }}, {{
+                                address.country }}, {{ address.postalCode }}</option>
+                        </template>
                     </select>
-                    <button v-else @click="navigateTo('/oauth-sensitive')">Get addresses from Hack Club Auth</button>
+                    <button v-else @click="navigateTo('/oauth-sensitive', { external: true })">Get addresses from Hack Club Auth</button>
 
                     <b>Order summary</b>
                     <div class="summary">
@@ -102,7 +106,8 @@ async function callback(result: boolean) {
                         <p><b>Balance after purchase: {{ balance - item.price }}</b></p>
                     </div>
 
-                    <button v-if="item.price > balance" disabled>You need {{ item.price - balance }} more
+                    <button v-if="!user.addresses || !address" disabled>You need to provide a shipping address</button>
+                    <button v-else-if="item.price > balance" disabled>You need {{ item.price - balance }} more
                         coins!</button>
                     <button v-else @click="manager.dialogBox(
                         'Confirm order',

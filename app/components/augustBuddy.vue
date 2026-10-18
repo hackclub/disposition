@@ -43,8 +43,10 @@ function moveSomewhere() {
     const distance = MIN_STEP + Math.random() * (MAX_STEP - MIN_STEP)
     const direction = Math.random() < 0.5 ? -1 : 1
     const nextX = Math.min(maxX, Math.max(margin, pos.x + distance * direction))
-    facingLeft.value = nextX < pos.x
-    pos.x = Math.max(nextX, LEFT_BOUNDARY)
+    const targetX = Math.max(nextX, LEFT_BOUNDARY)
+    if (targetX === pos.x) return
+    facingLeft.value = targetX < pos.x
+    pos.x = targetX
 
     isMoving.value = true
 }

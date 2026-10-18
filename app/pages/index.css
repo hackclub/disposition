@@ -231,3 +231,105 @@ input[type="email"] {
         outline: none;
     }
 }
+
+/* shoutout: https://css-tricks.com/styling-cross-browser-compatible-range-inputs-css/ */
+input[type="range"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 100%;
+    background: transparent;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+
+    border: 1px solid var(--color-border-light);
+    border-style: solid;
+    border-radius: 100%;
+    background: linear-gradient(180deg, var(--color-bg-light) 0%, var(--color-bg-medium) 41%, var(--color-bg-dark) 56%);
+    font-family: 'Fira Sans', sans-serif;
+    font-size: 15px;
+
+    &:hover:not(:disabled) {
+        filter: brightness(0.8);
+    }
+
+    &:active:not(:disabled) {
+        filter: brightness(0.5);
+    }
+
+    &:disabled {
+        cursor: not-allowed;
+    }
+}
+
+input[type="range"]::-moz-range-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+
+    border: 1px solid var(--color-border-light);
+    border-style: solid;
+    border-radius: 100%;
+    background: linear-gradient(180deg, var(--color-bg-light) 0%, var(--color-bg-medium) 41%, var(--color-bg-dark) 56%);
+    font-family: 'Fira Sans', sans-serif;
+    font-size: 15px;
+
+    &:hover:not(:disabled) {
+        filter: brightness(0.8);
+    }
+
+    &:active:not(:disabled) {
+        filter: brightness(0.5);
+    }
+
+    &:disabled {
+        cursor: not-allowed;
+    }
+}
+
+input[type="range"]:focus {
+    outline: none;
+}
+
+input[type="range"]::-ms-track {
+    width: 100%;
+    cursor: pointer;
+
+    background: transparent;
+    border-color: transparent;
+    color: transparent;
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 5px;
+    cursor: pointer;
+    background: var(--color-panel-bg);
+    border-radius: 5px;
+    border: 0.2px solid var(--color-border-dark);
+}
+
+input[type="range"]:focus::-webkit-slider-runnable-track {
+    background: #367ebd;
+}
+
+input[type="range"]::-moz-range-track {
+    width: 100%;
+    height: 5px;
+    cursor: pointer;
+    background: var(--color-panel-bg);
+    border-radius: 5px;
+    border: 0.2px solid var(--color-border-dark);
+}
+
+/** FF*/
+input[type="range"]::-moz-range-progress {
+  background-color: var(--color-black); 
+  height: 5px;
+}
+
+input[type="range"]::-ms-fill-lower {
+  background-color: var(--color-black); 
+  height: 5px;
+}

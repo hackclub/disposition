@@ -35,5 +35,5 @@ export const getReleaseInfo = defineCachedFunction(async (album: string, artist:
 {
     name: "musicbrainz-release",
     maxAge: 60 * 60 * 24 * 30, // 60 days
-    getKey: (album: string, artist: string, mbid?: string | null) => mbid ?? `search:${artist}:${album}`.toLowerCase()
+    getKey: (album: string, artist: string, mbid?: string | null) => mbid ? safeCacheKey(mbid) : safeCacheKey("search", artist, album)
 })

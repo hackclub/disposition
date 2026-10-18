@@ -84,7 +84,7 @@ export const useWindowManager = () => {
 
         windows.value.push({
             id: (Math.random() * 10000).toString(),
-            appId: "messageBox",
+            appId: "message_box",
             title: title,
             z: nextZ.value++,
             minimized: false,
@@ -117,7 +117,7 @@ export const useWindowManager = () => {
 
         windows.value.push({
             id: (Math.random() * 10000).toString(),
-            appId: "dialogBox",
+            appId: "dialog_box",
             title: title,
             z: nextZ.value++,
             minimized: false,

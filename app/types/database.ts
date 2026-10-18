@@ -11,6 +11,20 @@ export type Order = {
     adminMessage?: string,
     timestamp: Date
     tracking?: string,
+    address: Address
+}
+
+// admin order
+export type ServerOrder = {
+    id: number,
+    user: User,
+    item: Item,
+    status: OrderStatus,
+    message: string,
+    adminMessage?: string,
+    timestamp: Date
+    tracking?: string,
+    address: Address
 }
 
 export type Item = {
@@ -57,6 +71,20 @@ export type User = {
     verificationStatus: string
 }
 
+export type Address = {
+    id: string,
+    firstName: string,
+    lastName: string,
+    line1: string,
+    line2: string,
+    city: string,
+    state: string,
+    postalCode: string,
+    country: string,
+    phoneNumber: string,
+    primary: boolean
+}
+
 export type Request = {
     id: number,
     user: string,
@@ -65,5 +93,5 @@ export type Request = {
     artist: string,
     media: Media,
     status: RequestStatus,
-    message: string
+    message?: string
 }

@@ -25,7 +25,7 @@ The Disposition "operating system" and its user interface are protected by the M
 
 
 This product is licensed under the MIT license to:
-    {{ user.name }}
+    {{ user.firstName }}
                 </pre>
                 <pre v-else>Hack Club Disposition
 Version 0.1 (Build 15: Service Pack 1)

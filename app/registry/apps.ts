@@ -15,6 +15,7 @@ import AdminShop from "~/apps/admin/adminShop.vue"
 import ProfileEdit from "~/apps/manager/profileEdit.vue"
 import AdminShopAddItem from "~/apps/admin/adminShopAddItem.vue"
 import Item from "~/apps/shop/item.vue"
+import ShopRequest from "~/apps/shop/request.vue"
 import Orders from "~/apps/shop/orders.vue"
 import AdminShopOrder from "~/apps/admin/adminShopOrder.vue"
 import Order from "~/apps/shop/order.vue"
@@ -24,14 +25,17 @@ import AdminAnnouncePanel from "~/apps/admin/adminAnnouncePanel.vue"
 import AdminShopEditItem from "~/apps/admin/adminShopEditItem.vue"
 import Category from "~/apps/shop/category.vue"
 import ProjectProfile from "~/apps/manager/projectProfile.vue"
-import ProjectBrowse from "~/apps/manager/projectBrowse.vue"
+import ProjectBrowser from "~/apps/manager/projectBrowser.vue"
+import Requests from "~/apps/shop/requests.vue"
+import AdminShopRequest from "~/apps/admin/adminShopRequest.vue"
+import Feedback from "~/apps/feedback.vue"
 
+// don't ask me why, but all app id's should be snake case.
 export const APPS: { [key: string]: AppDef } = {
-
-    projectBrowse: {
-        appId: 'projectBrowse',
+    project_browser: {
+        appId: 'projectBrowser',
         title: "Project Browser",
-        component: ProjectBrowse,
+        component: ProjectBrowser,
 
         width: 500,
         height: 680,
@@ -42,8 +46,8 @@ export const APPS: { [key: string]: AppDef } = {
         resizeable: false,
     },
 
-    projectProfile: {
-        appId: 'projectProfile',
+    project_profile: {
+        appId: 'project_profile',
         title: "Project Profile",
         component: ProjectProfile,
 
@@ -56,8 +60,8 @@ export const APPS: { [key: string]: AppDef } = {
         resizeable: false,
     },
 
-    adminAnnouncePanel: {
-        appId: 'adminAnnouncePanel',
+    admin_announce_panel: {
+        appId: 'admin_announce_panel',
         title: "Admin Announcer Panel",
         component: AdminAnnouncePanel,
 
@@ -71,8 +75,8 @@ export const APPS: { [key: string]: AppDef } = {
 
     },
 
-    profileEdit: {
-        appId: 'profileEdit',
+    profile_edit: {
+        appId: 'profile_edit',
         title: "Profile Edit",
         component: ProfileEdit,
 
@@ -99,6 +103,20 @@ export const APPS: { [key: string]: AppDef } = {
         resizeable: false
     },
 
+    feedback: {
+        appId: 'feedback',
+        title: 'Feedback',
+        component: Feedback,
+
+        width: 400,
+        height: 550,
+        minWidth: 400,
+        minHeight: 550,
+
+        tool: false,
+        resizeable: true,
+    },
+
     documentation: {
         appId: 'documentation',
         title: 'DispoDocs',
@@ -113,8 +131,8 @@ export const APPS: { [key: string]: AppDef } = {
         resizeable: true
     },
 
-    projectManager: {
-        appId: 'projectManager',
+    project_manager: {
+        appId: 'project_manager',
         title: 'DispoManager',
         component: projectManager,
         width: 536,
@@ -126,8 +144,8 @@ export const APPS: { [key: string]: AppDef } = {
         resizeable: false,
     },
 
-    profileViewer: {
-        appId: 'profileViewer',
+    profile_viewer: {
+        appId: 'profile_Viewer',
         title: 'Profile Viewer',
         component: profileViewer,
         width: 500,
@@ -227,8 +245,8 @@ export const APPS: { [key: string]: AppDef } = {
         hidden: false
     },
 
-    messageBox: {
-        appId: 'messageBox',
+    message_box: {
+        appId: 'message_box',
         title: 'messageBox',
         component: Messagebox,
 
@@ -242,8 +260,8 @@ export const APPS: { [key: string]: AppDef } = {
         hidden: true
     },
 
-    dialogBox: {
-        appId: 'dialogBox',
+    dialog_box: {
+        appId: 'dialog_box',
         title: 'dialogBox',
         component: Dialogbox,
 
@@ -336,6 +354,21 @@ export const APPS: { [key: string]: AppDef } = {
         hidden: true
     },
 
+    admin_shop_view_request: {
+        appId: 'admin_shop_view_request',
+        title: 'View Request (admin)',
+        component: AdminShopRequest,
+
+        width: 500,
+        height: 200,
+        minWidth: 500,
+        minHeight: 200,
+
+        tool: true,
+        resizeable: true,
+        hidden: true
+    },
+
     ///////////////////////////////////////////
     // shop                                  //
     ///////////////////////////////////////////
@@ -407,5 +440,33 @@ export const APPS: { [key: string]: AppDef } = {
 
         tool: true,
         resizeable: true
-    }
+    },
+
+    request: {
+        appId: 'request',
+        title: 'Submit a request',
+        component: ShopRequest,
+
+        width: 300,
+        height: 400,
+        minWidth: 300,
+        minHeight: 400,
+
+        tool: true,
+        resizeable: true,
+    },
+
+    requests: {
+        appId: 'requests',
+        title: 'My requests',
+        component: Requests,
+
+        width: 670,
+        height: 550,
+        minWidth: 670,
+        minHeight: 550,
+
+        tool: true,
+        resizeable: false
+    },
 }

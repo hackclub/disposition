@@ -1,21 +1,13 @@
 <script setup lang="ts">
 import type { WindowInstance } from '~/types/window';
-import type { Order, Item, User, OrderStatus, Media } from "~/types/database";
+import type { ServerOrder, Item, User, OrderStatus, Address } from "~/types/database";
 const manager = useWindowManager();
 const props = defineProps<{ instance: WindowInstance, id: number }>()
 const admin = await isAdmin();
 if (!admin) manager.close(props.instance.id);
 
-// maybe i should make the server endpoint return all three but oh well
-const user = ref<User>();
-const item = ref<Item>();
-const order = ref<Order>();
-
-if (admin) {
-    order.value = await $fetch<Order>(`/api/shop/orders/${props.id}`);
-    item.value = await $fetch<Item>(`/api/shop/items/${order.value.item}`);
-    user.value = await $fetch<User>(`/api/user/${order.value.user}`);
-}
+const order = ref<ServerOrder>();
+if (admin) order.value = await $fetch<ServerOrder>(`/api/shop/orders/${props.id}`);
 
 // form bullshit
 const form = reactive({
@@ -26,7 +18,7 @@ const form = reactive({
 const submitting = ref(false);
 
 async function save() {
-    if(!admin) return;
+    if (!admin) return;
 
     const data = new FormData();
     data.append("status", form.status);
@@ -38,31 +30,38 @@ async function save() {
         body: data
     })
 
-    if(response.id) manager.close(props.instance.id);
+    if (response.id) manager.close(props.instance.id);
 }
 </script>
 
 <template>
-    <div class="content" v-if="admin && order && item && user">
+    <div class="content" v-if="admin && order">
         <div class="horizontal">
             <div class="vertical">
-                <img class="image" :src="`/images/${item!.image}`" alt="Item image" />
+                <img class="image" :src="`/images/${order.item.image}`" alt="Item image" />
             </div>
             <div class="vertical fields">
                 <label>Artist:</label>
-                <p>{{ item.artist }}</p>
+                <p>{{ order.item.artist }}</p>
 
                 <label>Album:</label>
-                <p>{{ item.album }}</p>
+                <p>{{ order.item.album }}</p>
 
                 <label>Genre:</label>
-                <p>{{ item.genre }}</p>
+                <p>{{ order.item.genre }}</p>
 
                 <label>Media:</label>
-                <p>{{ item.media }}</p>
+                <p>{{ order.item.media }}</p>
 
                 <label>Price:</label>
-                <p>{{ item.price }}</p>
+                <p>{{ order.item.price }}</p>
+
+                <button @click="manager.open('profile', { id: order.user.hcaId })">Open User Profile</button>
+
+                <label>Shipping address:</label>
+                <p>{{ order.address.line1 }}, {{ order.address.line2 ? order.address.line2 + "," : "" }} {{
+                    order.address.city }}, {{ order.address.state }}, {{ order.address.country }}, {{
+                        order.address.postalCode }}</p>
             </div>
         </div>
         <div class="vertical">
@@ -81,12 +80,12 @@ async function save() {
             <textarea v-model="form.adminMessage"></textarea>
 
             <label for="tracking">Tracking</label>
-            <input type="text" v-model="form.tracking"/>
+            <input type="text" v-model="form.tracking" />
 
             <div class="horizontal">
                 <div class="vertical">
                     <label>Item URLs</label>
-                    <template v-for="url in item.urls">
+                    <template v-for="url in order.item.urls">
                         <a :href="url">{{ url }}</a>
                     </template>
                 </div>

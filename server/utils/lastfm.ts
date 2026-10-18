@@ -30,5 +30,5 @@ export const getAlbumInfo = defineCachedFunction(async (album: string, artist: s
 {
     name: "lastfm-album",
     maxAge: 60 * 60 * 24 * 30, // 30 days
-    getKey: (album: string, artist: string) => `${artist}:${album}`.toLowerCase(),
+    getKey: (album: string, artist: string) => safeCacheKey(artist, album),
 })

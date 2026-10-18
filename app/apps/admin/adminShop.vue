@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { WindowInstance } from '~/types/window';
-import type {Item, Order, Request} from "~/types/database";
+import type { Item, Order, Request } from "~/types/database";
 
 const manager = useWindowManager();
 const props = defineProps<{ instance: WindowInstance }>()
@@ -65,7 +65,8 @@ if (admin) {
                                     <td>{{ item.media }}</td>
                                     <td>{{ item.price }}</td>
                                     <td>
-                                        <button @click="manager.open('admin_shop_edit_item', { id: item.id })">Edit</button>
+                                        <button
+                                            @click="manager.open('admin_shop_edit_item', { id: item.id })">Edit</button>
                                         <button
                                             @click="manager.open('admin_shop_item_delete', { id: item.id })">Delete</button>
                                     </td>
@@ -91,7 +92,9 @@ if (admin) {
                                     <td @click="manager.open('profile_viewer', { id: order.user })">{{ order.user }}
                                     </td>
                                     <td>{{ order.status }}</td>
-                                    <td>{{ order.timestamp }}</td>
+                                    <td>{{ new Date(order.timestamp).getDate() }}/{{ new
+                                        Date(order.timestamp).getMonth() }}/{{ new
+                                            Date(order.timestamp).getFullYear() }}</td>
                                     <td>
                                         <button
                                             @click="manager.open('admin_shop_view_order', { id: order.id })">View</button>
@@ -121,10 +124,12 @@ if (admin) {
                                     <td>{{ request.artist }}</td>
                                     <td>{{ request.media }}</td>
                                     <td>{{ request.status }}</td>
-                                    <td>{{ request.timestamp }}</td>
+                                    <td>{{ new Date(request.timestamp).getDate() }}/{{ new
+                                        Date(request.timestamp).getMonth() }}/{{ new
+                                            Date(request.timestamp).getFullYear() }}</td>
                                     <td>
                                         <button
-                                            @click="manager.open('admin_shop_request', { id: request.id })">View</button>
+                                            @click="manager.open('admin_shop_view_request', { id: request.id })">View</button>
                                     </td>
                                 </tr>
                             </tbody>
