@@ -45,10 +45,10 @@ async function callback(result: boolean) {
                         <b>Genre: </b>{{ item.genre }}
                     </p>
 
-                    <p>
+                    <p v-if="item.tracks && item.length">
                         <b>Length: </b>{{ item.tracks }} tracks, {{ formatDuration(item.length) }}
                     </p>
-                    <p>
+                    <p v-if="item.releaseDate">
                         <b>Release date: </b>{{ item.releaseDate }}
                     </p>
 

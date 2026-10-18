@@ -2,7 +2,7 @@
 import type { Item } from '~/types/database';
 
 const manager = useWindowManager();
-const { data } = await useFetch<Record<string, Item[]>>("/api/shop/items/shelves");
+const { data } = await useFetch<Record<string, Record<string, Item[]>>>("/api/shop/items/shelves");
 </script>
 
 <template>
@@ -27,20 +27,29 @@ const { data } = await useFetch<Record<string, Item[]>>("/api/shop/items/shelves
 		</div>
 
 		<div class="main" v-if="data">
-			<template v-for="(items, name) in data">
-				<section class="browse-section" v-if="items.length > 0">
-					<h2>{{ name }}</h2>
-					<div class="items">
-						<div v-for="item in items" class="item" @click="manager.open('item', { id: item.id })"
-							:key="item.id">
-							<img class="cover" :src="`/images/${item.image}`" :alt="`${item.artist} - ${item.album}`" />
-							<p class="album" v-if="item.media == 'other'">{{ item.album }}</p>
-							<p class="album" v-else>{{ item.album }} ({{ item.media }})</p>
-							<p class="artist" v-if="item.media != 'other'">{{ item.artist }}</p>
-							<p class="price">{{ item.price }} C</p>
-						</div>
-					</div>
-				</section>
+			<template v-for="(categories, section) in data">
+				<div class="browse-section">
+					<h1>{{ section }}</h1>
+					<div class="divider"></div>
+
+					<template v-for="(items, name) in categories">
+						<section class="browse-category" v-if="items.length > 0">
+							<h2 @click="manager.open('category', { category: name })">{{ name }}</h2>
+							<div class="items">
+								<div v-for="item in items" class="item" @click="manager.open('item', { id: item.id })"
+									:key="item.id">
+									<img class="cover" :src="`/images/${item.image}`"
+										:alt="`${item.artist} - ${item.album}`" />
+									<p class="album" v-if="item.media == 'other'">{{ item.album }}</p>
+									<p class="album" v-else>{{ item.album }} ({{ item.media }})</p>
+									<p class="artist" v-if="item.media != 'other'">{{ item.artist }}</p>
+									<p class="price">{{ item.price }} C</p>
+								</div>
+							</div>
+						</section>
+					</template>
+
+				</div>
 			</template>
 		</div>
 		<div class="flex-center" v-else>
@@ -50,7 +59,28 @@ const { data } = await useFetch<Record<string, Item[]>>("/api/shop/items/shelves
 </template>
 
 <style scoped>
+.divider {
+	width: 100%;
+	height: 2px;
+	background-color: var(--color-border-dark);
+}
+
 .browse-section {
+	text-align: center;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+
+	gap: 5px;
+
+	h1 {
+		margin: 0;
+	}
+}
+
+.browse-category {
+	width: 100%;
 	display: flex;
 	flex-direction: column;
 
@@ -67,7 +97,7 @@ const { data } = await useFetch<Record<string, Item[]>>("/api/shop/items/shelves
 		display: flex;
 		flex-direction: row;
 		gap: 5px;
-		
+
 		.item {
 			border: 2px solid var(--color-border-light);
 			background-color: var(--color-panel-bg);
@@ -76,6 +106,7 @@ const { data } = await useFetch<Record<string, Item[]>>("/api/shop/items/shelves
 			display: flex;
 			flex-direction: column;
 			justify-content: center;
+			align-items: start;
 			gap: 2px;
 
 			.cover {
@@ -95,6 +126,7 @@ const { data } = await useFetch<Record<string, Item[]>>("/api/shop/items/shelves
 			.price {
 				margin: 0;
 				text-align: right;
+				width: 100%;
 			}
 		}
 

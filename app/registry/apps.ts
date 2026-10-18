@@ -21,6 +21,7 @@ import Order from "~/apps/shop/order.vue"
 import Messagebox from "~/components/messageBox.vue"
 import Dialogbox from "~/components/dialogBox.vue"
 import AdminAnnouncePanel from "~/apps/admin/adminAnnouncePanel.vue"
+import AdminShopEditItem from "~/apps/admin/adminShopEditItem.vue"
 
 export const APPS: { [key: string]: AppDef } = {
 
@@ -249,9 +250,9 @@ export const APPS: { [key: string]: AppDef } = {
         title: 'DispoAdminShopThing',
         component: AdminShop,
 
-        width: 450,
+        width: 500,
         height: 500,
-        minWidth: 450,
+        minWidth: 500,
         minHeight: 500,
 
         tool: false,
@@ -272,6 +273,21 @@ export const APPS: { [key: string]: AppDef } = {
         tool: true,
         resizeable: true,
         hidden: true
+    },
+
+    admin_shop_edit_item: {
+        appId: 'admin_shop_edit_item',
+        title: 'Edit Shop Item',
+        component: AdminShopEditItem,
+
+        width: 500,
+        height: 600,
+        minWidth: 500,
+        minHeight: 600,
+
+        tool: true,
+        resizeable: true,
+        hidden: true,
     },
 
     admin_shop_view_order: {

@@ -65,7 +65,7 @@ if (admin) {
                                     <td>{{ item.media }}</td>
                                     <td>{{ item.price }}</td>
                                     <td>
-                                        <button @click="manager.open('admin_shop_item', { id: item.id })">Edit</button>
+                                        <button @click="manager.open('admin_shop_edit_item', { id: item.id })">Edit</button>
                                         <button
                                             @click="manager.open('admin_shop_item_delete', { id: item.id })">Delete</button>
                                     </td>

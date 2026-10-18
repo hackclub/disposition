@@ -8,7 +8,7 @@ import * as z from "zod";
 export default defineEventHandler(async event => {
     const { admin } = await isAdmin(event);
 
-    // TODO: turn staffPick into a tag and stop returning it as staffPickAt (or keep that too and add it as a tag)
+    // TODO: cache the info we get from last.fm and musicbrainz
 
     // i love typescript
     const id = await getValidatedRouterParams(event, z.object({
@@ -27,7 +27,7 @@ export default defineEventHandler(async event => {
         v == null ? [] : Array.isArray(v) ? v : [v];
 
     try {
-        const { album } = await getAlbumInfo(item.album, item.artist);
+        const album = (await getAlbumInfo(item.album, item.artist))?.album ?? {};
         const tracks = asArray<any>(album.tracks?.track);
         const lfmSeconds = tracks.reduce((sum, t) => sum + (Number(t.duration) || 0), 0);
         const mbInfo = await getReleaseInfo(item.album, item.artist, album.mbid).catch(() => null);
