@@ -45,10 +45,10 @@ async function callback(result: boolean) {
                         <b>Genre: </b>{{ item.genre }}
                     </p>
 
-                    <p>
+                    <p v-if="item.tracks && item.length">
                         <b>Length: </b>{{ item.tracks }} tracks, {{ formatDuration(item.length) }}
                     </p>
-                    <p>
+                    <p v-if="item.releaseDate">
                         <b>Release date: </b>{{ item.releaseDate }}
                     </p>
 
@@ -70,17 +70,17 @@ async function callback(result: boolean) {
                     <p>{{ item.description }}</p>
 
                     <div class="vertical" v-if="admin && item.urls && item.urls.length > 0">
-                        <label>URLs</label>
-                        <div v-for="url in item.urls">
-                            <a :href="url">{{ url }}</a>
-                        </div>
+                        <b>URLs</b>
+                        <ul v-for="url in item.urls">
+                            <li><a :href="url">{{ url }}</a></li>
+                        </ul>
                     </div>
-                    <div class="vertical">
+                    <!-- <div class="vertical">
                         <h2>Links</h2>
 
                         <a>last.fm</a>
                         <a>spotify</a>
-                    </div>
+                    </div> -->
                 </div>
 
                 <div class="vertical order" v-if="loggedIn">

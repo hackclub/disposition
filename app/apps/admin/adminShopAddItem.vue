@@ -43,6 +43,20 @@ const fileInput = ref<HTMLInputElement | null>(null);
 const isDragging = ref(false);
 const previewUrl = ref<string | null>(null);
 
+const canSubmit = computed(() => {
+    if (!previewUrl.value || !previewUrl.value.startsWith("blob:")) return false;
+
+    return (
+        artist.value != "" ||
+        album.value != "" ||
+        genre.value != "" ||
+        media.value != null ||
+        price.value != null ||
+        description.value != "" ||
+        staffPick.value != null
+    );
+});
+
 // genre dropdown bullshit
 const genres = ref<string[]>([]);
 if (admin) genres.value = await $fetch<string[]>("/api/shop/genres");
@@ -124,9 +138,11 @@ const onSubmit = handleSubmit(async (values) => {
                 <span class="error" v-if="errors.image">{{ errors.image }}</span>
             </div>
             <div class="vertical fields">
-                <label for="artist">Artist</label>
-                <input type="text" id="artist" v-model="artist" placeholder="Artist" />
-                <span class="error" v-if="errors.artist">{{ errors.artist }}</span>
+                <template>
+                    <label for="artist">Artist</label>
+                    <input type="text" id="artist" v-model="artist" placeholder="Artist" />
+                    <span class="error" v-if="errors.artist">{{ errors.artist }}</span>
+                </template>
 
                 <label for="album">Album</label>
                 <input type="text" id="album" v-model="album" placeholder="Album" />
@@ -175,7 +191,7 @@ const onSubmit = handleSubmit(async (values) => {
                 </div>
 
                 <div class="upload-div">
-                    <button type="submit" :disabled="isSubmitting">Upload</button>
+                    <button type="submit" :disabled="isSubmitting || canSubmit">Upload</button>
                 </div>
             </div>
         </div>

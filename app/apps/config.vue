@@ -13,10 +13,6 @@ const showBuddies = ref(read("showBuddies"));
 const fileInput = ref<HTMLInputElement | null>(null);
 const isDragging = ref(false);
 
-function pickFile() {
-    fileInput.value?.click();
-}
-
 function onFileSelected(e: Event) {
     const file = (e.target as HTMLInputElement).files?.[0];
     if (file) handleImageFile(file);
@@ -75,7 +71,7 @@ function handleImageFile(file: File) {
 
                     <button v-if="read('wallpaperSource') != '/wallpaper/default.png'" @click="write('wallpaperSource', '/wallpaper/default.png')">Restore default wallpaper</button>
 
-                    <button @click="pickFile">Upload from files</button>
+                    <button @click="fileInput!.click()">Upload from files</button>
                     <input ref="fileInput" type="file" accept="image/*" style="display: none"
                         @change="onFileSelected" />
 

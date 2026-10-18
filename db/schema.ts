@@ -13,9 +13,27 @@ export const users = pgTable("users", {
 	banner: text(),
 	bio: text(),
 },
-(table) => [
-	unique("users_slack_id_unique").on(table.slackId),
-]);
+	(table) => [
+		unique("users_slack_id_unique").on(table.slackId),
+	]);
+
+export const addresses = pgTable("addresses", {
+	id: varchar({ length: 11 }).notNull().primaryKey(),
+	user: varchar({ length: 16 }).notNull().references(() => users.hcaId),
+	firstName: text("first_name").notNull(),
+	lastName: text("last_name").notNull(),
+	line1: text("line_1").notNull(),
+	line2: text("line2").default(""),
+	city: text().notNull(),
+	state: text().notNull(),
+	postalCode: text("postal_code").notNull(),
+	country: varchar({ length: 2 }).notNull(),
+	phoneNumber: text("phone_number").notNull(),
+	primary: boolean().notNull().default(false),
+},
+	(table) => [
+		index("fk_addresses_users1_idx").on(table.user),
+	]);
 
 export const rsvps = pgTable("rsvps", {
 	hcaId: varchar("hca_id", { length: 16 }).primaryKey(),
@@ -39,11 +57,11 @@ export const announcementReads = pgTable("announcement_reads", {
 	announcement: integer().notNull().references(() => announcements.id),
 	seenAt: timestamp("seen_at", { withTimezone: true, mode: 'date' }).defaultNow().notNull(),
 },
-(table) => [
-	// the PK's leading column already covers lookups by user
-	primaryKey({ columns: [table.user, table.announcement] }),
-	index("fk_announcement_reads_announcements1_idx").on(table.announcement),
-]);
+	(table) => [
+		// the PK's leading column already covers lookups by user
+		primaryKey({ columns: [table.user, table.announcement] }),
+		index("fk_announcement_reads_announcements1_idx").on(table.announcement),
+	]);
 
 export const balanceEvents = pgTable("balance_events", {
 	id: integer().primaryKey().generatedByDefaultAsIdentity(),
@@ -52,9 +70,9 @@ export const balanceEvents = pgTable("balance_events", {
 	description: varchar({ length: 255 }).notNull(),
 	timestamp: timestamp({ withTimezone: true, mode: 'date' }).defaultNow().notNull(),
 },
-(table) => [
-	index("fk_balance_events_users1_idx").on(table.user),
-]);
+	(table) => [
+		index("fk_balance_events_users1_idx").on(table.user),
+	]);
 
 export const pendingNotifications = pgTable("pending_notifications", {
 	id: integer().primaryKey().generatedByDefaultAsIdentity(),
@@ -64,9 +82,9 @@ export const pendingNotifications = pgTable("pending_notifications", {
 	read: boolean().default(false).notNull(),
 	timestamp: timestamp({ withTimezone: true, mode: 'date' }).defaultNow().notNull(),
 },
-(table) => [
-	index("fk_pending_notifications_users1_idx").on(table.user),
-]);
+	(table) => [
+		index("fk_pending_notifications_users1_idx").on(table.user),
+	]);
 
 export const shopItems = pgTable("shop_items", {
 	id: integer().primaryKey().generatedByDefaultAsIdentity(),
@@ -92,12 +110,14 @@ export const shopOrders = pgTable("shop_orders", {
 	message: text(),
 	adminMessage: text("admin_message"),
 	tracking: text(),
+	shippingAddress: varchar({ length: 11 }).notNull().references(() => addresses.id),
 	timestamp: timestamp({ withTimezone: true, mode: 'date' }).defaultNow().notNull(),
 },
-(table) => [
-	index("fk_shop_orders_users1_idx").on(table.user),
-	index("fk_shop_orders_shop_items1_idx").on(table.item),
-]);
+	(table) => [
+		index("fk_shop_orders_users1_idx").on(table.user),
+		index("fk_shop_orders_shop_items1_idx").on(table.item),
+		index("fk_shop_orders_addresses1_idx").on(table.shippingAddress),
+	]);
 
 export const shopRequests = pgTable("shop_requests", {
 	id: integer().primaryKey().generatedByDefaultAsIdentity(),
@@ -111,6 +131,6 @@ export const shopRequests = pgTable("shop_requests", {
 	status: varchar({ length: 24 }).default('idle').notNull(),
 	message: text(),
 },
-(table) => [
-	index("fk_shop_requests_users_idx").on(table.user),
-]);
+	(table) => [
+		index("fk_shop_requests_users_idx").on(table.user),
+	]);

@@ -102,22 +102,9 @@ export default defineEventHandler(async (event) => {
         ? await latestPer(shopItems.genre, inArray(shopItems.genre, topGenres))
         : [];
 
-    // i wanna have like categories of categories but im waiting for luca to do the shop rewrite
-    // return {
-    //     featured: { trending, staffPicks },
-    //     media: groupBy(mediaRows, r => r.media, ["cd", "vinyl", "cassette", "other"]),
-    //     genres: groupBy(genreRows, r => r.genre, topGenres),
-    // }
-
     return {
-        "Trending": trending, 
-        "Staff Picks": staffPicks,
-        ...groupBy(
-            mediaRows,
-            r => r.media,
-            ["cd", "vinyl", "cassette", "other"],
-            ["CDs", "Vinyl", "Cassettes", "Other"],
-        ),
-        ...groupBy(genreRows, r => r.genre, topGenres),
+        "Featured": { "Trending": trending, "Staff Picks": staffPicks },
+        "By Media": groupBy(mediaRows, r => r.media, ["cd", "vinyl", "cassette", "other"], ["CDs", "Vinyl", "Cassette", "Other"]),
+        "By Genre": groupBy(genreRows, r => r.genre, topGenres),
     }
 });

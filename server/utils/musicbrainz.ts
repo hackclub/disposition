@@ -7,7 +7,7 @@ async function call(path: string, query: Record<string, string>): Promise<any> {
     });
 }
 
-export async function getReleaseInfo(album: string, artist: string, mbid?: string | null) {
+export const getReleaseInfo = defineCachedFunction(async (album: string, artist: string, mbid?: string | null) => {
     // search fallback if no mbid
     if (!mbid) {
         const esc = (s: string) => s.replace(/(["\\])/g, "\\$1");
@@ -31,4 +31,9 @@ export async function getReleaseInfo(album: string, artist: string, mbid?: strin
         trackCount: tracks.length || null,
         lengthSeconds: totalMs ? Math.round(totalMs / 1000) : null,
     };
-}
+}, 
+{
+    name: "musicbrainz-release",
+    maxAge: 60 * 60 * 24 * 30, // 60 days
+    getKey: (album: string, artist: string, mbid?: string | null) => mbid ?? `search:${artist}:${album}`.toLowerCase()
+})

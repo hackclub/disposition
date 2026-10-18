@@ -1,0 +1,3 @@
+ALTER TABLE "shop_orders" ADD COLUMN "shippingAddress" varchar(11) NOT NULL;--> statement-breakpoint
+ALTER TABLE "shop_orders" ADD CONSTRAINT "shop_orders_shippingAddress_addresses_id_fk" FOREIGN KEY ("shippingAddress") REFERENCES "public"."addresses"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+CREATE INDEX "fk_shop_orders_addresses1_idx" ON "shop_orders" USING btree ("shippingAddress");

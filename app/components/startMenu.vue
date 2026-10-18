@@ -209,7 +209,7 @@ if (loggedIn.value) {
     }
 
     &:hover {
-        background-color: var(--color-menu-hover);
+        background-color: var(--color-gray-900);
         font-weight: bold;
         color: var(--color-white);
         cursor: pointer;
