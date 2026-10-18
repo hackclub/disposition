@@ -1,4 +1,4 @@
-import { rsvps } from "~~/db/schema";
+import { addresses, rsvps } from "~~/db/schema";
 import { db } from "~~/server/utils/db";
 import { eq } from "drizzle-orm";
 import { users } from "~~/db/schema";
@@ -80,7 +80,7 @@ export default defineEventHandler(async (event) => {
             yswsEligible: identity.ysws_eligible,
             verificationStatus: identity.verification_status,
 
-            birthday: identity.birthday,
+            birthday: identity.birthday ? new Date(identity.birthday) : undefined,
             legalFirstName: identity.legal_first_name,
             legalLastName: identity.legal_last_name,
             phoneNumber: identity.phone_number,
@@ -111,10 +111,39 @@ export default defineEventHandler(async (event) => {
             name: `${identity.first_name} ${identity.last_name}`,
 
             yswsEligible: identity.ysws_eligible,
-            verificationStatus: identity.verification_status
+            verificationStatus: identity.verification_status,
+
+            birthday: identity.birthday ? new Date(identity.birthday) : undefined,
+            legalFirstName: identity.legal_first_name,
+            legalLastName: identity.legal_last_name,
+            phoneNumber: identity.phone_number,
         }
 
         await db.insert(users).values(user).returning({ id: users.hcaId });
+    }
+
+    if(identity.addresses) {
+        // peek existing addies and then add the rest
+        identity.addresses.forEach(async address => {
+            const [existing] = await db.select({ id: addresses.id }).from(addresses).where(eq(addresses.id, address.id));
+            if(existing) return;
+            const insert: typeof addresses.$inferInsert = {
+                id: address.id,
+                user: identity.id,
+                firstName: address.first_name,
+                lastName: address.last_name,
+                line1: address.line_1,
+                line2: address.line_2,
+                city: address.city,
+                state: address.state,
+                postalCode: address.postal_code,
+                country: address.country,
+                phoneNumber: address.phone_number,
+                primary: address.primary
+            }
+
+            await db.insert(addresses).values(insert); // just pray that it plays nice :)
+        })
     }
 
     // insert rsvp if needed

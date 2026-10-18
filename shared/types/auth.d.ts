@@ -8,7 +8,7 @@ declare module '#auth-utils' {
         yswsEligible: boolean,
         verificationStatus: string,
 
-        birthday?: string,
+        birthday?: Date,
         legalFirstName?: string,
         legalLastName?: string,
         phoneNumber?: string,

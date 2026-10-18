@@ -31,7 +31,7 @@ async function callback(result: boolean) {
 </script>
 
 <template>
-    <AuthState v-slot="{ loggedIn }">
+    <AuthState v-slot="{ loggedIn, user }">
         <div class="content" v-if="item && balance">
             <div class="horizontal">
                 <div class="vertical">
@@ -87,9 +87,10 @@ async function callback(result: boolean) {
                     <h2>Finish your order</h2>
 
                     <b>Shipping address</b>
-                    <select>
+                    <select v-if="user.addresses">
                         <option>308 Arroyo Negra Lane, New Mexico, USA, 540080</option>
                     </select>
+                    <button v-else @click="navigateTo('/oauth-sensitive')">Get addresses from Hack Club Auth</button>
 
                     <b>Order summary</b>
                     <div class="summary">
