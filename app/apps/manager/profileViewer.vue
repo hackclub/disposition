@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import badge from '~/assets/icons/badge.jpg'
+import badge from '~/assets/icons/badge.png'
 import avatar from '~/assets/icons/avatar.png'
 import projectImage from '~/assets/icons/project.jpg'
 
