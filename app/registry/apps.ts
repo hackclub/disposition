@@ -9,8 +9,8 @@ import AdminStats from "~/apps/admin/adminStats.vue"
 import Config from "~/apps/config.vue"
 import Shop from "~/apps/shop/shop.vue"
 import Notification from "~/apps/notification.vue"
-import projectManager from "~/apps/projectManager.vue"
-import profileViewer from "~/apps/profileViewer.vue"
+import projectManager from "~/apps/manager/projectManager.vue"
+import profileViewer from "~/apps/manager/profileViewer.vue"
 import AdminShop from "~/apps/admin/adminShop.vue"
 import ProfileEdit from "~/apps/profileEdit.vue"
 import AdminShopAddItem from "~/apps/admin/adminShopAddItem.vue"
@@ -23,8 +23,23 @@ import Dialogbox from "~/components/dialogBox.vue"
 import AdminAnnouncePanel from "~/apps/admin/adminAnnouncePanel.vue"
 import AdminShopEditItem from "~/apps/admin/adminShopEditItem.vue"
 import Category from "~/apps/shop/category.vue"
+import ProjectProfile from "~/apps/manager/projectProfile.vue"
 
 export const APPS: { [key: string]: AppDef } = {
+
+    projectProfile: {
+        appId: 'projectProfile',
+        title: "Project Profile",
+        component: ProjectProfile,
+
+        width: 450,
+        height: 680,
+        minHeight: 700,
+        minWidth: 450,
+
+        tool: false,
+        resizeable: false,
+    },
 
     adminAnnouncePanel: {
         appId: 'adminAnnouncePanel',
@@ -327,7 +342,7 @@ export const APPS: { [key: string]: AppDef } = {
         appId: 'item',
         title: 'View Item',
         component: Item,
-        
+
         width: 671,
         height: 550,
         minWidth: 671,
@@ -355,7 +370,7 @@ export const APPS: { [key: string]: AppDef } = {
         appId: 'order',
         title: 'View Order',
         component: Order,
-        
+
         width: 670,
         height: 550,
         minWidth: 670,

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import badge from '../assets/icons/badge.jpg'
-import avatar from '../assets/icons/avatar.png'
-import projectImage from '../assets/icons/project.jpg'
+import badge from '~/assets/icons/badge.jpg'
+import avatar from '~/assets/icons/avatar.png'
+import projectImage from '~/assets/icons/project.jpg'
 
 const activeTab = ref<'about' | 'projects'>('projects')
 </script>

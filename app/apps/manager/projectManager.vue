@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import badge from '../assets/icons/badge.jpg'
+import badge from '~/assets/icons/badge.jpg'
 
 interface Project {
   image?: string
