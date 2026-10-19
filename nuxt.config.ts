@@ -30,7 +30,8 @@ export default defineNuxtConfig({
 				settings: {
 					showBuddies: true,
 					wallpaperSource: "/wallpaper/default.png",
-					configVersion: "1.0.1"
+					hideSensitiveInfo: false,
+					configVersion: "1.0.2"
 				}
 			},
 

@@ -70,6 +70,8 @@ export default defineEventHandler(async (event) => {
     });
 
     const identity = response.identity;
+    const primaryAddress = identity.addresses?.find((address) => address.primary);
+
     await setUserSession(event, {
         user: {
             id: identity.id,
@@ -81,8 +83,12 @@ export default defineEventHandler(async (event) => {
             verificationStatus: identity.verification_status,
 
             birthday: identity.birthday ? new Date(identity.birthday) : undefined,
-            legalFirstName: identity.legal_first_name,
-            legalLastName: identity.legal_last_name,
+            // legalFirstName: identity.legal_first_name,
+            // legalLastName: identity.legal_last_name,
+            // archer told me to use the legal name from the primary address so here it is
+            legalFirstName: primaryAddress?.first_name,
+            legalLastName: primaryAddress?.last_name,
+
             phoneNumber: identity.phone_number,
             addresses: identity.addresses?.map((address) => ({
                 id: address.id,
@@ -114,19 +120,21 @@ export default defineEventHandler(async (event) => {
             verificationStatus: identity.verification_status,
 
             birthday: identity.birthday ? new Date(identity.birthday) : undefined,
-            legalFirstName: identity.legal_first_name,
-            legalLastName: identity.legal_last_name,
+
+            // archer told me to use the legal name from the primary address so here it is
+            legalFirstName: primaryAddress?.first_name,
+            legalLastName: primaryAddress?.last_name,
             phoneNumber: identity.phone_number,
         }
 
         await db.insert(users).values(user).returning({ id: users.hcaId });
     }
 
-    if(identity.addresses) {
+    if (identity.addresses) {
         // peek existing addies and then add the rest
         identity.addresses.forEach(async address => {
             const [existing] = await db.select({ id: addresses.id }).from(addresses).where(eq(addresses.id, address.id));
-            if(existing) return;
+            if (existing) return;
             const insert: typeof addresses.$inferInsert = {
                 id: address.id,
                 user: identity.id,

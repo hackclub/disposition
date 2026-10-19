@@ -12,7 +12,7 @@ export default defineEventHandler((event) => {
     url.searchParams.set("client_id", config.hackclub.clientId);
     url.searchParams.set("redirect_uri", `${config.public.baseUrl}/oauth/callback`);
     url.searchParams.set("response_type", "code"); 
-    url.searchParams.set("scope", "openid profile email name slack_id verification_status address basic_info");
+    url.searchParams.set("scope", "openid profile email name slack_id verification_status address basic_info birthdate");
     url.searchParams.set("state", state);
 
     if (query.loginHint && typeof query.login_hint === "string") url.searchParams.set("login_hint", String(query.loginHint));

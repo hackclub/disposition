@@ -8,8 +8,13 @@ const admin = await isAdmin();
 
 const { data: balance } = await useFetch<number>("/api/user/balance", { key: "balance" });
 const { data: item } = await useFetch<ServerItem>(`/api/shop/items/${props.id}`);
+const session = useUserSession();
 
-const address = ref<String>();
+const address = ref<string>();
+if (session.user.value && session.user.value.addresses) {
+    address.value = session.user.value.addresses.find((address) => address.primary)?.id;
+}
+
 async function callback(result: boolean) {
     if (!result) return;
     if (!address.value) return;
