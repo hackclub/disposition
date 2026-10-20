@@ -131,10 +131,40 @@ export default defineEventHandler(async (event) => {
     }
 
     if (identity.addresses) {
-        // peek existing addies and then add the rest
+        // peep existing addies and then add the rest
         identity.addresses.forEach(async address => {
-            const [existing] = await db.select({ id: addresses.id }).from(addresses).where(eq(addresses.id, address.id));
-            if (existing) return;
+            const [existing] = await db.select().from(addresses).where(eq(addresses.id, address.id));
+
+            if (existing) { // people update their addresses too
+                if (existing.firstName != address.first_name,
+                    existing.lastName != address.last_name,
+                    existing.line1 != address.line_1,
+                    existing.line2 != address.line_2,
+                    existing.city != address.city,
+                    existing.state != address.state,
+                    existing.postalCode != address.postal_code,
+                    existing.country != address.country,
+                    existing.phoneNumber != address.phone_number,
+                    existing.primary != address.primary // im trusting that hca only lets you set ONE primary address
+                ) {
+                    await db.update(addresses).set({
+                        id: address.id,
+                        user: identity.id,
+                        firstName: address.first_name,
+                        lastName: address.last_name,
+                        line1: address.line_1,
+                        line2: address.line_2,
+                        city: address.city,
+                        state: address.state,
+                        postalCode: address.postal_code,
+                        country: address.country,
+                        phoneNumber: address.phone_number,
+                        primary: address.primary
+                    }).where(eq(addresses.id, address.id));
+                    return;
+                }
+            }
+
             const insert: typeof addresses.$inferInsert = {
                 id: address.id,
                 user: identity.id,
