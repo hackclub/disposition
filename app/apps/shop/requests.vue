@@ -8,13 +8,16 @@ const { data: requests } = await useFetch<Request[]>("/api/shop/requests");
 <template>
     <div class="content" v-if="requests">
         <button @click="manager.open('request')">Submit a request</button>
-
-        <div class="request" v-for="request in requests">
+        
+        <div class="request" v-for="request in requests" v-if="requests.length > 0">
             <h2 v-if="request.media == 'other'">{{ request.album }}</h2>
             <h2 v-else>{{ request.album }} - {{ request.artist }} ({{ request.media }})</h2>
 
             <p>{{ new Date(request.timestamp).getDate() }}/{{ new Date(request.timestamp).getMonth() }}/{{ new
                 Date(request.timestamp).getFullYear() }} | {{ request.status }}</p>
+        </div>
+        <div v-else-if="requests.length < 1">
+            <h2>No requests yet, you should make one!</h2>
         </div>
     </div>
 </template>

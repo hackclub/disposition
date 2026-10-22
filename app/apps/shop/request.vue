@@ -70,7 +70,7 @@ const onSubmit = handleSubmit(async (values) => {
 
             <label for="media">Media</label>
             <select name="media" id="media" v-model="media">
-                <option value="cd">CD</option>@
+                <option value="cd">CD</option>
                 <option value="vinyl">Vinyl</option>
                 <option value="cassette">Cassette</option>
                 <option value="other">Other</option>

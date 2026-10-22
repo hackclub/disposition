@@ -14,7 +14,7 @@ orders.value!.forEach(async order => {
 </script>
 
 <template>
-    <div class="content" v-if="orders">
+    <div class="content" v-if="orders && orders.length > 0">
         <div class="order" v-for="(order, i) in orders">
             <img :src="`/images/${items[i]?.image}`" class="cover" />
             <div>
@@ -31,6 +31,9 @@ orders.value!.forEach(async order => {
                 </div>
             </div>
         </div>
+    </div>
+    <div class="content" v-else-if="orders && orders.length == 0">
+        <h1>No orders :(</h1>
     </div>
 </template>
 
