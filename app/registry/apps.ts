@@ -33,12 +33,12 @@ import Feedback from "~/apps/feedback.vue"
 // don't ask me why, but all app id's should be snake case.
 export const APPS: { [key: string]: AppDef } = {
     project_browser: {
-        appId: 'projectBrowser',
+        appId: 'project_browser',
         title: "Project Browser",
         component: ProjectBrowser,
 
         width: 500,
-        height: 680,
+        height: 700,
         minHeight: 700,
         minWidth: 450,
 
@@ -52,7 +52,7 @@ export const APPS: { [key: string]: AppDef } = {
         component: ProjectProfile,
 
         width: 450,
-        height: 680,
+        height: 700,
         minHeight: 700,
         minWidth: 450,
 
@@ -65,14 +65,13 @@ export const APPS: { [key: string]: AppDef } = {
         title: "Admin Announcer Panel",
         component: AdminAnnouncePanel,
 
-        width: 400,
-        height: 510,
-        minWidth: 542,
-        minHeight: 500,
+        width: 403,
+        height: 561,
+        minWidth: 403,
+        minHeight: 561,
 
         tool: false,
         resizeable: false,
-
     },
 
     profile_edit: {
@@ -145,17 +144,16 @@ export const APPS: { [key: string]: AppDef } = {
     },
 
     profile_viewer: {
-        appId: 'profile_Viewer',
+        appId: 'profile_viewer',
         title: 'Profile Viewer',
         component: profileViewer,
-        width: 500,
+        width: 541,
         height: 550,
         minWidth: 541,
         minHeight: 550,
 
         tool: false,
         resizeable: false,
-
     },
 
     notification: {
@@ -377,7 +375,7 @@ export const APPS: { [key: string]: AppDef } = {
         appId: 'shop',
         title: 'DispoShop',
         component: Shop,
-        width: 500,
+        width: 600,
         height: 650,
         minWidth: 600,
         minHeight: 310,
