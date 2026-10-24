@@ -20,35 +20,49 @@
       "idx": 2,
       "version": "7",
       "when": 1791720556435,
-      "tag": "0002_aromatic_rick_jones",
+      "tag": "0002_shop_orders_add_tracking",
       "breakpoints": true
     },
     {
       "idx": 3,
       "version": "7",
       "when": 1792334850928,
-      "tag": "0003_vengeful_ego",
+      "tag": "0003_add_addresses_and_user_info",
       "breakpoints": true
     },
     {
       "idx": 4,
       "version": "7",
       "when": 1792335300575,
-      "tag": "0004_funny_karen_page",
+      "tag": "0004_shop_orders_add_address",
       "breakpoints": true
     },
     {
       "idx": 5,
       "version": "7",
       "when": 1792337189756,
-      "tag": "0005_sudden_wendigo",
+      "tag": "0005_shop_items_optional",
       "breakpoints": true
     },
     {
       "idx": 6,
       "version": "7",
       "when": 1792359088663,
-      "tag": "0006_nasty_warpath",
+      "tag": "0006_users_add_info",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1792875259701,
+      "tag": "0007_announcements_add_author",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1792875405647,
+      "tag": "0008_rename_pending_notifications",
       "breakpoints": true
     }
   ]

@@ -53,10 +53,14 @@ export const rsvps = pgTable("rsvps", {
 
 export const announcements = pgTable("announcements", {
 	id: integer().primaryKey().generatedByDefaultAsIdentity(),
+	author: varchar({ length: 16 }).references(() => users.hcaId),
 	title: varchar({ length: 255 }).notNull(),
 	description: text().notNull(),
 	timestamp: timestamp({ withTimezone: true, mode: 'date' }).defaultNow().notNull(),
-});
+},
+	(table) => [
+		index("fk_announcements_users1_idx").on(table.author),
+	]);
 
 export const announcementReads = pgTable("announcement_reads", {
 	user: varchar({ length: 16 }).notNull().references(() => users.hcaId),
@@ -64,7 +68,6 @@ export const announcementReads = pgTable("announcement_reads", {
 	seenAt: timestamp("seen_at", { withTimezone: true, mode: 'date' }).defaultNow().notNull(),
 },
 	(table) => [
-		// the PK's leading column already covers lookups by user
 		primaryKey({ columns: [table.user, table.announcement] }),
 		index("fk_announcement_reads_announcements1_idx").on(table.announcement),
 	]);
@@ -80,7 +83,7 @@ export const balanceEvents = pgTable("balance_events", {
 		index("fk_balance_events_users1_idx").on(table.user),
 	]);
 
-export const pendingNotifications = pgTable("pending_notifications", {
+export const notifications = pgTable("notifications", {
 	id: integer().primaryKey().generatedByDefaultAsIdentity(),
 	user: varchar({ length: 16 }).notNull().references(() => users.hcaId),
 	title: varchar({ length: 255 }).notNull(),
@@ -89,7 +92,7 @@ export const pendingNotifications = pgTable("pending_notifications", {
 	timestamp: timestamp({ withTimezone: true, mode: 'date' }).defaultNow().notNull(),
 },
 	(table) => [
-		index("fk_pending_notifications_users1_idx").on(table.user),
+		index("fk_notifications_users1_idx").on(table.user),
 	]);
 
 export const shopItems = pgTable("shop_items", {

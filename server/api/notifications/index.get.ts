@@ -1,4 +1,4 @@
-import { pendingNotifications } from "~~/db/schema";
+import { notifications } from "~~/db/schema";
 import { eq, and } from "drizzle-orm";
 import * as z from "zod";
 
@@ -10,6 +10,6 @@ export default defineEventHandler(async event => {
         read: z.coerce.boolean().optional().default(true),
     }).parse);
 
-    return db.select().from(pendingNotifications)
-        .where(and(eq(pendingNotifications.user, userId!), eq(pendingNotifications.read, read)))
+    return db.select().from(notifications)
+        .where(and(eq(notifications.user, userId!), eq(notifications.read, read)))
 })
