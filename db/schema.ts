@@ -4,7 +4,9 @@ export const users = pgTable("users", {
 	hcaId: varchar("hca_id", { length: 16 }).primaryKey(),
 	email: varchar({ length: 255 }).notNull(),
 	slackId: varchar("slack_id", { length: 16 }).notNull(),
-	name: varchar({ length: 255 }).notNull(),
+	firstName: text("first_name").notNull(),
+	lastName: text("last_name").notNull(),
+	username: text().notNull(),
 	created: timestamp({ withTimezone: true, mode: 'date' }).defaultNow().notNull(),
 
 	yswsEligible: boolean("ysws_eligible").notNull(),

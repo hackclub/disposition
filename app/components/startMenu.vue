@@ -6,7 +6,7 @@ const manager = useWindowManager();
 
 let info;
 if (loggedIn.value) {
-    interface CachetResponse {
+    type CachetResponse = {
         id: string,
         userId: string,
         displayName: string,

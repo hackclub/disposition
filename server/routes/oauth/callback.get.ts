@@ -2,6 +2,8 @@ import { addresses, rsvps } from "~~/db/schema";
 import { db } from "~~/server/utils/db";
 import { eq } from "drizzle-orm";
 import { users } from "~~/db/schema";
+import { getCachetInfo } from "~~/server/utils/cachet"
+import { generateUsername } from "~~/server/utils/user/user";
 
 export default defineEventHandler(async (event) => {
     const config = useRuntimeConfig();
@@ -110,11 +112,20 @@ export default defineEventHandler(async (event) => {
     // create user row
     const [existing] = await db.select({ hcaId: users.hcaId }).from(users).where(eq(users.hcaId, identity.id));
     if (!existing) {
+        // we have to get the username, fancy style.
+        // i base the username off of the slack display name
+        // and then add numbers to it if those alr exist in the db
+
+        const userInfo = await getCachetInfo(identity.id);
+        const username = await generateUsername(userInfo.displayName);
+
         const user: typeof users.$inferInsert = {
             hcaId: identity.id,
             email: identity.primary_email,
             slackId: identity.slack_id,
-            name: `${identity.first_name} ${identity.last_name}`,
+            firstName: identity.first_name,
+            lastName: identity.last_name,
+            username: username,
 
             yswsEligible: identity.ysws_eligible,
             verificationStatus: identity.verification_status,
@@ -132,19 +143,19 @@ export default defineEventHandler(async (event) => {
 
     if (identity.addresses) {
         // peep existing addies and then add the rest
-        identity.addresses.forEach(async address => {
+        Promise.all(identity.addresses.map(async address => {
             const [existing] = await db.select().from(addresses).where(eq(addresses.id, address.id));
 
             if (existing) { // people update their addresses too
-                if (existing.firstName != address.first_name,
-                    existing.lastName != address.last_name,
-                    existing.line1 != address.line_1,
-                    existing.line2 != address.line_2,
-                    existing.city != address.city,
-                    existing.state != address.state,
-                    existing.postalCode != address.postal_code,
-                    existing.country != address.country,
-                    existing.phoneNumber != address.phone_number,
+                if (existing.firstName != address.first_name ||
+                    existing.lastName != address.last_name ||
+                    existing.line1 != address.line_1 ||
+                    existing.line2 != address.line_2 ||
+                    existing.city != address.city ||
+                    existing.state != address.state ||
+                    existing.postalCode != address.postal_code ||
+                    existing.country != address.country ||
+                    existing.phoneNumber != address.phone_number ||
                     existing.primary != address.primary // im trusting that hca only lets you set ONE primary address
                 ) {
                     await db.update(addresses).set({
@@ -163,25 +174,25 @@ export default defineEventHandler(async (event) => {
                     }).where(eq(addresses.id, address.id));
                     return;
                 }
-            }
+            } else {
+                const insert: typeof addresses.$inferInsert = {
+                    id: address.id,
+                    user: identity.id,
+                    firstName: address.first_name,
+                    lastName: address.last_name,
+                    line1: address.line_1,
+                    line2: address.line_2,
+                    city: address.city,
+                    state: address.state,
+                    postalCode: address.postal_code,
+                    country: address.country,
+                    phoneNumber: address.phone_number,
+                    primary: address.primary
+                }
 
-            const insert: typeof addresses.$inferInsert = {
-                id: address.id,
-                user: identity.id,
-                firstName: address.first_name,
-                lastName: address.last_name,
-                line1: address.line_1,
-                line2: address.line_2,
-                city: address.city,
-                state: address.state,
-                postalCode: address.postal_code,
-                country: address.country,
-                phoneNumber: address.phone_number,
-                primary: address.primary
+                await db.insert(addresses).values(insert); // just pray that it plays nice :)
             }
-
-            await db.insert(addresses).values(insert); // just pray that it plays nice :)
-        })
+        }))
     }
 
     // insert rsvp if needed
