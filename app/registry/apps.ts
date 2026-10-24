@@ -29,9 +29,26 @@ import ProjectBrowser from "~/apps/manager/projectBrowser.vue"
 import Requests from "~/apps/shop/requests.vue"
 import AdminShopRequest from "~/apps/admin/adminShopRequest.vue"
 import Feedback from "~/apps/feedback.vue"
+import ProjectEdit from "~/apps/manager/projectEdit.vue"
 
 // don't ask me why, but all app id's should be snake case.
+
 export const APPS: { [key: string]: AppDef } = {
+
+    project_edit: {
+        appId: 'project_edit',
+        title: "Project Edit",
+        component: ProjectEdit,
+
+        width: 542,
+        height: 490,
+        minWidth: 542,
+        minHeight: 307,
+
+        tool: false,
+        resizeable: false,
+    },
+
     project_browser: {
         appId: 'project_browser',
         title: "Project Browser",
