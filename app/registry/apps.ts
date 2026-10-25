@@ -31,12 +31,27 @@ import Feedback from "~/apps/feedback.vue"
 import ProjectEdit from "~/apps/projects/projectEdit.vue"
 import DevlogView from "~/apps/projects/devlogView.vue"
 import Onboarding from "~/apps/onboarding/onboarding.vue"
+import newDevlog from "~/apps/projects/newDevlog.vue"
 
 import AdminAddAnnouncement from "~/apps/admin/notifications/adminAddAnnouncement.vue"
 import AdminNotifications from "~/apps/admin/notifications/adminNotifications.vue"
 
 // don't ask me why, but all app id's should be snake case.
 export const APPS: { [key: string]: AppDef } = {
+
+    new_devlog: {
+        appId: 'new_devlog',
+        title: 'New Devlog',
+        component: newDevlog,
+
+        width: 570,
+        height: 490,
+        minWidth: 570,
+        minHeight: 490,
+
+        tool: false,
+        resizeable: false,
+    },
 
     onboarding: {
         appId: 'onboarding',

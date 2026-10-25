@@ -1,6 +1,16 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
+import type { WindowInstance } from '~/types/window'
 import onboardingLogo from '~/assets/icons/onboarding-logo.png'
+import headerbg from '~/assets/misc/header.png'
+import avatar from '~/assets/icons/avatar.png'
+
+const props = defineProps<{
+    instance: WindowInstance
+}>()
+
+
+
 
 const step = ref<1 | 2>(1)
 
