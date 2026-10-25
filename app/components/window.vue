@@ -8,21 +8,13 @@ const props = withDefaults(defineProps<{
 }>(), {
 })
 
-const instanceId = useId();
-const width = useState(`width-${instanceId}`, () => props.instance.width);
-const height = useState(`height-${instanceId}`, () => props.instance.height);
-const posX = useState(`posX-${instanceId}`, () => props.instance.posX);
-const posY = useState(`posY-${instanceId}`, () => props.instance.posY);
-const minWidth = useState(`minWidth-${instanceId}`, () => props.instance.minWidth);
-const minHeight = useState(`minHeight-${instanceId}`, () => props.instance.minHeight);
-
 let resizeDir: string | null = null;
 let startX = 0, startY = 0;
 let startWidth = 0, startHeight = 0;
 let startPosX = 0, startPosY = 0;
 let drag = false;
 
-function resize(event: MouseEvent) {
+function startResize(event: MouseEvent) {
     event.preventDefault();
     const target = event.currentTarget;
     if (!(target instanceof HTMLElement)) return;
@@ -32,10 +24,10 @@ function resize(event: MouseEvent) {
 
     startX = event.clientX;
     startY = event.clientY;
-    startWidth = width.value;
-    startHeight = height.value;
-    startPosX = posX.value;
-    startPosY = posY.value;
+    startWidth = props.instance.width;
+    startHeight = props.instance.height;
+    startPosX = props.instance.posX;
+    startPosY = props.instance.posY;
 
     document.addEventListener("mousemove", onMouseMove);
     document.addEventListener("mouseup", onMouseUp);
@@ -44,20 +36,25 @@ function resize(event: MouseEvent) {
 function onMouseMove(event: MouseEvent) {
     event.preventDefault();
     if (!resizeDir) return;
+    const id = props.instance.id;
     const dx = event.clientX - startX;
     const dy = event.clientY - startY;
 
-    if (resizeDir.includes("right")) width.value = Math.max(minWidth.value, startWidth + dx);
-    if (resizeDir.includes("bottom")) height.value = Math.max(minHeight.value, startHeight + dy);
+    if (resizeDir.includes("right")) {
+        manager.resize(id, { width: startWidth + dx });
+    }
+    if (resizeDir.includes("bottom")) {
+        manager.resize(id, { height: startHeight + dy });
+    }
     if (resizeDir.includes("left")) {
-        width.value = Math.max(minWidth.value, startWidth - dx);
-        if (width.value > minWidth.value) {
-            posX.value = startPosX + dx;
-        }
+        const width = Math.max(props.instance.minWidth, startWidth - dx);
+        manager.resize(id, { width });
+        manager.move(id, { posX: startPosX + (startWidth - width) });
     }
     if (resizeDir.includes("top")) {
-        height.value = Math.max(minHeight.value, startHeight - dy);
-        if (height.value > minHeight.value) posY.value = startPosY + dy;
+        const height = Math.max(props.instance.minHeight, startHeight - dy);
+        manager.resize(id, { height });
+        manager.move(id, { posY: startPosY + (startHeight - height) });
     }
 }
 
@@ -74,8 +71,8 @@ function startDrag(event: MouseEvent) {
     drag = true;
     startX = event.clientX;
     startY = event.clientY;
-    startPosX = posX.value;
-    startPosY = posY.value;
+    startPosX = props.instance.posX;
+    startPosY = props.instance.posY;
 
     document.addEventListener("mousemove", onDragMove);
     document.addEventListener("mouseup", onDragEnd);
@@ -86,8 +83,7 @@ function onDragMove(event: MouseEvent) {
     if (!drag) return;
     const dx = event.clientX - startX;
     const dy = event.clientY - startY;
-    posX.value = startPosX + dx;
-    posY.value = startPosY + dy;
+    manager.move(props.instance.id, { posX: startPosX + dx, posY: startPosY + dy });
 }
 
 function onDragEnd(event: MouseEvent) {
@@ -101,21 +97,21 @@ function onDragEnd(event: MouseEvent) {
 <template>
     <Transition name="window">
         <div class="window active" :style="{
-            width: width + 'px',
-            height: height + 'px',
-            left: posX + 'px',
-            top: posY + 'px',
+            width: instance.width + 'px',
+            height: instance.height + 'px',
+            left: instance.posX + 'px',
+            top: instance.posY + 'px',
             zIndex: instance.z
         }" @mousedown="manager.focus(instance.id)" v-show="!instance.minimized">
             <div class="resize-bars" v-if="props.instance.resizeable">
-                <div class="resize-bar left" data-dir="left" @mousedown="resize"></div>
-                <div class="resize-bar right" data-dir="right" @mousedown="resize"></div>
-                <div class="resize-bar top" data-dir="top" @mousedown="resize"></div>
-                <div class="resize-bar bottom" data-dir="bottom" @mousedown="resize"></div>
-                <div class="resize-bar top-left" data-dir="top-left" @mousedown="resize"></div>
-                <div class="resize-bar top-right" data-dir="top-right" @mousedown="resize"></div>
-                <div class="resize-bar bottom-left" data-dir="bottom-left" @mousedown="resize"></div>
-                <div class="resize-bar bottom-right" data-dir="bottom-right" @mousedown="resize"></div>
+                <div class="resize-bar left" data-dir="left" @mousedown="startResize"></div>
+                <div class="resize-bar right" data-dir="right" @mousedown="startResize"></div>
+                <div class="resize-bar top" data-dir="top" @mousedown="startResize"></div>
+                <div class="resize-bar bottom" data-dir="bottom" @mousedown="startResize"></div>
+                <div class="resize-bar top-left" data-dir="top-left" @mousedown="startResize"></div>
+                <div class="resize-bar top-right" data-dir="top-right" @mousedown="startResize"></div>
+                <div class="resize-bar bottom-left" data-dir="bottom-left" @mousedown="startResize"></div>
+                <div class="resize-bar bottom-right" data-dir="bottom-right" @mousedown="startResize"></div>
             </div>
 
             <div class="title-bar" @mousedown="startDrag" style="background-attachment: local;">

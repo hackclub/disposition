@@ -58,7 +58,7 @@ export default defineEventHandler(async event => {
 
             const lines: string[] = [];
             if (item) lines.push(`📀 ${item.album} by ${item.artist}`);
-            if (newStatus) lines.push(`Status: ${orderStatusLabels[newStatus] ?? newStatus}`);
+            if (newStatus) lines.push(`ℹ️ Status: ${orderStatusLabels[newStatus] ?? newStatus}`);
             if (newTracking) lines.push(`🚚 Tracking: ${newTracking}`);
 
             await sendNotification({

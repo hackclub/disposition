@@ -7,34 +7,50 @@ import type { MessageBoxOptions } from "~/components/messageBox.vue";
 
 export const useWindowManager = () => {
     const windows = useState<WindowInstance[]>("wm-windows", () => []);
-    const nextZ = useState("wm-z", () => 1);
-    const focused = (id: string) => { windows.value.find(w => w.id === id)!.z = nextZ.value++ };
+
+    // keeps z values at 1..n so they never grow without bound
+    function restack(topId?: string) {
+        const ordered = [...windows.value].sort((a, b) => a.z - b.z);
+        const topIndex = ordered.findIndex(w => w.id === topId);
+        if (topIndex !== -1) ordered.push(...ordered.splice(topIndex, 1));
+        ordered.forEach((w, i) => w.z = i + 1);
+    }
+
+    function add(instance: Omit<WindowInstance, "id" | "z">) {
+        const id = (Math.random() * 10000).toString();
+        windows.value.push({ ...instance, id, z: 0 });
+        restack(id);
+    }
 
     function open(appId: keyof typeof APPS, props: Record<string, any> = {}) {
-        if (!APPS[appId]) return;
+        const app = APPS[appId];
+        if (!app) return;
 
-        let posX = APPS[appId].posX ? APPS[appId].posX : 200;
-        let posY = APPS[appId].posY ? APPS[appId].posY : 200;
+        const width = app.width ?? app.minWidth;
+        const height = app.height ?? app.minHeight;
 
-        if (import.meta.client && !APPS[appId].posX && !APPS[appId].posY) {
-            posX = window.innerWidth / 2 - APPS[appId].width / 2;
-            posY = window.innerHeight / 2 - APPS[appId].height / 2;
+        const centered = import.meta.client && app.posX === undefined && app.posY === undefined;
+
+        let posX = app.posX ?? 200;
+        let posY = app.posY ?? 200;
+
+        if (centered) {
+            posX = window.innerWidth / 2 - width / 2;
+            posY = window.innerHeight / 2 - height / 2;
         }
 
-        windows.value.push({
-            id: (Math.random() * 10000).toString(),
+        add({
             appId: appId.toString(),
-            title: APPS[appId].title,
-            z: nextZ.value++,
+            title: app.title,
             minimized: false,
 
-            width: APPS[appId].width,
-            height: APPS[appId].height,
-            minWidth: APPS[appId].minWidth,
-            minHeight: APPS[appId].minHeight,
+            width,
+            height,
+            minWidth: app.minWidth,
+            minHeight: app.minHeight,
 
-            tool: APPS[appId].tool,
-            resizeable: APPS[appId].resizeable,
+            tool: app.tool,
+            resizeable: app.resizeable,
 
             posX,
             posY,
@@ -48,7 +64,7 @@ export const useWindowManager = () => {
     }
 
     function focus(id: string) {
-        windows.value.find(w => w.id === id)!.z = nextZ.value++;
+        restack(id);
     }
 
     function minimize(id: string) {
@@ -59,8 +75,20 @@ export const useWindowManager = () => {
         windows.value.find(w => w.id === id)!.minimized = false;
     }
 
+    function resize(id: string, size: { width?: number; height?: number }) {
+        const w = get(id);
+        if (size.width !== undefined) w.width = Math.max(w.minWidth, size.width);
+        if (size.height !== undefined) w.height = Math.max(w.minHeight, size.height);
+    }
+
+    function move(id: string, pos: { posX?: number; posY?: number }) {
+        const w = get(id);
+        if (pos.posX !== undefined) w.posX = pos.posX;
+        if (pos.posY !== undefined) w.posY = pos.posY;
+    }
+
     function isFocused(id: string) {
-        return windows.value.find(w => w.id === id)!.minimized;
+        return get(id).z === Math.max(...windows.value.map(w => w.z));
     }
 
     function get(id: string) {
@@ -82,11 +110,9 @@ export const useWindowManager = () => {
             posY = window.innerHeight / 2 - 120 / 2;
         }
 
-        windows.value.push({
-            id: (Math.random() * 10000).toString(),
+        add({
             appId: "message_box",
             title: title,
-            z: nextZ.value++,
             minimized: false,
 
             width: width,
@@ -115,11 +141,9 @@ export const useWindowManager = () => {
             posY = window.innerHeight / 2 - 120 / 2;
         }
 
-        windows.value.push({
-            id: (Math.random() * 10000).toString(),
+        add({
             appId: "dialog_box",
             title: title,
-            z: nextZ.value++,
             minimized: false,
 
             width: width,
@@ -139,12 +163,13 @@ export const useWindowManager = () => {
 
     return {
         windows: readonly(windows),
-        focused,
         open,
         close,
         focus,
         minimize,
         restore,
+        resize,
+        move,
         isFocused,
         get,
         isTypeOpen,

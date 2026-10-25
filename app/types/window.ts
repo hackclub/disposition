@@ -25,8 +25,8 @@ export type AppDef = {
     title: string;
     component: Component;
 
-    width: number,
-    height: number,
+    width?: number, // defaults to minWidth
+    height?: number, // defaults to minHeight
     minWidth: number,
     minHeight: number,
 

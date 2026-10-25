@@ -43,8 +43,6 @@ export const APPS: { [key: string]: AppDef } = {
         title: 'Onboarding',
         component: Onboarding,
 
-        width: 600,
-        height: 470,
         minWidth: 600,
         minHeight: 470,
 
@@ -58,7 +56,6 @@ export const APPS: { [key: string]: AppDef } = {
         component: DevlogView,
 
         width: 500,
-        height: 700,
         minHeight: 700,
         minWidth: 450,
 
@@ -72,7 +69,6 @@ export const APPS: { [key: string]: AppDef } = {
         title: "Project Edit",
         component: ProjectEdit,
 
-        width: 542,
         height: 490,
         minWidth: 542,
         minHeight: 307,
@@ -87,7 +83,6 @@ export const APPS: { [key: string]: AppDef } = {
         component: ProjectBrowser,
 
         width: 500,
-        height: 700,
         minHeight: 700,
         minWidth: 450,
 
@@ -100,8 +95,6 @@ export const APPS: { [key: string]: AppDef } = {
         title: "Project Profile",
         component: ProjectProfile,
 
-        width: 450,
-        height: 700,
         minHeight: 700,
         minWidth: 450,
 
@@ -114,7 +107,6 @@ export const APPS: { [key: string]: AppDef } = {
         title: "Profile Edit",
         component: ProfileEdit,
 
-        width: 542,
         height: 410,
         minWidth: 542,
         minHeight: 307,
@@ -128,8 +120,6 @@ export const APPS: { [key: string]: AppDef } = {
         title: 'Welcome!',
         component: Welcome,
 
-        width: 600,
-        height: 310,
         minWidth: 600,
         minHeight: 310,
 
@@ -142,8 +132,6 @@ export const APPS: { [key: string]: AppDef } = {
         title: 'Feedback',
         component: Feedback,
 
-        width: 400,
-        height: 550,
         minWidth: 400,
         minHeight: 550,
 
@@ -169,7 +157,6 @@ export const APPS: { [key: string]: AppDef } = {
         appId: 'project_manager',
         title: 'DispoManager',
         component: projectManager,
-        width: 536,
         height: 615,
         minWidth: 536,
         minHeight: 515,
@@ -182,8 +169,6 @@ export const APPS: { [key: string]: AppDef } = {
         appId: 'profile_viewer',
         title: 'Profile Viewer',
         component: profileViewer,
-        width: 541,
-        height: 550,
         minWidth: 541,
         minHeight: 550,
 
@@ -195,8 +180,6 @@ export const APPS: { [key: string]: AppDef } = {
         appId: 'notifications',
         title: 'Notifications',
         component: Notifications,
-        width: 450,
-        height: 500,
         minWidth: 450,
         minHeight: 500,
 
@@ -209,8 +192,6 @@ export const APPS: { [key: string]: AppDef } = {
         title: 'DispoVer',
         component: Winver,
 
-        width: 650,
-        height: 300,
         minWidth: 650,
         minHeight: 300,
 
@@ -224,7 +205,6 @@ export const APPS: { [key: string]: AppDef } = {
         component: Auth,
 
         width: 500,
-        height: 150,
         minWidth: 400,
         minHeight: 150,
 
@@ -237,8 +217,6 @@ export const APPS: { [key: string]: AppDef } = {
         title: 'DispoRun',
         component: Run,
 
-        width: 520,
-        height: 200,
         minWidth: 520,
         minHeight: 200,
 
@@ -254,8 +232,6 @@ export const APPS: { [key: string]: AppDef } = {
         title: 'Rigby',
         component: Rigby,
 
-        width: 367,
-        height: 476,
         minWidth: 367,
         minHeight: 476,
 
@@ -268,8 +244,6 @@ export const APPS: { [key: string]: AppDef } = {
         title: 'DispoConfig',
         component: Config,
 
-        width: 367,
-        height: 476,
         minWidth: 367,
         minHeight: 476,
 
@@ -283,8 +257,6 @@ export const APPS: { [key: string]: AppDef } = {
         title: 'messageBox',
         component: Messagebox,
 
-        width: 1,
-        height: 1,
         minWidth: 1,
         minHeight: 1,
 
@@ -298,8 +270,6 @@ export const APPS: { [key: string]: AppDef } = {
         title: 'dialogBox',
         component: Dialogbox,
 
-        width: 1,
-        height: 1,
         minWidth: 1,
         minHeight: 1,
 
@@ -317,8 +287,6 @@ export const APPS: { [key: string]: AppDef } = {
         title: 'DispoStats',
         component: AdminStats,
 
-        width: 380,
-        height: 476,
         minWidth: 380,
         minHeight: 476,
 
@@ -332,8 +300,6 @@ export const APPS: { [key: string]: AppDef } = {
         title: 'DispoAdminNotificationThing',
         component: AdminNotifications,
 
-        width: 500,
-        height: 500,
         minWidth: 500,
         minHeight: 500,
 
@@ -347,8 +313,6 @@ export const APPS: { [key: string]: AppDef } = {
         title: "Add Announcement",
         component: AdminAddAnnouncement,
 
-        width: 403,
-        height: 561,
         minWidth: 403,
         minHeight: 561,
 
@@ -361,8 +325,6 @@ export const APPS: { [key: string]: AppDef } = {
         title: 'DispoAdminShopThing',
         component: AdminShop,
 
-        width: 500,
-        height: 500,
         minWidth: 500,
         minHeight: 500,
 
@@ -376,8 +338,6 @@ export const APPS: { [key: string]: AppDef } = {
         title: 'Add Shop Item',
         component: AdminShopAddItem,
 
-        width: 500,
-        height: 600,
         minWidth: 500,
         minHeight: 600,
 
@@ -391,8 +351,6 @@ export const APPS: { [key: string]: AppDef } = {
         title: 'Edit Shop Item',
         component: AdminShopEditItem,
 
-        width: 500,
-        height: 600,
         minWidth: 500,
         minHeight: 600,
 
@@ -406,8 +364,6 @@ export const APPS: { [key: string]: AppDef } = {
         title: 'View Order (admin)',
         component: AdminShopOrder,
 
-        width: 500,
-        height: 600,
         minWidth: 500,
         minHeight: 600,
 
@@ -421,8 +377,6 @@ export const APPS: { [key: string]: AppDef } = {
         title: 'View Request (admin)',
         component: AdminShopRequest,
 
-        width: 500,
-        height: 200,
         minWidth: 500,
         minHeight: 200,
 
@@ -439,7 +393,6 @@ export const APPS: { [key: string]: AppDef } = {
         appId: 'shop',
         title: 'DispoShop',
         component: Shop,
-        width: 600,
         height: 650,
         minWidth: 600,
         minHeight: 310,
@@ -453,8 +406,6 @@ export const APPS: { [key: string]: AppDef } = {
         title: 'View Item',
         component: Item,
 
-        width: 671,
-        height: 550,
         minWidth: 671,
         minHeight: 550,
 
@@ -467,8 +418,6 @@ export const APPS: { [key: string]: AppDef } = {
         title: 'My orders',
         component: Orders,
 
-        width: 670,
-        height: 550,
         minWidth: 670,
         minHeight: 550,
 
@@ -481,8 +430,6 @@ export const APPS: { [key: string]: AppDef } = {
         title: 'View Order',
         component: Order,
 
-        width: 670,
-        height: 550,
         minWidth: 670,
         minHeight: 550,
 
@@ -495,8 +442,6 @@ export const APPS: { [key: string]: AppDef } = {
         title: 'View Category',
         component: Category,
 
-        width: 500,
-        height: 600,
         minWidth: 500,
         minHeight: 600,
 
@@ -509,8 +454,6 @@ export const APPS: { [key: string]: AppDef } = {
         title: 'Submit a request',
         component: ShopRequest,
 
-        width: 300,
-        height: 400,
         minWidth: 300,
         minHeight: 400,
 
@@ -523,8 +466,6 @@ export const APPS: { [key: string]: AppDef } = {
         title: 'My requests',
         component: Requests,
 
-        width: 670,
-        height: 550,
         minWidth: 670,
         minHeight: 550,
 

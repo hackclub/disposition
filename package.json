@@ -10,7 +10,6 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
-    "7.css": "^0.21.1",
     "@comark/vue": "^0.8.1",
     "@nuxt/content": "^3.16.0",
     "@nuxt/image": "2.1.0",
