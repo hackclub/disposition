@@ -47,7 +47,7 @@ export default defineEventHandler(async event => {
         const label = requestStatusLabels[parsed.data.status] ?? parsed.data.status;
         await sendNotification({
             title: `Request #${id}: ${label}`,
-            description: `📀 ${existing.album} by ${existing.artist}\nStatus: ${label}`,
+            description: `📀 ${existing.album} by ${existing.artist}\nℹ️ Status: ${label}`,
             user: existing.user
         });
     }

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { WindowInstance } from '~/types/window';
-import type { Item, Order, Request } from "~/types/database";
+import type { Item, ServerOrder, Request } from "~/types/database";
 
 const manager = useWindowManager();
 const props = defineProps<{ instance: WindowInstance }>()
@@ -9,12 +9,12 @@ if (!admin) manager.close(props.instance.id);
 let currentTab = ref<string>("items");
 
 const items = ref<Item[]>([]);
-const orders = ref<Order[]>([]);
+const orders = ref<ServerOrder[]>([]);
 const requests = ref<Request[]>([]);
 
 if (admin) {
     items.value = await $fetch<Item[]>("/api/shop/items/");
-    orders.value = await $fetch<Order[]>("/api/shop/orders?user=all");
+    orders.value = await $fetch<ServerOrder[]>("/api/shop/orders?user=all");
     requests.value = await $fetch<Request[]>("/api/shop/requests?user=all");
 }
 </script>
@@ -88,8 +88,8 @@ if (admin) {
                             <tbody>
                                 <tr v-for="order in orders" :key="order.id">
                                     <td>{{ order.id }}</td>
-                                    <td @click="manager.open('item', { id: order.item })">{{ order.item }}</td>
-                                    <td @click="manager.open('profile_viewer', { id: order.user })">{{ order.user }}
+                                    <td @click="manager.open('item', { id: order.item.id })">{{ order.item.id }}</td>
+                                    <td @click="manager.open('profile_viewer', { id: order.user.hcaId })">{{ order.user.hcaId }}
                                     </td>
                                     <td>{{ order.status }}</td>
                                     <td>{{ new Date(order.timestamp).getDate() }}/{{ new
