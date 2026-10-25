@@ -22,7 +22,7 @@ const props = defineProps<{
         <img v-if="props.options?.info" src="~/assets/icons/info.png" />
         <img v-else-if="props.options?.warning" src="~/assets/icons/warning.png" />
         <img v-else-if="props.options?.error" src="~/assets/icons/error.png" />
-        <img v-else-if="props.options?.question" src="~/assets/icons/info.png" /> <!-- for now its the info icon but its on the todo list -->
+        <img v-else-if="props.options?.question" src="~/assets/icons/question.png" /> <!-- for now its the info icon but its on the todo list -->
 
         <div>
             <h2>{{ props.message }}</h2>

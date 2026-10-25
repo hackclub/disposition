@@ -118,7 +118,7 @@ function post() {
 
 <style scoped>
 .devlog-view {
-    background: var(--color-bg-dark);
+    background: var(--color-bg-light);
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
