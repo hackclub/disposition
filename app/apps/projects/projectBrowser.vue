@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import browser from '~/assets/icons/browser.png'
+import rigby from '~/assets/icons/rigby.png'
+import badge from '~/assets/icons/badge.png'
 import heart from '~/assets/icons/heart.png'
 import comment from '~/assets/icons/comment.png'
-import badge from '~/assets/icons/badge.png'
 import devlogPhoto from '~/assets/misc/devlog-photo.png'
 
 interface Devlog {
@@ -19,11 +18,8 @@ interface Devlog {
     photo?: string
 }
 
-const sortLabel = ref('Latest > Oldest')
-
-function toggleSort() {
-    sortLabel.value = sortLabel.value === 'Latest > Oldest' ? 'Latest < Oldest' : 'Latest > Oldest'
-}
+const aboutText = 'My cat Rigby has been corrupted by the cruel evil and now he wants to destroy me so i am currently developing a very genius machine to suck out the evil within him'
+const photoCaption = 'This is a photo of Rigby'
 
 const devlogs: Devlog[] = [
     {
@@ -65,130 +61,154 @@ const emit = defineEmits<{
 </script>
 
 <template>
-    <div class="content">
-        <div class="header">
-            <div class="striped-bg">
-                <img :src="browser" alt="" class="logo" />
+<div class="content">
+    <div class="header">
 
-                <span>
-                    <h2>Browse other projects</h2>
-                    <p>All of the projects shown on Disposition</p>
-                </span>
+        <div class="header-bg">
+                <button class="back-btn">&lt;</button>
+
+                <div class="profile-card">
+                    <img class="avatar" :src="rigby" alt="">
+                    <div class="profile-info">
+                        <h2>Restoring Rigby's faith from the evil <img class="badge" :src="badge" alt=""></h2>
+                        <p>"This is a description look at me"</p>
+                    </div>
+                </div>
             </div>
-            <div class="spacer"></div>
+
+    </div>
+    <div class="spacer"></div>
+
+<div class="about-page">
+    <h2 class="heading">About</h2>
+
+    <div class="panel about">
+        <p class="about-text">{{ aboutText }}</p>
+        <div class="photo-row">
+            <img class="photo" :src="rigby" alt="">
+            <span class="caption">{{ photoCaption }}</span>
         </div>
+    </div>
 
-        <div class="main">
-            <div class="devlog-page">
-                <div class="sort">
-                    <button class="sort-btn" @click="toggleSort">{{ sortLabel }}</button>
-                </div>
+    <h2 class="heading">Devlogs</h2>
 
-                <div v-for="devlog in devlogs" :key="devlog.id" class="card">
-                    <span class="project">{{ devlog.project }}</span>
+    <div class="devlogs">
+        <div v-for="devlog in devlogs" :key="devlog.id" class="devlog-card">
+            <span class="project">{{ devlog.project }}</span>
 
-                    <div class="title-row">
-                        <h2 class="devlog-title">Devlog {{ devlog.number }}</h2>
-                        <span class="author">By {{ devlog.author }}</span>
-                        <span class="posted">&bull; {{ devlog.posted }}</span>
-                    </div>
+            <div class="title-row">
+                <h2 class="devlog-title">Devlog {{ devlog.number }}</h2>
+                <span class="author">By {{ devlog.author }}</span>
+                <span class="posted">&bull; {{ devlog.posted }}</span>
+            </div>
 
-                    <div class="devlog-content">
-                        <p v-for="(text, i) in devlog.paragraphs" :key="i">{{ text }}</p>
-                        <button class="see-more">See more...</button>
-                        <img v-if="devlog.photo" class="photo" :src="devlog.photo" alt="">
-                    </div>
+            <div class="devlog-content">
+                <p v-for="(text, i) in devlog.paragraphs" :key="i">{{ text }}</p>
+                <button class="see-more">See more...</button>
+                <img v-if="devlog.photo" class="devlog-photo" :src="devlog.photo" alt="">
+            </div>
 
-                    <div class="footer">
-                        <button class="btn" @click="emit('open', devlog.id)">Open</button>
+            <div class="footer">
+                <button class="btn" @click="emit('open', devlog.id)">Open</button>
 
-                        <span class="stat">
-                            <img class="icon" :src="heart" alt="">
-                            {{ devlog.likes }}
-                        </span>
+                <span class="stat">
+                    <img class="icon" :src="heart" alt="">
+                    {{ devlog.likes }}
+                </span>
 
-                        <span class="stat">
-                            <img class="icon" :src="comment" alt="">
-                            {{ devlog.comments }}
-                        </span>
+                <span class="stat">
+                    <img class="icon" :src="comment" alt="">
+                    {{ devlog.comments }}
+                </span>
 
-                        <span class="logged">
-                            {{ devlog.hoursLogged }}
-                            <img class="icon" :src="badge" alt="">
-                        </span>
-                    </div>
-                </div>
+                <span class="logged">
+                    {{ devlog.hoursLogged }}
+                    <img class="icon" :src="badge" alt="">
+                </span>
             </div>
         </div>
     </div>
+</div>
+</div>
 </template>
 
 <style scoped>
-.content {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    height: 100%;
-}
-
-.main {
-    flex: 1;
-    min-height: 0;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
 
 .header {
     display: flex;
     flex-direction: column;
-    flex-shrink: 0;
-    user-select: none;
+    font-family: 'Joan', serif;
 }
 
-.logo {
-    width: 38px;
-    height: 46px;
-    filter: drop-shadow(0 0 0.2rem var(--color-black));
-    margin: 10px;
-}
-
-.striped-bg {
+.header-bg {
+    position: relative;
     width: 100%;
-    height: 80px;
+    height: 110px;
+    overflow: hidden;
+}
+
+.back-btn {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    width: 30px;
+    height: 30px;
+    background: var(--color-white);
+    border: 1px solid var(--color-gray-dark);
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.profile-card {
+    height: 90px;
+    position: absolute;
+    top: 8px;
+    left: 40px;
+    width: 330px;
+    max-width: calc(100% - 48px);
     display: flex;
-    flex-direction: row;
-    justify-content: start;
-    align-items: center;
-    padding-left: 7px;
-    gap: 2px;
-    background: repeating-linear-gradient(
-        0deg,
-        var(--color-gray-light) 0px,
-        var(--color-gray-light) 6px,
-        var(--color-gray-medium) 6px,
-        var(--color-gray-medium) 7px
-    );
+    gap: 12px;
+    padding: 6px;
+    background: var(--color-panel-bg);
+    border: 1px solid var(--color-gray-medium);
+
+    .avatar {
+        width: 70px;
+        height: 70px;
+        object-fit: cover;
+        border: 1px solid var(--color-gray-dark);
+        background: var(--color-gray-medium);
+    }
+
+    .profile-info {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        flex: 1;
+
+        h2 {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin: 0;
+            font-weight: 500;
+            font-family: 'Joan', serif;
+        }
+
+        p {
+            margin: 0 0 6px;
+            font-size: 12px;
+        }
+    }
 }
 
-.striped-bg span {
-    display: flex;
-    justify-content: center;
-    align-items: start;
-    flex-direction: column;
-}
-
-.striped-bg span h2 {
-    margin: 0;
-    font-weight: normal;
-    filter: drop-shadow(1px 1px 5px var(--color-black));
-}
-
-.striped-bg span p {
-    margin: 0;
-    font-weight: normal;
-    filter: drop-shadow(1px 1px 5px var(--color-black));
+.badge {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    object-fit: contain;
+    display: block;
 }
 
 .spacer {
@@ -199,48 +219,87 @@ const emit = defineEmits<{
     box-sizing: border-box;
 }
 
-.devlog-page {
+.content {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.about-page {
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
     width: 100%;
-    font-size: 14px;
+    height: 100%;
+    padding: 4px 13px 14px;
+    overflow-y: auto;
+    font-family: 'Inter', 'Fira Sans', sans-serif;
+    font-size: 15px;
+    user-select: none;
 }
 
-.sort {
+.heading {
     flex-shrink: 0;
-    margin-left: 12px;
-}
-
-.sort-btn {
-    display: block;
-    width: 148px;
-    height: 20px;
-    padding: 0;
-    font-family: inherit;
-    font-size: 14px;
+    margin: 0 0 6px;
     text-align: center;
-    color: var(--color-black);
-    background: var(--color-bg-light);
-    border-color: var(--color-border-light);
-    border-radius: 0 0 4px 4px;
-    cursor: pointer;
-    outline: none;
+    font-size: 16px;
+    font-weight: 600;
+    font-family: 'Inter', 'Fira Sans', sans-serif;
 }
 
-.card {
+.panel {
+    box-sizing: border-box;
+    flex-shrink: 0;
+    background: var(--color-bg-light);
+    border: 1px solid var(--color-border-dark);
+}
+
+.about {
+    margin-bottom: 8px;
+    padding: 8px;
+}
+
+.about-text {
+    margin-top: 2px;
+    margin-bottom: 10px;
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1.25;
+}
+
+.photo-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.photo {
+    flex-shrink: 0;
+    width: 86px;
+    height: 86px;
+    object-fit: cover;
+    background: var(--color-bg-dark);
+}
+
+.caption {
+    font-size: 14px;
+}
+
+.devlogs {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.devlog-card {
     display: flex;
     flex-direction: column;
     flex-shrink: 0;
     box-sizing: border-box;
-    margin: 8px 12px 4px;
     padding: 6px 6px 8px;
     background: var(--color-bg-light);
     border: 1px solid var(--color-gray-light);
-}
-
-.card:last-child {
-    margin-bottom: 12px;
 }
 
 .project {
@@ -297,7 +356,7 @@ const emit = defineEmits<{
         cursor: pointer;
     }
 
-    .photo {
+    .devlog-photo {
         display: block;
         width: 148px;
         height: 129px;
