@@ -61,8 +61,8 @@ const onSubmit = handleSubmit(async (values) => {
 
 <style scoped>
 .description {
-    min-height: 100px;
-    max-height: 100px;
+    height: 100%;
+    flex-grow: 1;
 
     width: 100%;
     min-width: 100%;

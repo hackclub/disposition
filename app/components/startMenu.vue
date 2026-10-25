@@ -21,37 +21,37 @@ if (loggedIn.value) {
 </script>
 
 <template>
+
     <div class="startMenu">
-        <div class="left">
-            <div class="header">
-                <img src="~/assets/logos/Disposition.png" alt="Disposition logo" />
-                <span>
-                    <h1>Disposition</h1>
-                    <p>a physical-media based ysws</p>
-                </span>
+        <AuthState v-slot="{ loggedIn, clear }">
+            <div class="left">
+                <div class="header">
+                    <img src="~/assets/logos/Disposition.png" alt="Disposition logo" />
+                    <span>
+                        <h1>Disposition</h1>
+                        <p>a physical-media based ysws</p>
+                    </span>
+                </div>
+
+                <div class="apps">
+                    <template v-for="app in APPS">
+                        <div v-if="!app.tool && !app.hidden" class="app" @click="manager.open(app.appId)">
+                            <img :src="ICONS[app.appId]" />
+                            <p>{{ app.title }}</p>
+                        </div>
+                    </template>
+                </div>
             </div>
 
-            <div class="apps">
-                <template v-for="app in APPS">
-                    <div v-if="!app.tool && !app.hidden" class="app" @click="manager.open(app.appId)">
-                        <img :src="ICONS[app.appId]" />
-                        <p>{{ app.title }}</p>
-                    </div>
-                </template>
-            </div>
-        </div>
+            <div class="right">
+                <!-- here we can put some tool apps like dispover. not all of the tool apps tho -->
+                <div v-if="loggedIn" class="menu-item" @click="manager.open('rigby')">Secret...</div>
+                <div class="menu-item" @click="manager.open('winver')">DispoVer</div>
 
-        <div class="right">
-            <!-- here we can put some tool apps like dispover. not all of the tool apps tho -->
-            <div class="menu-item" @click="manager.open('rigby')">Secret...</div>
-            <div class="menu-item" @click="manager.open('winver')">DispoVer</div>
-            <AuthState v-slot="{ loggedIn, clear }">
                 <div v-if="loggedIn" class="menu-item" @click="clear">Sign Out</div>
                 <div v-else class="menu-item" @click="manager.open('auth')">Sign In</div>
-            </AuthState>
 
-            <div class="menu-profile">
-                <AuthState v-slot="{ loggedIn }">
+                <div class="menu-profile">
                     <span v-if="loggedIn && info">
                         <b>{{ info.displayName }}</b>
                         <img class="profile-pic" :src="info.imageUrl"></img>
@@ -60,9 +60,9 @@ if (loggedIn.value) {
                         <b>Guest</b>
                         <img class="profile-pic" src="~/assets/misc/pfp.png"></img>
                     </span>
-                </AuthState>
+                </div>
             </div>
-        </div>
+        </AuthState>
     </div>
 </template>
 

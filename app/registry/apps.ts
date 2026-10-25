@@ -328,11 +328,12 @@ export const APPS: { [key: string]: AppDef } = {
         title: "Add Announcement",
         component: AdminAddAnnouncement,
 
-        minWidth: 403,
-        minHeight: 561,
+        minWidth: 400,
+        minHeight: 300,
 
-        tool: false,
+        tool: true,
         resizeable: false,
+        hidden: true,
     },
 
     admin_shop: {
