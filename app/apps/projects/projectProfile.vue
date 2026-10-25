@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import rigby from '~/assets/icons/rigby.png'
+import rigby from '~/assets/misc/rigby.jpg'
 import badge from '~/assets/icons/badge.png'
 import heart from '~/assets/icons/heart.png'
 import comment from '~/assets/icons/comment.png'

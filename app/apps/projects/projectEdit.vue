@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import headerbg from '~/assets/misc/header.png'
-import projectImage from '~/assets/icons/rigby.png'
+import projectImage from '~/assets/misc/rigby.jpg'
 
 const projectName = ref('')
 const about = ref('')

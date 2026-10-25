@@ -4,7 +4,7 @@ import browser from '~/assets/icons/browser.png'
 import heart from '~/assets/icons/heart.png'
 import comment from '~/assets/icons/comment.png'
 import badge from '~/assets/icons/badge.png'
-import devlogPhoto from '~/assets/icons/devlog-photo.png'
+import devlogPhoto from '~/assets/misc/devlog-photo.png'
 
 interface Devlog {
     id: number

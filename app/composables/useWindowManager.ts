@@ -6,8 +6,8 @@ import type { DialogBoxOptions } from "~/components/dialogBox.vue";
 import type { MessageBoxOptions } from "~/components/messageBox.vue";
 
 export const useWindowManager = () => {
-    const windows = useState<WindowInstance[]>('wm-windows', () => []);
-    const nextZ = useState('wm-z', () => 1);
+    const windows = useState<WindowInstance[]>("wm-windows", () => []);
+    const nextZ = useState("wm-z", () => 1);
     const focused = (id: string) => { windows.value.find(w => w.id === id)!.z = nextZ.value++ };
 
     function open(appId: keyof typeof APPS, props: Record<string, any> = {}) {

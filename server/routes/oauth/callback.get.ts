@@ -130,7 +130,7 @@ export default defineEventHandler(async (event) => {
             yswsEligible: identity.ysws_eligible,
             verificationStatus: identity.verification_status,
 
-            birthday: identity.birthday ? new Date(identity.birthday) : undefined,
+            birthday: identity.birthday,
 
             // archer told me to use the legal name from the primary address so here it is
             legalFirstName: primaryAddress?.first_name,
