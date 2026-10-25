@@ -14,6 +14,7 @@ export const users = pgTable("users", {
 
 	banner: text(),
 	bio: text(),
+	onboardedAt: timestamp("onboarded_at", { mode: 'date', withTimezone: true }),
 
 	// sensitive info !!!! :scream:
 	birthday: timestamp({ mode: 'string' }),
