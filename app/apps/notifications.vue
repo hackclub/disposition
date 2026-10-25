@@ -2,21 +2,22 @@
 import { computed } from 'vue'
 import type { Notification } from '~/types/notification'
 import type { WindowInstance } from '~/types/window';
+import { Markdown } from '@comark/vue';
 
 const windowManager = useWindowManager();
 const props = defineProps<{ instance: WindowInstance, notificationId?: number, announcementId?: number }>();
 
 const announcements = ref<Notification[]>(
-  await $fetch<Notification[]>("/api/announcements?readFilter=all")
+    await $fetch<Notification[]>("/api/announcements?readFilter=all")
 )
 const notifications = ref<Notification[]>(
-  await $fetch<Notification[]>("/api/notifications?readFilter=all")
+    await $fetch<Notification[]>("/api/notifications?readFilter=all")
 )
 
 const feed = computed(() =>
-  [...announcements.value, ...notifications.value].sort(
-    (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
-  )
+    [...announcements.value, ...notifications.value].sort(
+        (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+    )
 )
 
 const feedRef = ref<HTMLElement | null>(null);
@@ -35,50 +36,77 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="header">
-        <div class="striped-bg">
-            <img src="~/assets/logos/Disposition.png" alt="Disposition Logo" class="logo" />
-            <!-- todo change to bell icon -->
-            <span>
-                <h2>Notifications</h2>
-                <p>your shop order was just lost at sea! sorry...</p>
-            </span>
+    <div class="notifications-app">
+        <div class="header">
+            <div class="striped-bg">
+                <img src="~/assets/logos/Disposition.png" alt="Disposition Logo" class="logo" />
+                <!-- todo change to bell icon -->
+                <span>
+                    <h2>Notifications</h2>
+                    <p>your shop order was just lost at sea! sorry...</p>
+                </span>
+            </div>
+
+            <div class="spacer"></div>
         </div>
 
-        <div class="spacer"></div>
-    </div>
+        <div class="notifications" ref="feedRef">
+            <template v-for="notif in feed">
+                <div class="notification" v-if="notif.type === 'notification'"
+                    :data-feed-key="`notification-${notif.serverId}`">
+                    <div class="bar">
+                        <p>{{ notif.title }}</p>
+                    </div>
 
-    <div class="notifications" ref="feedRef">
-        <template v-for="notif in feed">
-            <div class="notification" v-if="notif.type === 'notification'" :data-feed-key="`notification-${notif.serverId}`">
-                <div class="bar">
-                    <p>{{ notif.title }}</p>
+                    <div class="notification-content">
+                        <Markdown>{{ notif.description }}</Markdown>
+                    </div>
                 </div>
+                <div class="announcement" v-else :data-feed-key="`announcement-${notif.serverId}`">
+                    <div class="bar">
+                        <p>{{ notif.title }}</p>
+                    </div>
+                    <p class="from">From <a @click="windowManager.open('profile', { id: notif.author!.id })">@{{
+                        notif.author!.username }}</a></p>
 
-                <div class="notification-content">
-                    <p>{{ notif.description }}</p>
+                    <div class="announcement-content">
+                        <Markdown>{{ notif.description }}</Markdown>
+                    </div>
                 </div>
-            </div>
-            <div class="announcement" v-else :data-feed-key="`announcement-${notif.serverId}`">
-                <div class="bar">
-                    <p>{{ notif.title }}</p>
-                </div>
-                <p class="from">From <a
-                        @click="windowManager.open('profile', { id: notif.author!.id })">@{{
-                            notif.author!.username }}</a></p>
-
-                <div class="announcement-content">
-                    <p>{{ notif.description }}</p>
-                </div>
-            </div>
-        </template>
+            </template>
+        </div>
     </div>
 </template>
 
 <style scoped>
-.notifications {
+.notification-content :deep(p),
+.announcement-content :deep(p) {
+    margin: 0;
+    white-space: pre-line;
+}
+
+.notifications-app {
+    height: 100%;
     display: flex;
     flex-direction: column;
+}
+
+.notifications-app .header {
+    flex-shrink: 0;
+}
+
+.notifications {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+
+    justify-content: safe center;
+    align-items: center;
+
+    min-height: 0;
+    overflow-y: auto;
+    padding: 10px 10px 10px 10px;
+
     gap: 10px;
 }
 
@@ -93,7 +121,7 @@ onMounted(() => {
     flex-direction: column;
     padding: 5px;
 
-    width: 400px;
+    width: 100%;
     height: fit-content;
 
     .from {
@@ -114,7 +142,7 @@ onMounted(() => {
 
     padding: 5px;
 
-    p {
+    :deep(p) {
         margin: 0;
     }
 
@@ -143,7 +171,7 @@ onMounted(() => {
     flex-direction: column;
     padding: 5px;
 
-    width: 400px;
+    width: 100%;
     height: fit-content;
 }
 
@@ -153,7 +181,7 @@ onMounted(() => {
 
     padding: 5px;
 
-    p {
+    :deep(p) {
         margin: 0;
     }
 
@@ -204,9 +232,48 @@ onMounted(() => {
 
 /* window css */
 
-.striped-bg {
-    width: 100%;
+.logo {
+    width: 60px;
     height: 60px;
+
+    filter: drop-shadow(0 0 0.2rem var(--color-black));
+}
+
+.header {
+    display: flex;
+    flex-direction: column;
+
+    font-family: 'Joan', serif;
+    user-select: none;
+}
+
+.striped-bg {
+    span {
+        display: flex;
+        justify-content: center;
+        align-items: start;
+        flex-direction: column;
+
+        h2 {
+            margin: 0;
+            font-weight: normal;
+            filter: drop-shadow(1px 1px 5px var(--color-black));
+        }
+
+        p {
+            margin: 0;
+            filter: drop-shadow(1px 1px 5px var(--color-black));
+        }
+    }
+
+    width: 100%;
+
+    background: repeating-linear-gradient(0deg,
+        var(--color-gray-light) 0px,
+        var(--color-gray-light) 6px,
+        var(--color-gray-medium) 6px,
+        var(--color-gray-medium) 7px);
+    height: 80px;
 
     display: flex;
     flex-direction: row;
@@ -214,53 +281,6 @@ onMounted(() => {
     align-items: center;
     padding-left: 7px;
     gap: 2px;
-
-    span {
-        display: flex;
-        justify-content: center;
-        align-items: start;
-        flex-direction: column;
-
-        p {
-            margin: 0;
-            filter: drop-shadow(1px 1px 5px var(--color-black));
-        }
-
-        h2 {
-            margin-left: 5px;
-            font-weight: normal;
-            filter: drop-shadow(1px 1px 5px var(--color-black));
-        }
-    }
-}
-
-
-.logo {
-    width: 25px;
-    height: 60px;
-
-    filter: drop-shadow(0 0 0.2rem var(--color-black));
-}
-
-
-.header {
-    background: repeating-linear-gradient(0deg,
-            var(--color-gray-light) 0px,
-            var(--color-gray-light) 6px,
-            var(--color-gray-medium) 6px,
-            var(--color-gray-medium) 7px);
-
-    display: flex;
-    flex-direction: column;
-
-    h2 {
-        font-weight: normal;
-    }
-
-    font-family: 'Joan',
-    serif;
-    user-select: none;
-
 }
 
 .spacer {
@@ -269,5 +289,4 @@ onMounted(() => {
     border: 1px solid var(--color-border-light);
     background-color: var(--color-panel-bg);
 }
-
 </style>

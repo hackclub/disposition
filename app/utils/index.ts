@@ -46,3 +46,38 @@ export function formatDuration(totalSeconds: number | null | undefined): string 
         ? `${h}:${String(m).padStart(2, "0")}:${ss}`
         : `${m}:${ss}`;
 }
+
+// truncating markdown and shi. god bless claude sonnet 5.5 //
+
+import type { Node, ElementNode } from 'comark';
+
+export function visibleLength(nodes: Node[]): number {
+    return nodes.reduce((sum, n) =>
+        sum + (typeof n === 'string' ? n.length : visibleLength(n.slice(2) as Node[])), 0);
+}
+
+function truncateNodes(nodes: Node[], budget: { left: number }): Node[] {
+    const out: Node[] = [];
+    for (const node of nodes) {
+        if (budget.left <= 0) break;
+
+        if (typeof node === 'string') {
+            if (node.length < budget.left) {
+                out.push(node);
+                budget.left -= node.length;
+            } else {
+                out.push(node.slice(0, budget.left - 1).trimEnd() + '…');
+                budget.left = 0;
+            }
+        } else {
+            const [tag, props, ...children] = node as ElementNode;
+            out.push([tag, props, ...truncateNodes(children as Node[], budget)] as ElementNode);
+        }
+    }
+    return out;
+}
+
+export function truncateComark(nodes: Node[], max = 150): Node[] {
+    if (visibleLength(nodes) <= max) return nodes;
+    return truncateNodes(nodes, { left: max });
+}

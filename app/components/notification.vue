@@ -1,12 +1,23 @@
 <script setup lang="ts">
 import type { NotificationInstance } from '~/types/notification';
+import { Markdown } from '@comark/vue';
+import { parseMarkdown } from 'comark';
+import { renderMarkdown } from 'comark/render';
+import { truncateComark, visibleLength } from '~/utils/index'; // the functions from before, exported
 
 const props = defineProps<{ notification: NotificationInstance }>();
 const windowManager = useWindowManager();
 const notifManager = useNotificationManager();
 
 const maxLength = 150;
-const desc = (props.notification.description.length > maxLength) ? props.notification.description.trim().substring(0, maxLength - 3).trimEnd() + "..." : props.notification.description
+
+async function limit(source: string, max: number) {
+    const doc = await parseMarkdown(source);
+    if (visibleLength(doc.nodes) <= max) return source; // fits, so no round-trip
+    return await renderMarkdown({ ...doc, nodes: truncateComark(doc.nodes, max) });
+}
+
+const desc = await limit(props.notification.description.trim(), maxLength);
 
 async function close() {
     if (props.notification.type == "notification") {
@@ -37,7 +48,7 @@ async function more() {
         </div>
 
         <div class="content">
-            <p>{{ desc }}</p>
+            <Markdown>{{ desc }}</Markdown>
             <div class="see-more">
                 <a @click="more">See more...</a>
             </div>
@@ -52,7 +63,7 @@ async function more() {
             props.notification.author!.username }}</a></p>
 
         <div class="announcement-content">
-            <p>{{ desc }}</p>
+            <Markdown>{{ desc }}</Markdown>
             <div class="see-more">
                 <a @click="more">See more...</a>
             </div>
@@ -61,6 +72,12 @@ async function more() {
 </template>
 
 <style scoped>
+.content :deep(p),
+.announcement-content :deep(p) {
+    margin: 0;
+    white-space: pre-line;
+}
+
 .announcement {
     background-color: #050505BF;
     border: 2px solid #8E8F90;
@@ -91,7 +108,7 @@ async function more() {
 
     padding: 5px;
 
-    p {
+    :deep(p) {
         margin: 0;
     }
 
@@ -130,7 +147,7 @@ async function more() {
 
     padding: 5px;
 
-    p {
+    :deep(p) {
         margin: 0;
     }
 

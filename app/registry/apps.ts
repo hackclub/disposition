@@ -195,13 +195,13 @@ export const APPS: { [key: string]: AppDef } = {
         appId: 'notifications',
         title: 'Notifications',
         component: Notifications,
-        width: 367,
-        height: 476,
-        minWidth: 367,
-        minHeight: 476,
+        width: 450,
+        height: 500,
+        minWidth: 450,
+        minHeight: 500,
 
         tool: false,
-        resizeable: false,
+        resizeable: true,
     },
 
     winver: {

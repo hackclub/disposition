@@ -1,25 +1,17 @@
 <script setup lang="ts">
-import type { Order, Item } from '~/types/database';
+import type { ServerOrder } from '~/types/database';
 
 const manager = useWindowManager();
-const { data: orders } = await useFetch<Order[]>("/api/shop/orders");
-
-// should i make the server return the item info from the db?
-// db fetch is cheap but server fetch isnt very cheap. well, for now im kinda lazy so im just gonna do it like this
-
-const items = ref<Item[]>([]);
-orders.value!.forEach(async order => {
-    items.value.push(await $fetch<Item>(`/api/shop/items/${order.item}`));
-})
+const { data: orders } = await useFetch<ServerOrder[]>("/api/shop/orders", { key: "orders" });
 </script>
 
 <template>
     <div class="content" v-if="orders && orders.length > 0">
         <div class="order" v-for="(order, i) in orders">
-            <img :src="`/images/${items[i]?.image}`" class="cover" />
+            <img :src="`/images/${order.item.image}`" class="cover" />
             <div>
-                <h2 v-if="items[i]?.media == 'other'">{{ items[i]?.album }}</h2>
-                <h2 v-else>{{ items[i]?.album }} - {{ items[i]?.artist }} ({{ items[i]?.media }})</h2>
+                <h2 v-if="order.item.media == 'other'">{{ order.item.album }}</h2>
+                <h2 v-else>{{ order.item.album }} - {{ order.item.artist }} ({{ order.item.media }})</h2>
 
                 <p>{{ new Date(order.timestamp).getDate() }}/{{ new Date(order.timestamp).getMonth() }}/{{ new
                     Date(order.timestamp).getFullYear() }} | {{ order.status }}</p>
