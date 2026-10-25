@@ -22,7 +22,7 @@
 		"comark": "^0.8.1",
 		"dotenv": "^18.0.1",
 		"drizzle-orm": "0.45.3",
-		"nuxt": "^4.5.2",
+		"nuxt": "^4.6.2",
 		"nuxt-auth-utils": "0.5.30",
 		"pg": "^8.23.0",
 		"vee-validate": "^4.15.1",
