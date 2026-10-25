@@ -30,10 +30,26 @@ import Requests from "~/apps/shop/requests.vue"
 import AdminShopRequest from "~/apps/admin/adminShopRequest.vue"
 import Feedback from "~/apps/feedback.vue"
 import ProjectEdit from "~/apps/manager/projectEdit.vue"
+import DevlogView from "~/apps/manager/devlogView.vue"
 
 // don't ask me why, but all app id's should be snake case.
 
 export const APPS: { [key: string]: AppDef } = {
+
+    devlog_view: {
+        appId: 'devlog_view',
+        title: "Project Name | Devlog name",
+        component: DevlogView,
+
+        width: 500,
+        height: 700,
+        minHeight: 700,
+        minWidth: 450,
+
+        tool: false,
+        resizeable: false,
+
+    },
 
     project_edit: {
         appId: 'project_edit',
