@@ -5,10 +5,14 @@ import type { ServerItem, Address } from '~/types/database';
 const manager = useWindowManager();
 const props = defineProps<{ instance: WindowInstance, id: number }>()
 const admin = await isAdmin();
+const session = await useUserSession();
 
-const { data: balance } = await useFetch<number>("/api/user/balance", { key: "balance" });
+let balance;
+if (session.loggedIn) {
+    const { data: balanceData } = await useFetch<number>("/api/user/balance", { key: "balance" });
+    balance = balanceData;
+}
 const { data: item } = await useFetch<ServerItem>(`/api/shop/items/${props.id}`);
-const session = useUserSession();
 
 const address = ref<string>();
 if (session.user.value && session.user.value.addresses) {
@@ -38,7 +42,7 @@ async function callback(result: boolean) {
 
 <template>
     <AuthState v-slot="{ loggedIn, user }">
-        <div class="content" v-if="item && balance">
+        <div class="content" v-if="item">
             <div class="horizontal">
                 <div class="vertical">
                     <img class="image" :src="`/images/${item.image}`" alt="Item image" />
@@ -89,7 +93,7 @@ async function callback(result: boolean) {
                     </div> -->
                 </div>
 
-                <div class="vertical order" v-if="loggedIn">
+                <div class="vertical order" v-if="loggedIn && balance">
                     <h2>Finish your order</h2>
 
                     <b>Shipping address</b>
@@ -99,7 +103,8 @@ async function callback(result: boolean) {
                                 address.country }}, {{ address.postalCode }}</option>
                         </template>
                     </select>
-                    <button v-else @click="navigateTo('/oauth-sensitive', { external: true })">Get addresses from Hack Club Auth</button>
+                    <button v-else @click="navigateTo('/oauth-sensitive', { external: true })">Get addresses from Hack
+                        Club Auth</button>
 
                     <b>Order summary</b>
                     <div class="summary">

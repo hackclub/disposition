@@ -1,12 +1,12 @@
-import { eq, and, isNull, isNotNull } from "drizzle-orm";
+import { eq, and, isNull, isNotNull, desc } from "drizzle-orm";
 import { announcementReads, announcements, users } from "~~/db/schema";
-import type { Notification, NotificationType } from "~~/server/utils/notification";
+import type { Notification } from "~~/server/utils/notification";
 import * as z from "zod";
 
 export default defineEventHandler(async event => {
     const session = await requireUserSession(event);
     const { readFilter } = await getValidatedQuery(event, z.object({
-        readFilter: z.coerce.boolean().optional().default(false),
+        readFilter: z.enum(["all", "read", "unread"]).optional().default("unread"),
     }).parse);
 
     const rows = await db
@@ -28,10 +28,11 @@ export default defineEventHandler(async event => {
             ),
         )
         .where(
-            readFilter === false ? isNull(announcementReads.seenAt)
-                : readFilter === true ? isNotNull(announcementReads.seenAt)
+            readFilter === "unread" ? isNull(announcementReads.seenAt)
+                : readFilter === "read" ? isNotNull(announcementReads.seenAt)
                     : undefined,
-        );
+        )
+        .orderBy(desc(announcements.timestamp));
 
     return rows.map(({ announcement, seenAt, author }): Notification => ({
         serverId: announcement.id,

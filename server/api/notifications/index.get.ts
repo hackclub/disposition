@@ -7,8 +7,8 @@ export default defineEventHandler(async event => {
     const { admin, session } = await isAdmin(event);
     const userId = await resolveUserScope(event, session.user.id);
 
-    const { read } = await getValidatedQuery(event, z.object({
-        read: z.coerce.boolean().optional().default(false),
+    const { readFilter } = await getValidatedQuery(event, z.object({
+        readFilter: z.coerce.string().optional().default("unread"),
     }).parse);
 
     const rows = await db.select({
@@ -22,7 +22,7 @@ export default defineEventHandler(async event => {
         .leftJoin(users, eq(users.hcaId, notifications.user))
         .where(and(
             userId ? eq(notifications.user, userId) : undefined,
-            eq(notifications.read, read)
+            readFilter !== "all" ? eq(notifications.read, readFilter === "read") : undefined
         ))
         .orderBy(desc(notifications.id))
 

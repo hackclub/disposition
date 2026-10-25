@@ -4,8 +4,6 @@ import { db } from "~~/server/utils/db";
 import * as z from "zod";
 
 export default defineEventHandler(async (event) => {
-    await requireUserSession(event);
-
     const genre = await getValidatedRouterParams(event, z.object({
         genre: z.coerce.string().min(1),
     }).parse).then(p => p.genre);

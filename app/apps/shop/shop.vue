@@ -6,57 +6,60 @@ const { data } = await useFetch<Record<string, Record<string, Item[]>>>("/api/sh
 </script>
 
 <template>
-	<div class="content">
-		<div class="header">
-			<div class="striped-bg">
-				<div class="app-logo">
-					<img src="~/assets/logos/Shop.png" alt="DispoShop Logo" class="logo" />
-					<span>
-						<h2>DispoShop</h2>
-						<p>a physical-media based shop</p>
-					</span>
+	<AuthState v-slot="{ loggedIn, user }">
+		<div class="content">
+			<div class="header">
+				<div class="striped-bg">
+					<div class="app-logo">
+						<img src="~/assets/logos/Shop.png" alt="DispoShop Logo" class="logo" />
+						<span>
+							<h2>DispoShop</h2>
+							<p>a physical-media based shop</p>
+						</span>
+					</div>
+
+					<div class="app-buttons" v-if="loggedIn">
+						<button @click="manager.open('orders')">My orders</button>
+						<button @click="manager.open('requests')">My requests</button>
+					</div>
 				</div>
 
-				<div class="app-buttons">
-					<button @click="manager.open('orders')">My orders</button>
-					<button @click="manager.open('requests')">My requests</button>
-				</div>
+				<div class="spacer"></div>
 			</div>
 
-			<div class="spacer"></div>
-		</div>
+			<div class="main" v-if="data">
+				<template v-for="(categories, section) in data">
+					<div class="browse-section">
+						<h1>{{ section }}</h1>
+						<div class="divider"></div>
 
-		<div class="main" v-if="data">
-			<template v-for="(categories, section) in data">
-				<div class="browse-section">
-					<h1>{{ section }}</h1>
-					<div class="divider"></div>
-
-					<template v-for="(items, name) in categories">
-						<section class="browse-category" v-if="items.length > 0">
-							<h2 v-if="section == 'By Genre'" @click="manager.open('category', { category: name })" class="a">{{ name }}↗</h2>
-							<h2 v-else>{{ name }}</h2>
-							<div class="items">
-								<div v-for="item in items" class="item" @click="manager.open('item', { id: item.id })"
-									:key="item.id">
-									<img class="cover" :src="`/images/${item.image}`"
-										:alt="`${item.artist} - ${item.album}`" />
-									<p class="album" v-if="item.media == 'other'">{{ item.album }}</p>
-									<p class="album" v-else>{{ item.album }} ({{ item.media }})</p>
-									<p class="artist" v-if="item.media != 'other'">{{ item.artist }}</p>
-									<p class="price">{{ item.price }} C</p>
+						<template v-for="(items, name) in categories">
+							<section class="browse-category" v-if="items.length > 0">
+								<h2 v-if="section == 'By Genre'" @click="manager.open('category', { category: name })"
+									class="a">{{ name }}↗</h2>
+								<h2 v-else>{{ name }}</h2>
+								<div class="items">
+									<div v-for="item in items" class="item"
+										@click="manager.open('item', { id: item.id })" :key="item.id">
+										<img class="cover" :src="`/images/${item.image}`"
+											:alt="`${item.artist} - ${item.album}`" />
+										<p class="album" v-if="item.media == 'other'">{{ item.album }}</p>
+										<p class="album" v-else>{{ item.album }} ({{ item.media }})</p>
+										<p class="artist" v-if="item.media != 'other'">{{ item.artist }}</p>
+										<p class="price">{{ item.price }} C</p>
+									</div>
 								</div>
-							</div>
-						</section>
-					</template>
+							</section>
+						</template>
 
-				</div>
-			</template>
+					</div>
+				</template>
+			</div>
+			<div class="flex-center" v-else>
+				<p>Error fetching shop data :(</p>
+			</div>
 		</div>
-		<div class="flex-center" v-else>
-			<p>Error fetching shop data :(</p>
-		</div>
-	</div>
+	</AuthState>
 </template>
 
 <style scoped>

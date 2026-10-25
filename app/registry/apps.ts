@@ -8,7 +8,7 @@ import Rigby from "~/apps/misc/rigby.vue"
 import AdminStats from "~/apps/admin/adminStats.vue"
 import Config from "~/apps/config.vue"
 import Shop from "~/apps/shop/shop.vue"
-import Notification from "~/apps/notification.vue"
+import Notifications from "~/apps/notifications.vue"
 import projectManager from "~/apps/projects/projectManager.vue"
 import profileViewer from "~/apps/users/profileViewer.vue"
 import AdminShop from "~/apps/admin/shop/adminShop.vue"
@@ -176,10 +176,10 @@ export const APPS: { [key: string]: AppDef } = {
         resizeable: false,
     },
 
-    notification: {
-        appId: 'notification',
+    notifications: {
+        appId: 'notifications',
         title: 'Notifications',
-        component: Notification,
+        component: Notifications,
         width: 367,
         height: 476,
         minWidth: 367,

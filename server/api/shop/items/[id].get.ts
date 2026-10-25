@@ -6,7 +6,9 @@ import { getReleaseInfo } from "~~/server/utils/musicbrainz";
 import * as z from "zod";
 
 export default defineEventHandler(async event => {
-    const { admin } = await isAdmin(event);
+    const session = await getUserSession(event);
+    const slackId = session.user?.slackId;
+    const admin = !!slackId && useRuntimeConfig().public.adminIds.includes(slackId);
 
     // TODO: cache the info we get from last.fm and musicbrainz
 

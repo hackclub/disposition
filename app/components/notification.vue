@@ -21,7 +21,11 @@ async function close() {
 async function more() {
     await close();
 
-    // TODO: open notif viewer
+    if (props.notification.type == "notification") {
+        windowManager.open('notifications', { notificationId: props.notification.serverId });
+    } else {
+        windowManager.open('notifications', { announcementId: props.notification.serverId });
+    }
 }
 </script>
 

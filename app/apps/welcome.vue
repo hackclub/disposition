@@ -53,7 +53,7 @@ function openNextChanged() {
                 <img src="~/assets/logos/Disposition.png" alt="Disposition Logo" class="logo" />
                 <span>
                     <h2>Welcome to Disposition!</h2>
-                    <p>a physical-media based ysws</p>
+                    <p>a physical-media based ysws sponsored by Archer</p>
                 </span>
             </div>
 
