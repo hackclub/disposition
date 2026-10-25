@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import rigby from '~/assets/icons/rigby.png'
+import rigby from '~/assets/misc/rigby.jpg'
 import badge from '~/assets/icons/badge.png'
 
 const aboutText = 'My cat Rigby has been corrupted by the cruel evil and now he wants to destroy me so i am currently developing a very genius machine to suck out the evil within him'

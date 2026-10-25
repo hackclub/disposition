@@ -64,6 +64,20 @@
       "when": 1792875405647,
       "tag": "0008_rename_pending_notifications",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1792928155926,
+      "tag": "0009_more_users_info",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1792928618531,
+      "tag": "0010_users_first_name_text",
+      "breakpoints": true
     }
   ]
 }

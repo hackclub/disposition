@@ -16,13 +16,14 @@ export const users = pgTable("users", {
 	bio: text(),
 
 	// sensitive info !!!! :scream:
-	birthday: timestamp({ mode: 'date' }),
+	birthday: timestamp({ mode: 'string' }),
 	legalFirstName: text("legal_first_name"),
 	legalLastName: text("legal_last_name"),
 	phoneNumber: text("phone_number"),
 },
 	(table) => [
 		unique("users_slack_id_unique").on(table.slackId),
+		unique("users_username_unique").on(table.username)
 	]);
 
 export const addresses = pgTable("addresses", {

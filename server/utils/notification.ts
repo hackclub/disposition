@@ -19,3 +19,18 @@ export const AnnouncementPatchBody = z.object({
     title: z.string().optional(),
     description: z.string().optional()
 })
+
+// copy of notification.ts from app/types
+export type NotificationType = "notification" | "announcement"
+export type Notification = {
+    serverId: number,
+    type: NotificationType,
+    title: string,
+    description: string,
+    timestamp: Date,
+    read: boolean,
+    author?: {
+        id: string
+        username: string,
+    }
+}

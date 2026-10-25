@@ -1,5 +1,6 @@
 import { eq, and, isNull, isNotNull } from "drizzle-orm";
-import { announcementReads, announcements } from "~~/db/schema";
+import { announcementReads, announcements, users } from "~~/db/schema";
+import type { Notification, NotificationType } from "~~/server/utils/notification";
 
 export default defineEventHandler(async event => {
     const session = await requireUserSession(event);
@@ -8,9 +9,14 @@ export default defineEventHandler(async event => {
     const rows = await db
         .select({
             announcement: announcements,
-            readId: announcementReads.seenAt,
+            seenAt: announcementReads.seenAt,
+            author: {
+                id: users.hcaId,
+                username: users.username,
+            },
         })
         .from(announcements)
+        .leftJoin(users, eq(users.hcaId, announcements.author))
         .leftJoin(
             announcementReads,
             and(
@@ -24,5 +30,13 @@ export default defineEventHandler(async event => {
                     : undefined,
         );
 
-    return rows.map(r => ({ ...r.announcement, read: r.readId !== null }));
+    return rows.map(({ announcement, seenAt, author }): Notification => ({
+        serverId: announcement.id,
+        type: "announcement",
+        title: announcement.title,
+        description: announcement.description,
+        timestamp: announcement.timestamp,
+        author: author?.id ? { id: author.id, username: author.username } : undefined,
+        read: seenAt !== null,
+    }));
 });

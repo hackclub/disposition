@@ -3,8 +3,8 @@ import { ref } from 'vue'
 import heart from '~/assets/icons/heart.png'
 import comment from '~/assets/icons/comment.png'
 import badge from '~/assets/icons/badge.png'
-import devlogPhoto from '~/assets/icons/devlog-photo.png'
-import avatar from '~/assets/icons/avatar.png'
+import devlogPhoto from '~/assets/misc/devlog-photo.png'
+import avatar from '~/assets/misc/avatar.png'
 
 interface Comment {
     id: number

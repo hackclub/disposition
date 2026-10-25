@@ -16,6 +16,9 @@ const {
     isTypeOpen,
 } = useWindowManager();
 
+const {
+    notifications
+} = useNotificationManager();
 
 onMounted(async () => {
     await nextTick();
@@ -51,9 +54,13 @@ const wallpaper = computed(() =>
         </template>
     </Taskbar>
 
+    <NotificationShim>
+        <Notification v-for="notification in notifications" :notification="notification"></Notification>
+    </NotificationShim>
+
     <ClientOnly>
-        <BenjiBuddy v-if="useConfiguration('settings').read('showBuddy')" />
-        <AugustBuddy v-if="useConfiguration('settings').read('showBuddy')" />
+        <BenjiBuddy v-if="useConfiguration('settings').read('showBuddies')" />
+        <AugustBuddy v-if="useConfiguration('settings').read('showBuddies')" />
     </ClientOnly>
 </template>
 
