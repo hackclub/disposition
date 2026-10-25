@@ -4,6 +4,13 @@ import { users } from "~~/db/schema";
 import { like } from "drizzle-orm";
 import { db } from "~~/server/utils/db";
 
+function getPublicUserColumns() {
+    const { email, firstName, lastName, legalLastName, legalFirstName, birthday, phoneNumber, yswsEligible, verificationStatus, ...publicUserColumns } = getTableColumns(users);
+    return publicUserColumns;
+}
+
+export const publicUserColumns = getPublicUserColumns();
+
 export function slugifyUsername(raw?: string | null) {
     const slug = (raw ?? "")
         .normalize("NFKD").replace(/[\u0300-\u036f]/g, "") // strip accents
@@ -31,8 +38,6 @@ export async function generateUsername(raw?: string | null) {
         if (!taken.has(candidate)) return candidate;
     }
 }
-
-export const { email, firstName, lastName, legalLastName, legalFirstName, birthday, phoneNumber, yswsEligible, verificationStatus, ...publicUserColumns } = getTableColumns(users);
 
 export const UserPostBody = z.object({
     // empty for now
