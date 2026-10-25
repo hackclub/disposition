@@ -2,6 +2,7 @@ import * as z from "zod";
 import { eq, sql } from "drizzle-orm";
 import { shopItems, shopOrders, balanceEvents } from "~~/db/schema";
 import { OrderPostBody } from "~~/server/utils/shop/order";
+import { sendNotification } from "~~/server/utils/notification";
 
 export default defineEventHandler(async event => {
     const session = await requireUserSession(event);
@@ -50,6 +51,13 @@ export default defineEventHandler(async event => {
     }
 
     await db.insert(balanceEvents).values(balanceEvent);
+
+    await sendNotification({
+        title: `Order #${result!.id}: Placed`,
+        description: `📀 ${item.album} by ${item.artist}`,
+        user: session.user.id
+    });
+
     setResponseStatus(event, 201);
     return { 
         id: result!.id,

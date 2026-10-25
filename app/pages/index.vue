@@ -54,9 +54,11 @@ const wallpaper = computed(() =>
         </template>
     </Taskbar>
 
-    <NotificationShim>
-        <Notification v-for="notification in notifications" :notification="notification"></Notification>
-    </NotificationShim>
+    <ClientOnly>
+        <NotificationShim>
+            <Notification v-for="notification in notifications" :notification="notification"></Notification>
+        </NotificationShim>
+    </ClientOnly>
 
     <ClientOnly>
         <BenjiBuddy v-if="useConfiguration('settings').read('showBuddies')" />

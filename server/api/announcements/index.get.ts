@@ -1,10 +1,13 @@
 import { eq, and, isNull, isNotNull } from "drizzle-orm";
 import { announcementReads, announcements, users } from "~~/db/schema";
 import type { Notification, NotificationType } from "~~/server/utils/notification";
+import * as z from "zod";
 
 export default defineEventHandler(async event => {
     const session = await requireUserSession(event);
-    const { readFilter } = getQuery(event);
+    const { readFilter } = await getValidatedQuery(event, z.object({
+        readFilter: z.coerce.boolean().optional().default(false),
+    }).parse);
 
     const rows = await db
         .select({
@@ -25,8 +28,8 @@ export default defineEventHandler(async event => {
             ),
         )
         .where(
-            readFilter === "unread" ? isNull(announcementReads.seenAt)
-                : readFilter === "read" ? isNotNull(announcementReads.seenAt)
+            readFilter === false ? isNull(announcementReads.seenAt)
+                : readFilter === true ? isNotNull(announcementReads.seenAt)
                     : undefined,
         );
 

@@ -21,7 +21,6 @@ import AdminShopOrder from "~/apps/admin/shop/adminShopOrder.vue"
 import Order from "~/apps/shop/order.vue"
 import Messagebox from "~/components/messageBox.vue"
 import Dialogbox from "~/components/dialogBox.vue"
-import AdminAnnouncePanel from "~/apps/admin/notifications/adminAnnouncePanel.vue"
 import AdminShopEditItem from "~/apps/admin/shop/adminShopEditItem.vue"
 import Category from "~/apps/shop/category.vue"
 import ProjectProfile from "~/apps/projects/projectProfile.vue"
@@ -33,8 +32,10 @@ import ProjectEdit from "~/apps/projects/projectEdit.vue"
 import DevlogView from "~/apps/projects/devlogView.vue"
 import Onboarding from "~/apps/onboarding/onboarding.vue"
 
-// don't ask me why, but all app id's should be snake case.
+import AdminAddAnnouncement from "~/apps/admin/notifications/adminAddAnnouncement.vue"
+import AdminNotifications from "~/apps/admin/notifications/adminNotifications.vue"
 
+// don't ask me why, but all app id's should be snake case.
 export const APPS: { [key: string]: AppDef } = {
 
     onboarding: {
@@ -103,20 +104,6 @@ export const APPS: { [key: string]: AppDef } = {
         height: 700,
         minHeight: 700,
         minWidth: 450,
-
-        tool: false,
-        resizeable: false,
-    },
-
-    admin_announce_panel: {
-        appId: 'admin_announce_panel',
-        title: "Admin Announcer Panel",
-        component: AdminAnnouncePanel,
-
-        width: 403,
-        height: 561,
-        minWidth: 403,
-        minHeight: 561,
 
         tool: false,
         resizeable: false,
@@ -338,6 +325,35 @@ export const APPS: { [key: string]: AppDef } = {
         tool: false,
         resizeable: true,
         hidden: true
+    },
+
+    admin_notifications: {
+        appId: 'admin_notifications',
+        title: 'DispoAdminNotificationThing',
+        component: AdminNotifications,
+
+        width: 500,
+        height: 500,
+        minWidth: 500,
+        minHeight: 500,
+
+        tool: false,
+        hidden: true,
+        resizeable: true
+    },
+
+    admin_add_announcement: {
+        appId: 'admin_add_announcement',
+        title: "Add Announcement",
+        component: AdminAddAnnouncement,
+
+        width: 403,
+        height: 561,
+        minWidth: 403,
+        minHeight: 561,
+
+        tool: false,
+        resizeable: false,
     },
 
     admin_shop: {

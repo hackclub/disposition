@@ -109,37 +109,39 @@ export default defineEventHandler(async (event) => {
         secure: { hcRefreshToken: tokens.refresh_token }, // not exposed to client
     })
 
-    // create user row
-    const [existing] = await db.select({ hcaId: users.hcaId }).from(users).where(eq(users.hcaId, identity.id));
-    if (!existing) {
-        // we have to get the username, fancy style.
-        // i base the username off of the slack display name
-        // and then add numbers to it if those alr exist in the db
+    // create or update user row
+    const [existing] = await db.select({ username: users.username }).from(users).where(eq(users.hcaId, identity.id));
 
-        const userInfo = await getCachetInfo(identity.id);
-        const username = await generateUsername(userInfo.displayName);
-
-        const user: typeof users.$inferInsert = {
-            hcaId: identity.id,
-            email: identity.primary_email,
-            slackId: identity.slack_id,
-            firstName: identity.first_name,
-            lastName: identity.last_name,
-            username: username,
-
-            yswsEligible: identity.ysws_eligible,
-            verificationStatus: identity.verification_status,
-
-            birthday: identity.birthday,
-
-            // archer told me to use the legal name from the primary address so here it is
-            legalFirstName: primaryAddress?.first_name,
-            legalLastName: primaryAddress?.last_name,
-            phoneNumber: identity.phone_number,
-        }
-
-        await db.insert(users).values(user).returning({ id: users.hcaId });
+    // we have to get the username, fancy style.
+    // i base the username off of the slack display name
+    // and then add numbers to it if those alr exist in the db
+    // only generated for new users so existing usernames don't change on every login
+    let username = existing?.username;
+    if (!username) {
+        const cachetInfo = await getCachetInfo(identity.slack_id);
+        username = await generateUsername(cachetInfo.displayName);
     }
+
+    const userFields = {
+        email: identity.primary_email,
+        slackId: identity.slack_id,
+        firstName: identity.first_name,
+        lastName: identity.last_name,
+
+        yswsEligible: identity.ysws_eligible,
+        verificationStatus: identity.verification_status,
+
+        birthday: identity.birthday,
+
+        // archer told me to use the legal name from the primary address so here it is
+        legalFirstName: primaryAddress?.first_name,
+        legalLastName: primaryAddress?.last_name,
+        phoneNumber: identity.phone_number,
+    };
+
+    await db.insert(users)
+        .values({ hcaId: identity.id, username, ...userFields })
+        .onConflictDoUpdate({ target: users.hcaId, set: userFields });
 
     if (identity.addresses) {
         // peep existing addies and then add the rest

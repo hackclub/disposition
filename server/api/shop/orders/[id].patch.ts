@@ -1,7 +1,15 @@
 import { eq } from "drizzle-orm";
 import * as z from "zod";
-import { shopOrders } from "~~/db/schema";
+import { shopItems, shopOrders } from "~~/db/schema";
+import { Notification, sendNotification } from "~~/server/utils/notification";
 import { OrderAdminPatchBody, OrderPatchBody } from "~~/server/utils/shop/order";
+
+const orderStatusLabels: Record<string, string> = {
+    idle: "Idle",
+    claimed: "Claimed",
+    fulfilled: "Fulfilled",
+    cancelled: "Cancelled",
+};
 
 export default defineEventHandler(async event => {
     await requireUserSession(event);
@@ -38,6 +46,30 @@ export default defineEventHandler(async event => {
     await db.update(shopOrders)
         .set(parsed.data)
         .where(eq(shopOrders.id, id));
+
+    if (admin) {
+        const newStatus = "status" in parsed.data && parsed.data.status !== existing.status ? parsed.data.status : undefined;
+        const newTracking = "tracking" in parsed.data && parsed.data.tracking !== existing.tracking ? parsed.data.tracking : undefined;
+
+        if (newStatus || newTracking) {
+            const [item] = await db.select({ album: shopItems.album, artist: shopItems.artist })
+                .from(shopItems)
+                .where(eq(shopItems.id, existing.item));
+
+            const lines: string[] = [];
+            if (item) lines.push(`📀 ${item.album} by ${item.artist}`);
+            if (newStatus) lines.push(`Status: ${orderStatusLabels[newStatus] ?? newStatus}`);
+            if (newTracking) lines.push(`🚚 Tracking: ${newTracking}`);
+
+            await sendNotification({
+                title: newStatus
+                    ? `Order #${id}: ${orderStatusLabels[newStatus] ?? newStatus}`
+                    : `Order #${id} updated`,
+                description: lines.join("\n"),
+                user: existing.user
+            });
+        }
+    }
 
     return { id };
 });
