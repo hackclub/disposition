@@ -95,3 +95,7 @@ export type Request = {
     status: RequestStatus,
     message?: string
 }
+
+export type Notification = {
+    
+}
