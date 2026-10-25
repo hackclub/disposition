@@ -31,10 +31,25 @@ import AdminShopRequest from "~/apps/admin/shop/adminShopRequest.vue"
 import Feedback from "~/apps/feedback.vue"
 import ProjectEdit from "~/apps/projects/projectEdit.vue"
 import DevlogView from "~/apps/projects/devlogView.vue"
+import Onboarding from "~/apps/onboarding/onboarding.vue"
 
 // don't ask me why, but all app id's should be snake case.
 
 export const APPS: { [key: string]: AppDef } = {
+
+    onboarding: {
+        appId: 'onboarding',
+        title: 'Onboarding',
+        component: Onboarding,
+
+        width: 600,
+        height: 470,
+        minWidth: 600,
+        minHeight: 470,
+
+        tool: false,
+        resizeable: false,
+    },
 
     devlog_view: {
         appId: 'devlog_view',
