@@ -1,12 +1,63 @@
 <script setup lang="ts">
 import rigby from '~/assets/misc/rigby.jpg'
 import badge from '~/assets/icons/badge.png'
+import heart from '~/assets/icons/heart.png'
+import comment from '~/assets/icons/comment.png'
+import devlogPhoto from '~/assets/misc/devlog-photo.png'
+
+interface Devlog {
+    id: number
+    project: string
+    number: number
+    author: string
+    posted: string
+    paragraphs: string[]
+    likes: number
+    comments: number
+    hoursLogged: string
+    photo?: string
+}
 
 const aboutText = 'My cat Rigby has been corrupted by the cruel evil and now he wants to destroy me so i am currently developing a very genius machine to suck out the evil within him'
 const photoCaption = 'This is a photo of Rigby'
 
-const devlogs = [1, 2, 3, 4, 5]
+const devlogs: Devlog[] = [
+    {
+        id: 1,
+        project: 'Restoring Rigby\u2019s faith from the evil',
+        number: 12,
+        author: 'Username',
+        posted: 'posted 5h ago',
+        paragraphs: [
+            'I HAVE FINALLY FOUND THE CURE TO THE EVIL THAT CORRUPTS RIGBY I CAN FINALLY FREE HIM!',
+            'Here\u2019s a photo of it.',
+            'It\u2019s another cat. He\u2019s able to pulverize all the evil within Rigby.',
+            'i paid him 2 dollars and 1 peggle',
+        ],
+        likes: -2003,
+        comments: 103,
+        hoursLogged: '28h Logged',
+        photo: devlogPhoto,
+    },
+    {
+        id: 2,
+        project: 'Restoring Rigby\u2019s faith from the evil',
+        number: 11,
+        author: 'Username',
+        posted: 'posted 2d ago',
+        paragraphs: [
+            'The evil machine is half built.',
+            'I still need more cables.',
+        ],
+        likes: 12,
+        comments: 4,
+        hoursLogged: '20h Logged',
+    },
+]
 
+const emit = defineEmits<{
+    (e: 'open', id: number): void
+}>()
 </script>
 
 <template>
@@ -14,8 +65,6 @@ const devlogs = [1, 2, 3, 4, 5]
     <div class="header">
 
         <div class="header-bg">
-                <img src="" alt="">
-
                 <button class="back-btn">&lt;</button>
 
                 <div class="profile-card">
@@ -44,7 +93,40 @@ const devlogs = [1, 2, 3, 4, 5]
     <h2 class="heading">Devlogs</h2>
 
     <div class="devlogs">
-        <div v-for="n in devlogs" :key="n" class="panel devlog"></div>
+        <div v-for="devlog in devlogs" :key="devlog.id" class="devlog-card">
+            <span class="project">{{ devlog.project }}</span>
+
+            <div class="title-row">
+                <h2 class="devlog-title">Devlog {{ devlog.number }}</h2>
+                <span class="author">By {{ devlog.author }}</span>
+                <span class="posted">&bull; {{ devlog.posted }}</span>
+            </div>
+
+            <div class="devlog-content">
+                <p v-for="(text, i) in devlog.paragraphs" :key="i">{{ text }}</p>
+                <button class="see-more">See more...</button>
+                <img v-if="devlog.photo" class="devlog-photo" :src="devlog.photo" alt="">
+            </div>
+
+            <div class="footer">
+                <button class="btn" @click="emit('open', devlog.id)">Open</button>
+
+                <span class="stat">
+                    <img class="icon" :src="heart" alt="">
+                    {{ devlog.likes }}
+                </span>
+
+                <span class="stat">
+                    <img class="icon" :src="comment" alt="">
+                    {{ devlog.comments }}
+                </span>
+
+                <span class="logged">
+                    {{ devlog.hoursLogged }}
+                    <img class="icon" :src="badge" alt="">
+                </span>
+            </div>
+        </div>
     </div>
 </div>
 </div>
@@ -63,15 +145,6 @@ const devlogs = [1, 2, 3, 4, 5]
     width: 100%;
     height: 110px;
     overflow: hidden;
-
-    > img {
-        position: absolute;
-        inset: 0;
-        width: 100%;
-        height: 100%;
-        object-fit: fill;
-        display: block;
-    }
 }
 
 .back-btn {
@@ -147,7 +220,7 @@ const devlogs = [1, 2, 3, 4, 5]
 }
 
 .content {
-     width: 100%;
+    width: 100%;
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -179,12 +252,13 @@ const devlogs = [1, 2, 3, 4, 5]
     box-sizing: border-box;
     flex-shrink: 0;
     background: var(--color-bg-light);
-    border: 1px solid var(--color-border-dark);
+    border: 1px solid var(--color-gray-light);
 }
 
 .about {
     margin-bottom: 8px;
     padding: 8px;
+
 }
 
 .about-text {
@@ -206,7 +280,7 @@ const devlogs = [1, 2, 3, 4, 5]
     width: 86px;
     height: 86px;
     object-fit: cover;
-    background: var(--color-bg-dark); 
+    background: var(--color-bg-dark);
 }
 
 .caption {
@@ -219,11 +293,111 @@ const devlogs = [1, 2, 3, 4, 5]
     gap: 10px;
 }
 
-.devlog {
-    height: 84px;
+.devlog-card {
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    box-sizing: border-box;
+    padding: 6px 6px 8px;
+    background: var(--color-bg-light);
+    border: 1px solid var(--color-gray-light);
 }
 
+.project {
+    margin-left: 2px;
+    font-size: 14px;
+    color: var(--color-gray-medium);
+}
 
+.title-row {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    margin: 0 2px 4px;
+}
 
+.devlog-title {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 700;
+    font-family: inherit;
+}
 
+.author {
+    font-size: 16px;
+}
+
+.posted {
+    font-size: 14px;
+}
+
+.devlog-content {
+    box-sizing: border-box;
+    padding: 6px 7px 10px;
+    background: var(--color-white);
+    border: 1px solid var(--color-border-dark);
+
+    p {
+        margin: 0 0 12px;
+        font-size: 13px;
+        line-height: 1.3;
+    }
+
+    .see-more {
+        display: block;
+        margin: 0 0 4px;
+        padding: 0;
+        font-family: inherit;
+        font-size: 15px;
+        font-weight: 700;
+        text-align: left;
+        color: inherit;
+        background: none;
+        border: none;
+        cursor: pointer;
+    }
+
+    .devlog-photo {
+        display: block;
+        width: 148px;
+        height: 129px;
+        object-fit: cover;
+        background: var(--color-panel-bg);
+    }
+}
+
+.footer {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: 10px;
+    padding: 0 2px;
+}
+
+.btn {
+    width: 126px;
+}
+
+.stat {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 14px;
+}
+
+.logged {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-left: auto;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+.icon {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+    flex-shrink: 0;
+}
 </style>
