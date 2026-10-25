@@ -1,4 +1,8 @@
+import { getTableColumns } from "drizzle-orm";
 import * as z from "zod";
+import { shopOrders } from "~~/db/schema";
+
+const { adminMessage, ...publicOrderColumns } = getTableColumns(shopOrders);
 
 const OrderPostBody = z.object({
     item: z.coerce.number().int().positive(),
@@ -16,4 +20,4 @@ const OrderPatchBody = z.object({
     message: z.string(),
 })
 
-export { OrderPostBody, OrderAdminPatchBody, OrderPatchBody }
+export { OrderPostBody, OrderAdminPatchBody, OrderPatchBody, publicOrderColumns }

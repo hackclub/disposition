@@ -3,7 +3,7 @@ import type { WindowInstance } from '~/types/window';
 import { useForm } from "vee-validate";
 import { toTypedSchema } from '@vee-validate/zod'
 import * as z from "zod";
-import Item from '../shop/item.vue';
+import Item from '~~/app/apps/shop/item.vue';
 
 const manager = useWindowManager();
 const props = defineProps<{ instance: WindowInstance }>()

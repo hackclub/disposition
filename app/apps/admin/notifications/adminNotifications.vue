@@ -1,21 +1,21 @@
 <script setup lang="ts">
 import type { WindowInstance } from '~/types/window';
 import type { Item, Order, Request } from "~/types/database";
+import type { Notification } from '~/types/notification';
 
 const manager = useWindowManager();
 const props = defineProps<{ instance: WindowInstance }>()
+const session = await useUserSession();
 const admin = await isAdmin();
 if (!admin) manager.close(props.instance.id);
-let currentTab = ref<string>("items");
+let currentTab = ref<string>("notifications");
 
-const items = ref<[]>([]);
-const orders = ref<Order[]>([]);
-const requests = ref<Request[]>([]);
+const announcements = ref<Notification[]>([]);
+const notifications = ref<Notification[]>([]);
 
 if (admin) {
-    items.value = await $fetch<Item[]>("/api/shop/items/");
-    orders.value = await $fetch<Order[]>("/api/shop/orders?user=all");
-    requests.value = await $fetch<Request[]>("/api/shop/requests?user=all");
+    announcements.value = await $fetch<Notification[]>("/api/announcements");
+    notifications.value = await $fetch<Notification[]>("/api/notifications?user=all");
 }
 </script>
 
@@ -25,122 +25,75 @@ if (admin) {
             <div class="striped-bg">
                 <img src="~/assets/logos/Shop.png" alt="DispoAdminShopThing Logo" class="logo" />
                 <span>
-                    <h2>DispoAdminShopThing</h2>
+                    <h2>DispoAdminNotifications</h2>
                     <p>super secret admin app for super secret people 🙏</p>
                 </span>
             </div>
 
             <div class="tabs">
-                <button @click="currentTab = 'items'">Items</button>
-                <button @click="currentTab = 'orders'">Orders</button>
-                <button @click="currentTab = 'requests'">Requests</button>
+                <button @click="currentTab = 'notifications'">Notifications</button>
+                <button @click="currentTab = 'announcements'">Announcements</button>
             </div>
             <div class="spacer"></div>
         </div>
 
         <div class="main">
-            <AuthState v-slot="{ loggedIn, user }">
-                <div v-if="loggedIn && $config.public.adminIds.includes(user.slackId)" class="flex">
-                    <div v-if="currentTab === 'items'">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Album</th>
-                                    <th>Artist</th>
-                                    <th>Genre</th>
-                                    <th>Media</th>
-                                    <th>Price</th>
-                                    <th>
-                                        <button @click="manager.open('admin_shop_add_item')">Add</button>
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr v-for="item in items" :key="item.id">
-                                    <td><a @click="manager.open('item', { id: item.id })">{{ item.id }}</a></td>
-                                    <td>{{ item.album }}</td>
-                                    <td>{{ item.artist }}</td>
-                                    <td>{{ item.genre }}</td>
-                                    <td>{{ item.media }}</td>
-                                    <td>{{ item.price }}</td>
-                                    <td>
-                                        <button
-                                            @click="manager.open('admin_shop_edit_item', { id: item.id })">Edit</button>
-                                        <button
-                                            @click="manager.open('admin_shop_item_delete', { id: item.id })">Delete</button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div v-if="currentTab === 'orders'">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Item ID</th>
-                                    <th>User ID</th>
-                                    <th>Status</th>
-                                    <th>Timestamp</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr v-for="order in orders" :key="order.id">
-                                    <td>{{ order.id }}</td>
-                                    <td @click="manager.open('item', { id: order.item })">{{ order.item }}</td>
-                                    <td @click="manager.open('profile_viewer', { id: order.user })">{{ order.user }}
-                                    </td>
-                                    <td>{{ order.status }}</td>
-                                    <td>{{ new Date(order.timestamp).getDate() }}/{{ new
-                                        Date(order.timestamp).getMonth() }}/{{ new
-                                            Date(order.timestamp).getFullYear() }}</td>
-                                    <td>
-                                        <button
-                                            @click="manager.open('admin_shop_view_order', { id: order.id })">View</button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div v-if="currentTab === 'requests'">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>User ID</th>
-                                    <th>Album</th>
-                                    <th>Artist</th>
-                                    <th>Media</th>
-                                    <th>Status</th>
-                                    <th>Timestamp</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr v-for="request in requests" :key="request.id">
-                                    <td>{{ request.id }}</td>
-                                    <td>{{ request.user }}</td>
-                                    <td>{{ request.album }}</td>
-                                    <td>{{ request.artist }}</td>
-                                    <td>{{ request.media }}</td>
-                                    <td>{{ request.status }}</td>
-                                    <td>{{ new Date(request.timestamp).getDate() }}/{{ new
-                                        Date(request.timestamp).getMonth() }}/{{ new
-                                            Date(request.timestamp).getFullYear() }}</td>
-                                    <td>
-                                        <button
-                                            @click="manager.open('admin_shop_view_request', { id: request.id })">View</button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+            <div v-if="admin" class="flex">
+                <div v-if="currentTab === 'notifications'">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Title</th>
+                                <th>Timestamp</th>
+                                <th>User</th>
+                                <th>
+                                    <button @click="manager.open('admin_add_notification')">Create notification</button>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="notification in notifications" :key="notification.serverId">
+                                <td>{{ notification.serverId }}</td>
+                                <td>{{ notification.title }}</td>
+                                <td>{{ notification.timestamp }}</td>
+                                <td><a @click="manager.open('profile', { id: notification.user!.id })">@{{
+                                    notification.user!.username }}</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
-
-                <div v-else class="center">
-                    sorry, not admin :(
+                <div v-if="currentTab === 'announcements'">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Title</th>
+                                <th>Timestamp</th>
+                                <th>Author</th>
+                                <th>
+                                    <button @click="manager.open('admin_add_announcement')">Create announcement</button>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="announcement in announcements" :key="announcement.serverId">
+                                <td>{{ announcement.serverId }}</td>
+                                <td>{{ announcement.title }}</td>
+                                <td>{{ announcement.timestamp }}</td>
+                                <td @click="manager.open('profile', { id: announcement.author!.id })">@{{
+                                    announcement.author!.username }}</td>
+                                <td v-if="session.user.value?.id == announcement.author"><button
+                                        @click="manager.open('admin_edit_announcement', { id: announcement.serverId })">Edit</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
-            </AuthState>
+            </div>
+            <div v-else class="center">
+                sorry, not admin :(
+            </div>
         </div>
     </div>
 </template>

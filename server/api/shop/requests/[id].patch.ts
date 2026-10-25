@@ -3,6 +3,14 @@ import * as z from "zod";
 import { RequestPatchBody } from "~~/server/utils/shop/request";
 import { shopRequests } from "~~/db/schema";
 import { eq } from "drizzle-orm";
+import { sendNotification } from "~~/server/utils/notification";
+
+const requestStatusLabels: Record<string, string> = {
+    idle: "Idle",
+    claimed: "Claimed",
+    accepted: "Accepted",
+    rejected: "Rejected",
+};
 
 export default defineEventHandler(async event => {
     await requireAdmin(event);
@@ -34,6 +42,15 @@ export default defineEventHandler(async event => {
     await db.update(shopRequests)
         .set(parsed.data)
         .where(eq(shopRequests.id, id))
+
+    if (parsed.data.status !== existing.status) {
+        const label = requestStatusLabels[parsed.data.status] ?? parsed.data.status;
+        await sendNotification({
+            title: `Request #${id}: ${label}`,
+            description: `📀 ${existing.album} by ${existing.artist}\nStatus: ${label}`,
+            user: existing.user
+        });
+    }
     
     return { id }
 })

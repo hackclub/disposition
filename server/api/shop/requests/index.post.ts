@@ -1,6 +1,7 @@
 import { RequestPostBody } from "~~/server/utils/shop/request";
 import * as z from "zod";
 import { shopRequests } from "~~/db/schema";
+import { sendNotification } from "~~/server/utils/notification";
 
 export default defineEventHandler(async event => {
     await requireUserSession(event);
@@ -32,6 +33,12 @@ export default defineEventHandler(async event => {
     }
 
     const [result] = await db.insert(shopRequests).values(request).returning({ id: shopRequests.id });
+
+    await sendNotification({
+        title: `Request #${result!.id}: Received`,
+        description: `📀 ${fields.album} by ${fields.artist}\nMedia: ${fields.media}`,
+        user: session.user!.id
+    });
 
     setResponseStatus(event, 201);
     return { id: result!.id };

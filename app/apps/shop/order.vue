@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import type { WindowInstance } from '~/types/window';
-import type { Order, Item, User, OrderStatus, Media } from "~/types/database";
+import type { ServerOrder } from "~/types/database";
 const manager = useWindowManager();
 const props = defineProps<{ instance: WindowInstance, id: number }>()
 
-const { data: order } = await useFetch<Order>(`/api/shop/orders/${props.id}`);
-const { data: item } = await useFetch<Item>(`/api/shop/items/${order.value!.item}`);
+const { data: order } = await useFetch<ServerOrder>(`/api/shop/orders/${props.id}`);
 
 // form bullshit
 const form = reactive({
@@ -27,13 +26,13 @@ async function save() {
 </script>
 
 <template>
-    <div class="content" v-if="order && item">
+    <div class="content" v-if="order">
         <div class="horizontal">
             <div class="vertical">
-                <img class="image" :src="`/images/${item!.image}`" alt="Item image" />
+                <img class="image" :src="`/images/${order.item.image}`" alt="Item image" />
             </div>
             <div class="vertical fields">
-                <p><b>Price: </b>{{ item.price }}</p>
+                <p><b>Price: </b>{{ order.item.price }}</p>
                 <p><b>Shipping address: </b>todo</p>
                 <p><b>Ordered on: </b>{{ new Date(order.timestamp).getDate() }}/{{ new Date(order.timestamp).getMonth()
                     }}/{{ new Date(order.timestamp).getFullYear() }}</p>

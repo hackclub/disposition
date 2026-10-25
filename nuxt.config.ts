@@ -18,6 +18,11 @@ export default defineNuxtConfig({
 			apiKey: process.env.LASTFM_API_KEY
 		},
 
+		slack: {
+			token: process.env.SLACK_TOKEN,
+			appToken: process.env.SLACK_APP_TOKEN
+		},
+
 		public: {
 			baseUrl: "http://localhost:3000",
 			adminIds: ["U0A9S13HQF3", "U0AFWJX9CP2", "U0A9M9LC5PV"], // org slack ids

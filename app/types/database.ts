@@ -14,7 +14,7 @@ export type Order = {
     address: Address
 }
 
-// admin order
+/* what shop/orders/[id].get.ts returns */
 export type ServerOrder = {
     id: number,
     user: User,
@@ -24,7 +24,7 @@ export type ServerOrder = {
     adminMessage?: string,
     timestamp: Date
     tracking?: string,
-    address: Address
+    shippingAddress: Address
 }
 
 export type Item = {
@@ -94,8 +94,4 @@ export type Request = {
     media: Media,
     status: RequestStatus,
     message?: string
-}
-
-export type Notification = {
-    
 }

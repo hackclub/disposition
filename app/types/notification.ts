@@ -11,6 +11,10 @@ export type Notification = {
         id: string
         username: string,
     },
+    user?: {
+        id: string,
+        username: string
+    }
 }
 
 export type NotificationInstance = {
