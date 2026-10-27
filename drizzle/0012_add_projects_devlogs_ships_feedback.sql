@@ -67,7 +67,11 @@ CREATE TABLE "ships" (
 --> statement-breakpoint
 ALTER TABLE "shop_orders" RENAME COLUMN "admin_message" TO "internal_message";--> statement-breakpoint
 ALTER TABLE "shop_items" ALTER COLUMN "media" SET DATA TYPE "public"."shop_item_media" USING "media"::"public"."shop_item_media";--> statement-breakpoint
-ALTER TABLE "shop_items" ALTER COLUMN "urls" SET DATA TYPE text[];--> statement-breakpoint
+ALTER TABLE "shop_items" ADD COLUMN "urls_new" text[];--> statement-breakpoint
+UPDATE "shop_items" SET "urls_new" = ARRAY(SELECT jsonb_array_elements_text("urls"));--> statement-breakpoint
+ALTER TABLE "shop_items" DROP COLUMN "urls";--> statement-breakpoint
+ALTER TABLE "shop_items" RENAME COLUMN "urls_new" TO "urls";--> statement-breakpoint
+ALTER TABLE "shop_items" ALTER COLUMN "urls" SET NOT NULL;--> statement-breakpoint
 ALTER TABLE "shop_orders" ALTER COLUMN "status" SET DEFAULT 'idle'::"public"."shop_order_status";--> statement-breakpoint
 ALTER TABLE "shop_orders" ALTER COLUMN "status" SET DATA TYPE "public"."shop_order_status" USING "status"::"public"."shop_order_status";--> statement-breakpoint
 ALTER TABLE "shop_requests" ALTER COLUMN "media" SET DATA TYPE "public"."shop_item_media" USING "media"::"public"."shop_item_media";--> statement-breakpoint
