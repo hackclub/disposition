@@ -9,29 +9,15 @@ export default defineEventHandler(async event => {
     await requireAdmin(event);
 
     const form = await readFormData(event);
-    const parsed = ItemPostBody.safeParse({
-        album: form.get("album"),
-        artist: form.get("artist"),
-        genre: form.get("genre"),
-        description: form.get("description"),
-        media: form.get("media"),
-        urls: form.getAll("urls"),
-        price: form.get("price"),
-        staffPick: form.get("staffPick"),
-    });
-
-    if (!parsed.success) {
-        throw createError({
-            statusCode: 400,
-            message: "Invalid input",
-            data: z.flattenError(parsed.error),
-        })
-    }
-
-    const fields = parsed.data;
+    const parsed = ItemPostBody.safeParse(Object.fromEntries(form));
+    if (!parsed.success) throw createError({
+        statusCode: 400,
+        message: "Invalid input",
+        data: z.flattenError(parsed.error),
+    })
 
     const file = form.get("image");
-    if (!(file instanceof File)) {
+    if (!(file instanceof File && file.size > 0)) {
         throw createError({ statusCode: 400, message: "image is required" });
     }
     validateImage(file);
@@ -42,15 +28,15 @@ export default defineEventHandler(async event => {
     });
 
     const item: Omit<typeof shopItems.$inferInsert, "staffPickAt"> & { staffPickAt: SQL | null } = {
-        album: fields.album,
-        artist: fields.artist,
-        genre: fields.genre,
-        description: fields.description,
-        media: fields.media,
-        urls: fields.urls,
+        album: parsed.data.album,
+        artist: parsed.data.artist,
+        genre: parsed.data.genre,
+        description: parsed.data.description,
+        media: parsed.data.media,
+        urls: parsed.data.urls,
         image: uploaded.pathname,
-        price: fields.price,
-        staffPickAt: fields.staffPick ? sql`now()` : null,
+        price: parsed.data.price,
+        staffPickAt: parsed.data.staffPick ? sql`now()` : null,
     }
 
     try {

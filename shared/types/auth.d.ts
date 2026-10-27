@@ -3,10 +3,15 @@ declare module '#auth-utils' {
         id: string,
         firstName: string,
         lastName: string,
+        username: string,
         email: string,
         slackId: string,
         yswsEligible: boolean,
         verificationStatus: string,
+
+        bio?: string,
+        banner?: string,
+        onboardedAt?: Date,
 
         birthday?: Date,
         legalFirstName?: string,

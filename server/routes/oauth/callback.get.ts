@@ -74,11 +74,25 @@ export default defineEventHandler(async (event) => {
     const identity = response.identity;
     const primaryAddress = identity.addresses?.find((address) => address.primary);
 
+    // create or update user row
+    const [existing] = await db.select().from(users).where(eq(users.hcaId, identity.id));
+
+    // we have to get the username, fancy style.
+    // i base the username off of the slack display name
+    // and then add numbers to it if those alr exist in the db
+    // only generated for new users so existing usernames don't change on every login
+    let username = existing?.username;
+    if (!username) {
+        const cachetInfo = await getCachetInfo(identity.slack_id);
+        username = await generateUsername(cachetInfo.displayName);
+    }
+
     await setUserSession(event, {
         user: {
             id: identity.id,
             firstName: identity.first_name,
             lastName: identity.last_name,
+            username: username,
             email: identity.primary_email,
             slackId: identity.slack_id,
             yswsEligible: identity.ysws_eligible,
@@ -90,6 +104,10 @@ export default defineEventHandler(async (event) => {
             // archer told me to use the legal name from the primary address so here it is
             legalFirstName: primaryAddress?.first_name,
             legalLastName: primaryAddress?.last_name,
+
+            bio: existing?.bio ? existing.bio : undefined,
+            banner: existing?.banner ? existing.banner : undefined,
+            onboardedAt: existing?.onboardedAt ? existing.onboardedAt : undefined, // defaults to undefined :)
 
             phoneNumber: identity.phone_number,
             addresses: identity.addresses?.map((address) => ({
@@ -108,19 +126,6 @@ export default defineEventHandler(async (event) => {
         },
         secure: { hcRefreshToken: tokens.refresh_token }, // not exposed to client
     })
-
-    // create or update user row
-    const [existing] = await db.select({ username: users.username }).from(users).where(eq(users.hcaId, identity.id));
-
-    // we have to get the username, fancy style.
-    // i base the username off of the slack display name
-    // and then add numbers to it if those alr exist in the db
-    // only generated for new users so existing usernames don't change on every login
-    let username = existing?.username;
-    if (!username) {
-        const cachetInfo = await getCachetInfo(identity.slack_id);
-        username = await generateUsername(cachetInfo.displayName);
-    }
 
     const userFields = {
         email: identity.primary_email,

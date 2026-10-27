@@ -85,6 +85,13 @@
       "when": 1792970959995,
       "tag": "0011_users_add_onboarded_at",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1793141434247,
+      "tag": "0012_add_projects_devlogs_ships_feedback",
+      "breakpoints": true
     }
   ]
 }

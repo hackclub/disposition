@@ -29,6 +29,8 @@ export default defineEventHandler(async event => {
         message: "Unauthorized to view this notification"
     })
 
-    await db.update(notifications).set({ read: parsed.data.read }).where(eq(notifications.id, id))
+    await db.update(notifications)
+        .set({ read: parsed.data.read })
+        .where(eq(notifications.id, id))
     return { id };
 });

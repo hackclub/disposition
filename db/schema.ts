@@ -1,4 +1,4 @@
-import { pgTable, integer, varchar, text, boolean, timestamp, jsonb, index, unique, primaryKey } from "drizzle-orm/pg-core"
+import { pgTable, numeric, integer, varchar, text, boolean, timestamp, index, unique, primaryKey, pgEnum, foreignKey, type AnyPgColumn } from "drizzle-orm/pg-core"
 
 export const users = pgTable("users", {
 	hcaId: varchar("hca_id", { length: 16 }).primaryKey(),
@@ -22,10 +22,113 @@ export const users = pgTable("users", {
 	legalLastName: text("legal_last_name"),
 	phoneNumber: text("phone_number"),
 },
-	(table) => [
-		unique("users_slack_id_unique").on(table.slackId),
-		unique("users_username_unique").on(table.username)
-	]);
+(table) => [
+	unique("users_slack_id_unique").on(table.slackId),
+	unique("users_username_unique").on(table.username)
+]);
+
+export const shipStatus = pgEnum("ship_status", [
+	"idle",
+	"claimed",
+	"accepted",
+	"rejected"
+])
+
+export const projects = pgTable("projects", {
+	id: integer().primaryKey().generatedByDefaultAsIdentity(),
+	author: varchar({ length: 16 }).notNull().references(() => users.hcaId),
+	title: text().notNull(),
+	description: text().notNull(),
+
+	banner: varchar({ length: 255 }),
+	repository: text(),
+	demo: text(),
+
+	deletedAt: timestamp("deleted_at", { mode: 'date', withTimezone: true }),
+	timestamp: timestamp("created_at", { mode: 'date', withTimezone: true }).defaultNow().notNull(),
+
+	platinum: boolean().notNull().default(false), // super project? or not
+}, (table) => [
+	index("fk_projects_users1_idx").on(table.author)
+]);
+
+export const ships = pgTable("ships", {
+	id: integer().primaryKey().generatedByDefaultAsIdentity(),
+	user: varchar({ length: 16 }).notNull().references(() => users.hcaId),
+	project: integer().notNull().references(() => projects.id),
+
+	hackatimeProjects: text("hackatime_projects").array().notNull(),
+	hackatimeHours: numeric("hackatime_hours", { precision: 10, scale: 2, mode: "number" }).notNull(),
+
+	status: shipStatus().notNull().default("idle"),
+	statusMessage: text("status_message"), // from reviewer to user
+	reviewerNote: text("reviewer_note"), // from user to reviewers
+
+	overrideHours: numeric("override_hours", { precision: 10, scale: 2, mode: "number" }),
+	overrideReason: text("override_reason"),
+
+	internalMessage: text("internal_message"),
+
+	ai: boolean().notNull().default(false),
+	aiDeclaration: text("ai_declaration"),
+
+	update: boolean().notNull().default(false),
+	updateDeclaration: text("update_declaration"),
+
+	timestamp: timestamp({ mode: 'date', withTimezone: true }).defaultNow().notNull()
+}, (table) => [
+	index("fk_ships_users1_idx").on(table.user),
+	index("fk_ships_projects1_idx").on(table.project),
+	unique("ships_id_project_unique").on(table.id, table.project),
+]);
+
+export const devlogs = pgTable("devlogs", {
+	id: integer().primaryKey().generatedByDefaultAsIdentity(),
+
+	project: integer().notNull().references(() => projects.id),
+	linkedShip: integer("linked_ship").references(() => ships.id),
+	author: varchar({ length: 16 }).notNull().references(() => users.hcaId),
+
+	title: text().notNull(),
+	description: text().notNull(),
+	attachments: text().array().notNull().default([]),
+
+	hours: numeric("hours", { precision: 10, scale: 2, mode: "number" }).default(0),
+
+	overrideHours: numeric("override_hours", { precision: 10, scale: 2, mode: "number" }),
+	overrideReason: text("override_reason")
+}, (table) => [
+	index("fk_devlogs_projects1_idx").on(table.project),
+	index("fk_devlogs_ships1_idx").on(table.linkedShip),
+	index("fk_devlogs_users1_idx").on(table.author),
+	foreignKey({
+		columns: [table.linkedShip, table.project],
+		foreignColumns: [ships.id, ships.project],
+		name: "devlogs_linked_ship_project_fk"
+	}),
+])
+
+export const projectHackatimeLinks = pgTable("project_hackatime_links", {
+	id: integer().primaryKey().generatedByDefaultAsIdentity(),
+	project: integer().notNull().references(() => projects.id),
+	hackatimeName: text("hackatime_name").notNull(),
+
+	isActive: boolean("is_active").notNull().default(true),
+	timestamp: timestamp("created_at", { mode: 'date', withTimezone: true }).notNull().defaultNow(),
+}, (table) => [
+	index("fk_project_hackatime_links_projects1_idx").on(table.project),
+])
+
+export const feedback = pgTable("feedback", {
+	id: integer().primaryKey().generatedByDefaultAsIdentity(),
+	recommend: integer().notNull(),
+	well: text().notNull(),
+	improve: text().notNull(),
+	user: varchar({ length: 16 }).notNull().references(() => users.hcaId),
+	timestamp: timestamp({ withTimezone: true, mode: 'date' }).defaultNow().notNull(),
+}, (table) => [
+	index("fk_feedback_users1_idx").on(table.user)
+]);
 
 export const addresses = pgTable("addresses", {
 	id: varchar({ length: 11 }).notNull().primaryKey(),
@@ -99,6 +202,33 @@ export const notifications = pgTable("notifications", {
 		index("fk_notifications_users1_idx").on(table.user),
 	]);
 
+/////////////////////////////////////////////////////////////////
+//															   //
+//                    SHOP STUFF                               //
+//															   //
+/////////////////////////////////////////////////////////////////
+
+export const shopItemMedia = pgEnum("shop_item_media", [
+	"vinyl",
+	"cassette",
+	"cd",
+	"other"
+])
+
+export const shopOrderStatus = pgEnum("shop_order_status", [
+	"idle",
+	"claimed",
+	"fulfilled",
+	"cancelled"
+])
+
+export const shopRequestStatus = pgEnum("shop_request_status", [
+	"accepted",
+	"rejected",
+	"claimed",
+	"idle"
+])
+
 export const shopItems = pgTable("shop_items", {
 	id: integer().primaryKey().generatedByDefaultAsIdentity(),
 	album: varchar({ length: 255 }).notNull(),
@@ -107,21 +237,24 @@ export const shopItems = pgTable("shop_items", {
 	image: text().notNull(),
 	description: text().notNull(),
 	// vinyl | cassette | cd | other
-	media: varchar({ length: 45 }).notNull(),
-	urls: jsonb().$type<string[]>().notNull(),
+	media: shopItemMedia().notNull(),
+	//urls: jsonb().$type<string[]>().notNull(),
+	urls: text().array().notNull(),
 	added: timestamp({ withTimezone: true, mode: 'date' }).defaultNow().notNull(),
 	price: integer().notNull(),
 	staffPickAt: timestamp("staff_pick_at", { withTimezone: true, mode: 'date' }),
+	//region: jsonb().$type<string[]>().notNull().default(["na", "eu", "sa", "as", "af", "oc"]), // all regions by default
+	region: varchar({ length: 2 }).array().notNull().default(["na", "sa", "eu", "af", "as", "oc"]), // all regions by default
 });
 
 export const shopOrders = pgTable("shop_orders", {
 	id: integer().primaryKey().generatedByDefaultAsIdentity(),
 	user: varchar({ length: 16 }).notNull().references(() => users.hcaId),
 	item: integer().notNull().references(() => shopItems.id),
-	// idle | claimed | fulfilled | cancelled
-	status: varchar({ length: 64 }).default('idle').notNull(),
+	status: shopOrderStatus().default('idle').notNull(),
 	message: text(),
-	adminMessage: text("admin_message"),
+
+	internalMessage: text("internal_message"),
 	tracking: text(),
 	shippingAddress: varchar({ length: 11 }).notNull().references(() => addresses.id),
 	timestamp: timestamp({ withTimezone: true, mode: 'date' }).defaultNow().notNull(),
@@ -138,10 +271,9 @@ export const shopRequests = pgTable("shop_requests", {
 	timestamp: timestamp({ withTimezone: true, mode: 'date' }).defaultNow().notNull(),
 	album: varchar({ length: 255 }).notNull(),
 	artist: varchar({ length: 255 }).notNull(),
-	// cd | vinyl | cassette
-	media: varchar({ length: 45 }).notNull(),
-	// accepted | rejected | claimed | idle
-	status: varchar({ length: 24 }).default('idle').notNull(),
+
+	media: shopItemMedia().notNull(),
+	status: shopRequestStatus().default('idle').notNull(),
 	message: text(),
 },
 	(table) => [

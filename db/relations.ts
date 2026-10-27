@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm/relations";
-import { announcements, announcementReads, users, balanceEvents, notifications, shopItems, shopOrders, shopRequests, addresses } from "./schema";
+import { announcements, feedback, announcementReads, users, balanceEvents, notifications, shopItems, shopOrders, shopRequests, addresses, projects, ships, devlogs, projectHackatimeLinks } from "./schema";
 
 export const announcementReadsRelations = relations(announcementReads, ({one}) => ({
 	announcement: one(announcements, {
@@ -28,14 +28,66 @@ export const announcementsRelations = relations(announcements, ({one, many}) => 
 	}),
 }));
 
-export const usersRelations = relations(users, ({many}) => ({
+export const feedbackRelations = relations(feedback, ({one}) => ({
+	users: one(users)
+}))
+
+export const usersRelations = relations(users, ({many, one}) => ({
 	announcementReads: many(announcementReads),
 	balanceEvents: many(balanceEvents),
 	notifications: many(notifications),
 	shopOrders: many(shopOrders),
 	shopRequests: many(shopRequests),
 	addresses: many(addresses),
-	announcements: many(announcements)
+	announcements: many(announcements),
+	feedback: one(feedback),
+	projects: many(projects),
+	ships: many(ships),
+	devlogs: many(devlogs),
+}));
+
+export const projectsRelations = relations(projects, ({one, many}) => ({
+	user: one(users, {
+		fields: [projects.author],
+		references: [users.hcaId]
+	}),
+	ships: many(ships),
+	devlogs: many(devlogs),
+	projectHackatimeLinks: many(projectHackatimeLinks),
+}));
+
+export const shipsRelations = relations(ships, ({one, many}) => ({
+	user: one(users, {
+		fields: [ships.user],
+		references: [users.hcaId]
+	}),
+	project: one(projects, {
+		fields: [ships.project],
+		references: [projects.id]
+	}),
+	devlogs: many(devlogs),
+}));
+
+export const devlogsRelations = relations(devlogs, ({one}) => ({
+	user: one(users, {
+		fields: [devlogs.author],
+		references: [users.hcaId]
+	}),
+	project: one(projects, {
+		fields: [devlogs.project],
+		references: [projects.id]
+	}),
+	ship: one(ships, {
+		fields: [devlogs.linkedShip],
+		references: [ships.id]
+	}),
+}));
+
+export const projectHackatimeLinksRelations = relations(projectHackatimeLinks, ({one}) => ({
+	project: one(projects, {
+		fields: [projectHackatimeLinks.project],
+		references: [projects.id]
+	}),
 }));
 
 export const balanceEventsRelations = relations(balanceEvents, ({one}) => ({

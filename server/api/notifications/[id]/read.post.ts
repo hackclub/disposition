@@ -21,7 +21,10 @@ export default defineEventHandler(async event => {
     })
 
     if (result.read === true) return; // already marked as read
-    const [update] = await db.update(notifications).set({ read: true }).where(eq(notifications.id, id)).returning({ id: notifications.id });
+    const [update] = await db.update(notifications)
+        .set({ read: true })
+        .where(eq(notifications.id, id))
+        .returning({ id: notifications.id });
     if(!update) throw createError("Error updating notification");
     
     return { id: update.id };

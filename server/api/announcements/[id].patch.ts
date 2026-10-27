@@ -28,10 +28,13 @@ export default defineEventHandler(async event => {
         message: "Unauthorized to patch this announcement"
     })
 
-    const [result] = await db.update(announcements).set({
-        title: parsed.data.title,
-        description: parsed.data.description,
-    }).returning({ id: announcements.id })
+    const [result] = await db.update(announcements)
+        .set({
+            title: parsed.data.title,
+            description: parsed.data.description,
+        })
+        .where(eq(announcements.id, id))
+        .returning({ id: announcements.id })
 
     return { id: result!.id }
 })
