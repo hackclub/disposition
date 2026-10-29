@@ -53,7 +53,7 @@ export default defineEventHandler(async event => {
     await db.insert(balanceEvents).values(balanceEvent);
 
     await sendNotification({
-        title: `Order #${result!.id}: Placed`,
+        title: `ℹ️ Order #${result!.id}: Placed`,
         description: `📀 ${item.album} by ${item.artist}`,
         user: session.user.id
     });

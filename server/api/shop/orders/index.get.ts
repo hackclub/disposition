@@ -7,7 +7,7 @@ export default defineEventHandler(async event => {
     const userId = await resolveUserScope(event, session.user.id);
 
     const { status } = await getValidatedQuery(event, z.object({
-        status: z.enum(["pending", "shipped", "delivered", "cancelled"]).optional(),
+        status: z.enum(["idle", "fulfilled", "claimed", "cancelled"]).optional(),
     }).parse);
 
     const result = await db.select({

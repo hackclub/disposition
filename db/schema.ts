@@ -40,6 +40,8 @@ export const projects = pgTable("projects", {
 	title: text().notNull(),
 	description: text().notNull(),
 
+	hackatimeProjects: text("hackatime_projects").array().notNull(),
+
 	banner: varchar({ length: 255 }),
 	repository: text(),
 	demo: text(),
@@ -58,7 +60,7 @@ export const ships = pgTable("ships", {
 	project: integer().notNull().references(() => projects.id),
 
 	hackatimeProjects: text("hackatime_projects").array().notNull(),
-	hackatimeHours: numeric("hackatime_hours", { precision: 10, scale: 2, mode: "number" }).notNull(),
+	hackatimeHours: numeric("hackatime_hours", { precision: 10, scale: 2, mode: "number" }).notNull(), // calculated when project is shipped
 
 	status: shipStatus().notNull().default("idle"),
 	statusMessage: text("status_message"), // from reviewer to user
@@ -106,17 +108,6 @@ export const devlogs = pgTable("devlogs", {
 		foreignColumns: [ships.id, ships.project],
 		name: "devlogs_linked_ship_project_fk"
 	}),
-])
-
-export const projectHackatimeLinks = pgTable("project_hackatime_links", {
-	id: integer().primaryKey().generatedByDefaultAsIdentity(),
-	project: integer().notNull().references(() => projects.id),
-	hackatimeName: text("hackatime_name").notNull(),
-
-	isActive: boolean("is_active").notNull().default(true),
-	timestamp: timestamp("created_at", { mode: 'date', withTimezone: true }).notNull().defaultNow(),
-}, (table) => [
-	index("fk_project_hackatime_links_projects1_idx").on(table.project),
 ])
 
 export const feedback = pgTable("feedback", {
@@ -236,14 +227,11 @@ export const shopItems = pgTable("shop_items", {
 	genre: varchar({ length: 255 }),
 	image: text().notNull(),
 	description: text().notNull(),
-	// vinyl | cassette | cd | other
 	media: shopItemMedia().notNull(),
-	//urls: jsonb().$type<string[]>().notNull(),
 	urls: text().array().notNull(),
 	added: timestamp({ withTimezone: true, mode: 'date' }).defaultNow().notNull(),
 	price: integer().notNull(),
 	staffPickAt: timestamp("staff_pick_at", { withTimezone: true, mode: 'date' }),
-	//region: jsonb().$type<string[]>().notNull().default(["na", "eu", "sa", "as", "af", "oc"]), // all regions by default
 	region: varchar({ length: 2 }).array().notNull().default(["na", "sa", "eu", "af", "as", "oc"]), // all regions by default
 });
 

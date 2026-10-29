@@ -2,7 +2,7 @@ import { getTableColumns } from "drizzle-orm";
 import * as z from "zod";
 import { shopOrders } from "~~/db/schema";
 
-const { adminMessage, ...publicOrderColumns } = getTableColumns(shopOrders);
+const { internalMessage, ...publicOrderColumns } = getTableColumns(shopOrders);
 
 const OrderPostBody = z.object({
     item: z.coerce.number().int().positive(),
@@ -12,7 +12,7 @@ const OrderPostBody = z.object({
 
 const OrderAdminPatchBody = z.object({
     status: z.enum(["idle", "claimed", "cancelled", "fulfilled"]).optional(),
-    adminMessage: z.string().optional(),
+    internalMessage: z.string().optional(),
     tracking: z.string().optional(),
 })
 

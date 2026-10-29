@@ -12,7 +12,7 @@ if (admin) order.value = await $fetch<ServerOrder>(`/api/shop/orders/${props.id}
 // form bullshit
 const form = reactive({
     status: order.value?.status as OrderStatus,
-    adminMessage: order.value?.adminMessage,
+    internalMessage: order.value?.adminMessage,
     tracking: order.value?.tracking
 })
 const submitting = ref(false);
@@ -22,7 +22,7 @@ async function save() {
 
     const data = new FormData();
     data.append("status", form.status);
-    if (form.adminMessage) data.append("adminMessage", form.adminMessage);
+    if (form.internalMessage) data.append("adminMessage", form.internalMessage);
     if (form.tracking) data.append("tracking", form.tracking);
 
     const response = await $fetch(`/api/shop/orders/${props.id}`, {
@@ -76,8 +76,8 @@ async function save() {
             <label v-if="order.message">User message</label>
             <p v-if="order.message">{{ order.message }}</p>
 
-            <label for="adminMessage">Admin notes</label>
-            <textarea v-model="form.adminMessage"></textarea>
+            <label for="internalMessage">Internal notes</label>
+            <textarea v-model="form.internalMessage" name="internalMessage"></textarea>
 
             <label for="tracking">Tracking</label>
             <input type="text" v-model="form.tracking" />
