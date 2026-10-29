@@ -20,25 +20,8 @@ let funFacts = [
 
 const openNext = ref(read("openNext"));
 const manager = useWindowManager();
-async function rsvp() {
-    const rsvp = document.getElementById("rsvp");
-
-    if (loggedIn.value) {
-        const rsvpResponse = await fetch('/api/rsvps', { method: "POST" });
-        if (rsvpResponse.status == 200) {
-            rsvp!.innerText = "RSVP'd!";
-        } else if (rsvpResponse.status == 409) {
-            rsvp!.innerText = "Already RSVP'd!";
-        } else {
-            rsvp!.innerText = "Error :(";
-        }
-    } else {
-        manager.open("auth", { rsvp: true });
-    }
-
-    setTimeout(() => {
-        rsvp!.innerText = "RSVP";
-    }, 5000);
+async function login() {
+    manager.open("auth", { rsvp: true });
 }
 
 function openNextChanged() {
@@ -73,7 +56,7 @@ function openNextChanged() {
                 </div>
 
                 <div class="buttons">
-                    <button @click="rsvp" id="rsvp">RSVP</button>
+                    <button @click="login">Log in</button>
                     <button @click="manager.open('documentation')">What's this about?</button>
                     <button @click="manager.open('winver')">Information</button>
                     <button @click="manager.open('config')">Config</button>

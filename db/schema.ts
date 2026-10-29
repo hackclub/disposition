@@ -21,6 +21,7 @@ export const users = pgTable("users", {
 	legalFirstName: text("legal_first_name"),
 	legalLastName: text("legal_last_name"),
 	phoneNumber: text("phone_number"),
+	hackatimeToken: text("hackatime_token"),
 },
 (table) => [
 	unique("users_slack_id_unique").on(table.slackId),
@@ -109,17 +110,6 @@ export const devlogs = pgTable("devlogs", {
 		name: "devlogs_linked_ship_project_fk"
 	}),
 ])
-
-export const feedback = pgTable("feedback", {
-	id: integer().primaryKey().generatedByDefaultAsIdentity(),
-	recommend: integer().notNull(),
-	well: text().notNull(),
-	improve: text().notNull(),
-	user: varchar({ length: 16 }).notNull().references(() => users.hcaId),
-	timestamp: timestamp({ withTimezone: true, mode: 'date' }).defaultNow().notNull(),
-}, (table) => [
-	index("fk_feedback_users1_idx").on(table.user)
-]);
 
 export const addresses = pgTable("addresses", {
 	id: varchar({ length: 11 }).notNull().primaryKey(),

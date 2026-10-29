@@ -9,38 +9,41 @@ const props = defineProps<{
     instance: WindowInstance
 }>()
 
+const config = useConfiguration("onboarding");
+const step = computed(() => (config.has("step") ? config.read("step") : 1));
 
+// first screen
+function cancel() {
 
+}
 
-const step = ref<1 | 2>(1)
+function advance() {
+    config.write("step", 2);
+}
 
-const emit = defineEmits<{
-    (e: 'cancel'): void
-    (e: 'finish'): void
-}>()
+// second screen
+const sensitiveAuth = ref<boolean>(false);
+function cancel1() {
 
-function next() {
-    if (step.value === 1) {
-        step.value = 2
-    } else {
-        emit('finish')
-    }
+}
+
+function advance1() {
+
 }
 </script>
 
 <template>
-    <div class="onboarding">
+    <div class="onboarding" v-if="step === 1">
         <div class="body">
-            <div class="side" :class="step === 1 ? 'blue' : 'red'">
+            <div class="side blue">
                 <img class="side-logo" :src="onboardingLogo" alt="">
             </div>
 
-            <div v-if="step === 1" class="page">
+            <div class="page">
                 <h2 class="title">Welcome to Disposition!</h2>
 
                 <p>
-                    Welcome to the first physical-media based YSWS! Let's get you started
-                    with the basics of setting you up for the event!
+                    Welcome to the Disposition, a physical-media based YSWS!
                 </p>
 
                 <p>
@@ -52,25 +55,43 @@ function next() {
 
                 <p class="hint">Click "Next" in order to start the onboarding</p>
             </div>
+        </div>
 
-            <div v-else class="page">
-                <h2 class="title">Link your Hack Club account</h2>
+        <div class="footer">
+            <button class="btn" @click="cancel">Cancel</button>
+            <button class="btn" @click="advance">Next</button>
+        </div>
+    </div>
+
+    <div class="onboarding" v-if="step === 2">
+        <div class="body">
+            <div class="side red">
+                <img class="side-logo" :src="onboardingLogo" alt="">
+            </div>
+
+            <div class="page">
+                <h2 class="title">Link your Hack Club Auth account</h2>
 
                 <p>
-                    To continue participation you must link your Hack Club account. If you
-                    don't have one yet you can make one <a class="link" href="#">here</a>.
+                    To participate in Disposition, you must link your Hack Club Auth account first.
                 </p>
 
-                <div class="link-box">
-                    <a class="link" href="#">Link your Hack Club account here</a>
-                    <span class="status">Account not linked yet</span>
-                </div>
+                <b>Sensitive Information</b>
+                <p>
+                    Do you want to authorize Disposition to access sensitive info (such as addresses, legal name and
+                    birthdate) now? You can do this later.
+                </p>
+
+                <label>
+                    <input type="checkbox" v-model="sensitiveAuth" />
+                    Authorize Disposition to access sensitive information
+                </label>
             </div>
         </div>
 
         <div class="footer">
-            <button class="btn" @click="emit('cancel')">Cancel</button>
-            <button class="btn" @click="next">Next</button>
+            <button class="btn" @click="cancel1">Cancel</button>
+            <button class="btn" @click="advance1">Authorize</button>
         </div>
     </div>
 </template>

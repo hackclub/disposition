@@ -22,7 +22,7 @@ async function save() {
 
     const data = new FormData();
     data.append("status", form.status);
-    if (form.internalMessage) data.append("adminMessage", form.internalMessage);
+    if (form.internalMessage) data.append("internalMessage", form.internalMessage);
     if (form.tracking) data.append("tracking", form.tracking);
 
     const response = await $fetch(`/api/shop/orders/${props.id}`, {
