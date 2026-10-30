@@ -10,7 +10,7 @@ export default defineEventHandler(async event => {
     const query = getQuery(event);
 
     const url = new URL("https://hackatime.hackclub.com/oauth/authorize");
-    url.searchParams.set("client_id", config.hackclub.clientId);
+    url.searchParams.set("client_id", config.hackatime.clientId);
     url.searchParams.set("redirect_uri", `${config.public.baseUrl}/oauth/callback-hackatime`);
     url.searchParams.set("response_type", "code"); 
     url.searchParams.set("scope", "profile read");

@@ -4,20 +4,7 @@ import { ICONS } from '~/registry/icons';
 const { loggedIn, user } = await useUserSession()
 const manager = useWindowManager();
 
-let info;
-if (loggedIn.value) {
-    type CachetResponse = {
-        id: string,
-        userId: string,
-        displayName: string,
-        realName: string,
-        pronouns: string,
-        imageUrl: string,
-    }
-
-    //@ts-ignore
-    info = await $fetch<CachetResponse>(`https://cachet.hackclub.com/users/${user.value.slackId}`);
-}
+let info = loggedIn.value && user.value?.slackId ? await getUserInfo(user.value.slackId) : undefined;
 </script>
 
 <template>

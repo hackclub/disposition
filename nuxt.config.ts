@@ -14,6 +14,11 @@ export default defineNuxtConfig({
 			clientSecret: process.env.HCA_CLIENT_SECRET,
 		},
 
+		hackatime: {
+			clientId: process.env.HACKATIME_CLIENT_ID,
+			clientSecret: process.env.HACKATIME_CLIENT_SECRET,
+		},
+
 		lastfm: {
 			apiKey: process.env.LASTFM_API_KEY
 		},

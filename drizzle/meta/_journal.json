@@ -92,6 +92,13 @@
       "when": 1793141434247,
       "tag": "0012_add_projects_devlogs_ships_feedback",
       "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1793355904804,
+      "tag": "0013_user_add_hackatime_token",
+      "breakpoints": true
     }
   ]
 }
