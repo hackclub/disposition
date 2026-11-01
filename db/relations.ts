@@ -30,7 +30,8 @@ export const announcementsRelations = relations(announcements, ({one, many}) => 
 
 export const usersRelations = relations(users, ({many, one}) => ({
 	announcementReads: many(announcementReads),
-	balanceEvents: many(balanceEvents),
+	balanceEvents: many(balanceEvents, { relationName: "balanceEventUser" }),
+	authoredBalanceEvents: many(balanceEvents, { relationName: "balanceEventAuthor" }),
 	notifications: many(notifications),
 	shopOrders: many(shopOrders),
 	shopRequests: many(shopRequests),
@@ -80,7 +81,13 @@ export const devlogsRelations = relations(devlogs, ({one}) => ({
 export const balanceEventsRelations = relations(balanceEvents, ({one}) => ({
 	user: one(users, {
 		fields: [balanceEvents.user],
-		references: [users.hcaId]
+		references: [users.hcaId],
+		relationName: "balanceEventUser"
+	}),
+	author: one(users, {
+		fields: [balanceEvents.author],
+		references: [users.hcaId],
+		relationName: "balanceEventAuthor"
 	}),
 }));
 

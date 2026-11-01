@@ -47,7 +47,8 @@ export default defineEventHandler(async event => {
     const balanceEvent: typeof balanceEvents.$inferInsert = {
         user: session.user.id,
         description: `Shop order ${result?.id} (automated)`,
-        value: -item.price
+        value: -item.price,
+        author: "system",
     }
 
     await db.insert(balanceEvents).values(balanceEvent);

@@ -40,7 +40,7 @@ const onSubmit = handleSubmit(async (values) => {
 
     try {
         const response = await $fetch("/api/notifications", { method: "POST", body: body })
-        manager.messageBox("Success!", `Notification id ${response.id} has been sent out!`);
+        manager.messageBox("Success!", `Notification id ${response.id} has been sent out!`, { info: true });
         manager.close(props.instance.id);
     } catch (e: any) {
         manager.messageBox("Error!", e.data?.message ?? "Upload failed", { error: true });

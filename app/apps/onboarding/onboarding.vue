@@ -6,6 +6,8 @@ import headerbg from '~/assets/misc/header.png'
 import avatar from '~/assets/misc/avatar.png'
 import { useForm } from "vee-validate";
 import { toTypedSchema } from '@vee-validate/zod'
+import defaultBanner from '~/assets/misc/banner.png'
+import { urlToFile } from '~/utils'
 import * as z from "zod";
 
 const manager = useWindowManager();
@@ -53,31 +55,31 @@ async function advance2() {
 }
 
 // user profile screen
+console.log(useUserSession().user.value?.username)
 const userForm = useForm({
     validationSchema: toTypedSchema(z.object({
         banner: z.instanceof(File, { message: "Please choose an image" }),
-        
-    }))
+        username: z.string().min(1),
+        bio: z.string().optional(),
+    })),
+    initialValues: {
+        username: useUserSession().user.value?.username,
+        banner: await urlToFile(defaultBanner, 'banner.png')
+    },
 });
 
+const [usernameModel] = userForm.defineField("username");
+const [bioModel] = userForm.defineField("bio");
 
-const previewUrl = ref<string | null>(null);
+const previewUrl = ref<string>(defaultBanner);
 const fileInput = ref<HTMLInputElement | null>(null);
-
-const placeholder =
-    "data:image/svg+xml;utf8," +
-    encodeURIComponent(
-        `<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300">` +
-        `<text x="50%" y="50%" text-anchor="middle" dominant-baseline="middle" ` +
-        `font-family="sans-serif" font-size="16" fill="#888">Drag and drop your image in here</text></svg>`
-    );
 
 function setImage(file: File | undefined) {
     if (!file || !file.type.startsWith("image/")) return;
 
     if (previewUrl.value) URL.revokeObjectURL(previewUrl.value);
     previewUrl.value = URL.createObjectURL(file);
-    setFieldValue("image", file); // validates against the schema
+    userForm.setFieldValue("banner", file);
 }
 
 onBeforeUnmount(() => {
@@ -184,33 +186,29 @@ function advance3() {
 
     <div class="onboarding" v-if="step === 4 && info">
         <div class="body">
-            <div class="side red">
+            <div class="side-small green">
                 <img class="side-logo" :src="onboardingLogo" alt="">
             </div>
 
             <div class="page">
                 <h2 class="title">Customize your profile</h2>
 
-                <!-- TODO image upload code -->
                 <div class="header-bg">
                     <input ref="fileInput" type="file" accept="image/jpeg,image/png,image/webp" v-show="false"
                         @change="(e) => setImage((e.target as HTMLInputElement).files?.[0])" />
-
-                    <img class="drag-and-drop" :class="{ dragging: isDragging }" :src="previewUrl ?? placeholder"
-                        alt="Item image" @dragover.prevent="isDragging = true" @dragleave.prevent="isDragging = false"
-                        @drop.prevent="onDrop" />
+                    <img class="banner" :src="previewUrl" alt="Banner image" />
 
                     <div class="profile-card">
                         <img class="avatar" :src="info.imageUrl" alt="">
                         <div class="profile-info">
-                            <h2>Username</h2>
-                            <p>"This is a bio look at me"</p>
+                            <input type="text" v-model="usernameModel" />
+                            <textarea v-model="bioModel" class="bio" placeholder="Your amazing bio goes here..." ></textarea>
                         </div>
                     </div>
 
                     <button type="button" @click="fileInput?.click()">Upload from files</button>
                 </div>
-                <span class="error" v-if="errors.image">{{ errors.image }}</span>
+                <span class="error" v-if="userForm.errors.value.banner">{{ userForm.errors.value.banner }}</span>
             </div>
         </div>
 
@@ -224,9 +222,27 @@ function advance3() {
 </template>
 
 <style scoped>
-.header-bg {}
+.header-bg {
+    position: relative;
+    width: 100%;
+    height: 140px;
+    overflow: hidden;
+
+    .banner {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: fill;
+        user-select: none;
+        pointer-events: none;
+    }
+}
 
 .profile-card {
+    position: absolute;
+    top: 24px;
+    left: 24px;
     width: 330px;
     max-width: calc(100% - 48px);
     display: flex;
@@ -248,20 +264,17 @@ function advance3() {
         flex-direction: column;
         justify-content: center;
         align-items: center;
+        gap: 5px;
         flex: 1;
 
-        h2 {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            margin: 0;
-            font-weight: 500;
-            font-family: 'Joan', serif;
+        input[type="text"] {
+            width: 100%;
         }
 
-        p {
-            margin: 0 0 6px;
-            font-size: 12px;
+        .bio {
+            width: 100%;
+            resize: none;
+            height: 70px;
         }
     }
 }
@@ -288,12 +301,21 @@ function advance3() {
     flex: 0 0 39%;
 }
 
-.side.blue {
+.side-small {
+    position: relative;
+    flex: 0 0 10%;
+}
+
+.blue {
     background: linear-gradient(160deg, #1a0a8c 0%, #2a00ff 100%);
 }
 
-.side.red {
+.red {
     background: linear-gradient(180deg, #b4306f 0%, #ff2d2d 100%);
+}
+
+.green {
+    background: linear-gradient(180deg, #6bb430 0%, #45ff2d 100%);
 }
 
 .side-logo {

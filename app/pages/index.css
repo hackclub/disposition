@@ -209,32 +209,17 @@ label:has(input[type="checkbox"]) {
     gap: 3px;
 }
 
-input[type="text"] {
-    outline: none;
-    background-color: var(--color-bg-light);
-    border: 1px solid var(--color-border-dark);
-    font-family: 'Fira Sans', sans-serif;
-
-    &:active {
-        outline: none;
-
-        outline: none;
-        border: 1.8px solid var(--color-black);
-    }
-}
-
+input[type="text"],
 input[type="email"] {
     outline: none;
-
     background-color: var(--color-bg-light);
     border: 1px solid var(--color-border-dark);
     font-family: 'Fira Sans', sans-serif;
 
-    &:active {
+    &:focus {
         outline: none;
-
-        outline: none;
-        border: 1.8px solid var(--color-black);
+        border-color: var(--color-black);
+        box-shadow: 0 0 0 0.2px var(--color-black);
     }
 }
 
@@ -363,17 +348,16 @@ input[type="range"]::-ms-fill-lower {
 }
 
 textarea {
-    width: 100%;
-    padding: 5px;
     box-sizing: border-box;
     border: 1px solid var(--color-border-dark);
-    background: linear-gradient(180deg, var(--color-bg-light) 0%, var(--color-bg-medium) 41%, var(--color-bg-dark) 56%);
+    background-color: var(--color-bg-light);
 
     font-family: 'Fira Sans', sans-serif;
     font-size: 12px;
 
     &:focus {
         outline: none;
-        border: 1.8px solid var(--color-black);
+        border-color: var(--color-black);
+        box-shadow: 0 0 0 0.2px var(--color-black);
     }
 }
