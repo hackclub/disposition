@@ -12,11 +12,28 @@ const items = ref<Item[]>([]);
 const orders = ref<ServerOrder[]>([]);
 const requests = ref<Request[]>([]);
 
+const orderStatus = ref("");
+const requestStatus = ref("");
+
+async function loadOrders() {
+    orders.value = await $fetch<ServerOrder[]>("/api/shop/orders", {
+        query: { user: "all", status: orderStatus.value || undefined }
+    });
+}
+
+async function loadRequests() {
+    requests.value = await $fetch<Request[]>("/api/shop/requests", {
+        query: { user: "all", status: requestStatus.value || undefined }
+    });
+}
+
 if (admin) {
     items.value = await $fetch<Item[]>("/api/shop/items/");
-    orders.value = await $fetch<ServerOrder[]>("/api/shop/orders?user=all");
-    requests.value = await $fetch<Request[]>("/api/shop/requests?user=all");
+    await Promise.all([loadOrders(), loadRequests()]);
 }
+
+watch(orderStatus, loadOrders);
+watch(requestStatus, loadRequests);
 
 function deleteItem(id: number) {
     manager.dialogBox("Delete item?", `Do you want to delete item ${id}? This cannot be undone.`, async (result: boolean) => {
@@ -82,6 +99,16 @@ function deleteItem(id: number) {
                         </table>
                     </div>
                     <div v-if="currentTab === 'orders'">
+                        <div class="filter-bar">
+                            <label for="order-status">Status</label>
+                            <select id="order-status" v-model="orderStatus">
+                                <option value="">All statuses</option>
+                                <option value="idle">Idle</option>
+                                <option value="claimed">Claimed</option>
+                                <option value="fulfilled">Fulfilled</option>
+                                <option value="cancelled">Cancelled</option>
+                            </select>
+                        </div>
                         <table>
                             <thead>
                                 <tr>
@@ -109,6 +136,16 @@ function deleteItem(id: number) {
                         </table>
                     </div>
                     <div v-if="currentTab === 'requests'">
+                        <div class="filter-bar">
+                            <label for="request-status">Status</label>
+                            <select id="request-status" v-model="requestStatus">
+                                <option value="">All statuses</option>
+                                <option value="idle">Idle</option>
+                                <option value="claimed">Claimed</option>
+                                <option value="accepted">Accepted</option>
+                                <option value="rejected">Rejected</option>
+                            </select>
+                        </div>
                         <table>
                             <thead>
                                 <tr>
@@ -180,6 +217,13 @@ a:hover {
     span h1 {
         margin: 0;
     }
+}
+
+.filter-bar {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 0;
 }
 
 .tabs {

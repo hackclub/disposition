@@ -27,7 +27,6 @@ import ProjectProfile from "~/apps/projects/projectProfile.vue"
 import ProjectBrowser from "~/apps/projects/projectBrowser.vue"
 import Requests from "~/apps/shop/requests.vue"
 import AdminShopRequest from "~/apps/admin/shop/adminShopRequest.vue"
-import Feedback from "~/apps/feedback.vue"
 import ProjectEdit from "~/apps/projects/projectEdit.vue"
 import DevlogView from "~/apps/projects/devlogView.vue"
 import Onboarding from "~/apps/onboarding/onboarding.vue"
@@ -158,18 +157,6 @@ export const APPS: { [key: string]: AppDef } = {
 
         tool: false,
         resizeable: false
-    },
-
-    feedback: {
-        appId: 'feedback',
-        title: 'Feedback',
-        component: Feedback,
-
-        minWidth: 400,
-        minHeight: 550,
-
-        tool: false,
-        resizeable: true,
     },
 
     documentation: {

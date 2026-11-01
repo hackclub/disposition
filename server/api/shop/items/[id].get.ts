@@ -10,8 +10,6 @@ export default defineEventHandler(async event => {
     const slackId = session.user?.slackId;
     const admin = !!slackId && useRuntimeConfig().public.adminIds.includes(slackId);
 
-    // TODO: cache the info we get from last.fm and musicbrainz
-
     // i love typescript
     const id = await getValidatedRouterParams(event, z.object({
         id: z.coerce.number().int().positive(),
