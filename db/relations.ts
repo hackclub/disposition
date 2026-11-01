@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm/relations";
-import { announcements, announcementReads, users, balanceEvents, notifications, shopItems, shopOrders, shopRequests, addresses, projects, ships, devlogs } from "./schema";
+import { announcements, announcementReads, users, balanceEvents, notifications, shopItems, shopOrders, shopRequests, addresses, projects, ships, devlogs, devlogComments } from "./schema";
 
 export const announcementReadsRelations = relations(announcementReads, ({one}) => ({
 	announcement: one(announcements, {
@@ -63,7 +63,14 @@ export const shipsRelations = relations(ships, ({one, many}) => ({
 	devlogs: many(devlogs),
 }));
 
-export const devlogsRelations = relations(devlogs, ({one}) => ({
+export const devlogCommentsRelations = relations(devlogComments, ({one}) => ({
+	devlog: one(devlogs, {
+		fields: [devlogComments.devlog],
+		references: [devlogs.id]
+	})
+}))
+
+export const devlogsRelations = relations(devlogs, ({one, many}) => ({
 	user: one(users, {
 		fields: [devlogs.author],
 		references: [users.hcaId]
@@ -76,6 +83,7 @@ export const devlogsRelations = relations(devlogs, ({one}) => ({
 		fields: [devlogs.linkedShip],
 		references: [ships.id]
 	}),
+	devlogComments: many(devlogComments)
 }));
 
 export const balanceEventsRelations = relations(balanceEvents, ({one}) => ({

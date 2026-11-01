@@ -112,6 +112,19 @@ export const devlogs = pgTable("devlogs", {
 	}),
 ])
 
+export const devlogComments = pgTable("devlog_comments", {
+	id: integer().primaryKey().generatedByDefaultAsIdentity(),
+
+	devlog: integer().notNull().references(() => devlogs.id),
+	author: varchar({ length: 16 }).notNull().references(() => users.hcaId),
+
+	content: text().notNull(),
+	tiemstamp: timestamp({ mode: 'date', withTimezone: true }).notNull().defaultNow(),
+}, (table) => [
+	index("fk_devlog_comments_users1_idx").on(table.author),
+	index("fk_devlog_comments_devlogs1_idx").on(table.devlog),
+])
+
 export const addresses = pgTable("addresses", {
 	id: varchar({ length: 11 }).notNull().primaryKey(),
 	user: varchar({ length: 16 }).notNull().references(() => users.hcaId),

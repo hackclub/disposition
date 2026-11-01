@@ -1,4 +1,4 @@
-import { NotificationPostBody } from "#imports";
+import { NotificationPostBody } from "~~/server/utils/notification";
 import * as z from "zod";
 import { notifications } from "~~/db/schema";
 
