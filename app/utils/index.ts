@@ -47,6 +47,18 @@ export function formatDuration(totalSeconds: number | null | undefined): string 
         : `${m}:${ss}`;
 }
 
+export function formatTimestamp(value: string | number | Date): string {
+    const d = new Date(value);
+    if (isNaN(d.getTime())) return String(value);
+
+    const pad = (n: number) => String(n).padStart(2, "0");
+    const hours24 = d.getHours();
+    const hours12 = hours24 % 12 || 12;
+    const ampm = hours24 >= 12 ? "PM" : "AM";
+
+    return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()} ${pad(hours12)}:${pad(d.getMinutes())} ${ampm}`;
+}
+
 // truncating markdown and shi. god bless claude sonnet 5.5 //
 
 import type { Node, ElementNode } from 'comark';

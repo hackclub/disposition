@@ -64,7 +64,7 @@ let info = loggedIn.value && user.value?.slackId ? await getUserInfo(user.value.
     background: linear-gradient(0deg, var(--color-menu-gradient-top) 0%, var(--color-menu-gradient-bottom) 100%);
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
-    border: 2px solid var(--color-border-light);
+    border: 2px solid var(--color-border-dark);
 
     width: 350px;
     height: 450px;

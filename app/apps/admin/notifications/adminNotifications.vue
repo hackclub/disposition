@@ -56,7 +56,7 @@ if (admin) {
                             <tr v-for="notification in notifications" :key="notification.serverId">
                                 <td>{{ notification.serverId }}</td>
                                 <td>{{ notification.title }}</td>
-                                <td>{{ notification.timestamp }}</td>
+                                <td>{{ formatTimestamp(notification.timestamp) }}</td>
                                 <td><a @click="manager.open('profile', { id: notification.user!.id })">@{{
                                     notification.user!.username }}</a></td>
                             </tr>
@@ -80,11 +80,11 @@ if (admin) {
                             <tr v-for="announcement in announcements" :key="announcement.serverId">
                                 <td>{{ announcement.serverId }}</td>
                                 <td>{{ announcement.title }}</td>
-                                <td>{{ announcement.timestamp }}</td>
+                                <td>{{ formatTimestamp(announcement.timestamp) }}</td>
                                 <td @click="manager.open('profile', { id: announcement.author!.id })">@{{
                                     announcement.author!.username }}</td>
                                 <td>
-                                    <button @click="manager.open('admin_edit_announcement', { id: announcement.serverId })">Edit</button>
+                                    <button v-if="session.user.value!.id === announcement.author!.id" @click="manager.open('admin_edit_announcement', { id: announcement.serverId })">Edit</button>
                                 </td>
                             </tr>
                         </tbody>

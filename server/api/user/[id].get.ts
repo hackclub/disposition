@@ -11,13 +11,7 @@ export default defineEventHandler(async event => {
         id: z.coerce.string().min(1).max(16),
     }).parse).then(p => p.id);
 
-    let user;
-    if(admin) {
-        [user] = await db.select().from(users).where(eq(users.hcaId, id));
-    } else {
-        [user] = await db.select(publicUserColumns).from(users).where(eq(users.hcaId, id));
-    }
-    
+    const [user] = admin ? await db.select().from(users).where(eq(users.hcaId, id)) : await db.select(publicUserColumns).from(users).where(eq(users.hcaId, id));
     if (!user) throw createError({
         statusCode: 400,
         message: "User not found"

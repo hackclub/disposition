@@ -17,6 +17,14 @@ if (admin) {
     orders.value = await $fetch<ServerOrder[]>("/api/shop/orders?user=all");
     requests.value = await $fetch<Request[]>("/api/shop/requests?user=all");
 }
+
+function deleteItem(id: number) {
+    manager.dialogBox("Delete item?", `Do you want to delete item ${id}? This cannot be undone.`, async (result: boolean) => {
+        if(!result) return;
+        const response = await $fetch(`/api/shop/items/${id}`, { method: "DELETE" });
+        await manager.messageBox("Item deleted successfully!", `Item ${id} deleted successfully!`, { info: true })
+    }, { question: true });
+}
 </script>
 
 <template>
@@ -67,8 +75,7 @@ if (admin) {
                                     <td>
                                         <button
                                             @click="manager.open('admin_shop_edit_item', { id: item.id })">Edit</button>
-                                        <button
-                                            @click="manager.open('admin_shop_item_delete', { id: item.id })">Delete</button>
+                                        <button @click="deleteItem(item.id)">Delete</button>
                                     </td>
                                 </tr>
                             </tbody>
@@ -92,9 +99,7 @@ if (admin) {
                                     <td @click="manager.open('profile_viewer', { id: order.user.hcaId })">{{ order.user.hcaId }}
                                     </td>
                                     <td>{{ order.status }}</td>
-                                    <td>{{ new Date(order.timestamp).getDate() }}/{{ new
-                                        Date(order.timestamp).getMonth() }}/{{ new
-                                            Date(order.timestamp).getFullYear() }}</td>
+                                    <td>{{ formatTimestamp(order.timestamp) }}</td>
                                     <td>
                                         <button
                                             @click="manager.open('admin_shop_view_order', { id: order.id })">View</button>
@@ -124,9 +129,7 @@ if (admin) {
                                     <td>{{ request.artist }}</td>
                                     <td>{{ request.media }}</td>
                                     <td>{{ request.status }}</td>
-                                    <td>{{ new Date(request.timestamp).getDate() }}/{{ new
-                                        Date(request.timestamp).getMonth() }}/{{ new
-                                            Date(request.timestamp).getFullYear() }}</td>
+                                    <td>{{ formatTimestamp(request.timestamp) }}</td>
                                     <td>
                                         <button
                                             @click="manager.open('admin_shop_view_request', { id: request.id })">View</button>
