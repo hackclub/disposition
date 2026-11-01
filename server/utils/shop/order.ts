@@ -17,6 +17,7 @@ const OrderAdminPatchBody = z.object({
 })
 
 const OrderPatchBody = z.object({
+    status: z.enum(["cancelled"]).optional(),
     message: z.string(),
 })
 

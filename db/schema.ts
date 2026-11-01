@@ -9,6 +9,7 @@ export const users = pgTable("users", {
 	username: text().notNull(),
 	created: timestamp({ withTimezone: true, mode: 'date' }).defaultNow().notNull(),
 
+	system: boolean().notNull().default(false),
 	yswsEligible: boolean("ysws_eligible").notNull(),
 	verificationStatus: varchar("verification_status", { length: 16 }).notNull(),
 
@@ -165,10 +166,12 @@ export const balanceEvents = pgTable("balance_events", {
 	user: varchar({ length: 16 }).notNull().references(() => users.hcaId),
 	value: integer().notNull(),
 	description: varchar({ length: 255 }).notNull(),
+	author: varchar({ length: 16 }).notNull().references(() => users.hcaId),
 	timestamp: timestamp({ withTimezone: true, mode: 'date' }).defaultNow().notNull(),
 },
 	(table) => [
 		index("fk_balance_events_users1_idx").on(table.user),
+		index("fk_balance_events_users2_idx").on(table.author),
 	]);
 
 export const notifications = pgTable("notifications", {

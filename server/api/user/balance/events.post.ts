@@ -3,7 +3,7 @@ import * as z from "zod";
 import { balanceEvents } from "~~/db/schema";
 
 export default defineEventHandler(async event => {
-    await requireAdmin(event);
+    const session = await requireAdmin(event);
 
     const form = await readFormData(event);
     const parsed = BalanceEventPostBody.safeParse(Object.fromEntries(form));
@@ -19,6 +19,7 @@ export default defineEventHandler(async event => {
         user: parsed.data.user,
         description: parsed.data.description,
         value: parsed.data.value,
+        author: session.user.id,
     }
 
     const [result] = await db.insert(balanceEvents).values(balanceEvent).returning({ id: balanceEvents.id });
