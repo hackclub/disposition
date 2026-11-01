@@ -1,10 +1,16 @@
 const HEADERS = { "User-Agent": "YourShopName/1.0 ( you@example.com )" };
 
-async function call(path: string, query: Record<string, string>): Promise<any> {
-    return await $fetch<any>(`https://musicbrainz.org/ws/2/${path}`, {
-        query: { ...query, fmt: "json" },
-        headers: HEADERS,
-    });
+async function call(path: string, query: Record<string, string>): Promise<any | null> {
+    try {
+        return await $fetch<any>(`https://musicbrainz.org/ws/2/${path}`, {
+            query: { ...query, fmt: "json" },
+            headers: HEADERS,
+        });
+    } catch (e: any) {
+        // unknown/invalid mbid -> treat as "not found" so the null result gets cached
+        if ((e?.statusCode ?? e?.response?.status) === 404) return null;
+        throw e; // 503 rate limits, network errors etc. should NOT be cached
+    }
 }
 
 export const getReleaseInfo = defineCachedFunction(async (album: string, artist: string, mbid?: string | null) => {
@@ -15,11 +21,12 @@ export const getReleaseInfo = defineCachedFunction(async (album: string, artist:
             query: `release:"${esc(album)}" AND artist:"${esc(artist)}"`,
             limit: "1",
         });
-        mbid = search.releases?.[0]?.id;
+        mbid = search?.releases?.[0]?.id;
         if (!mbid) return null;
     }
 
     const release = await call(`release/${mbid}`, { inc: "release-groups recordings" });
+    if (!release) return null;
 
     const tracks: any[] = (release.media ?? []).flatMap((m: any) => m.tracks ?? []);
     const totalMs = tracks.reduce((sum, t) => sum + (t.length || 0), 0);
@@ -34,6 +41,6 @@ export const getReleaseInfo = defineCachedFunction(async (album: string, artist:
 }, 
 {
     name: "musicbrainz-release",
-    maxAge: 60 * 60 * 24 * 30, // 60 days
+    maxAge: 60 * 60 * 24 * 30, // 30 days
     getKey: (album: string, artist: string, mbid?: string | null) => mbid ? safeCacheKey(mbid) : safeCacheKey("search", artist, album)
 })

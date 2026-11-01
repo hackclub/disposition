@@ -32,7 +32,6 @@ export async function generateUsername(raw?: string | null) {
         .from(users)
         .where(like(users.username, `${escaped}%`));
     const taken = new Set(rows.map(r => r.username));
-    console.log("[debug] taken usernames matching base", { base, taken: [...taken] });
 
     if (!taken.has(base)) return base;
     for (let i = 2; ; i++) {

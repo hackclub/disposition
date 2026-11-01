@@ -13,7 +13,13 @@ export default defineEventHandler(async (event) => {
     deleteCookie(event, "oauth_rsvp");
     deleteCookie(event, "oauth_state");
 
-    if (!code || !state || state !== savedState) {
+    if(!code || !state) {
+        // user denied app in this case. oh well
+
+        return sendRedirect(event, '/');
+    }
+
+    if (state !== savedState) {
         throw createError({
             statusCode: 401,
             statusMessage: "Invalid OAuth State"

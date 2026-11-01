@@ -7,16 +7,18 @@ async function call(method: string, params: Record<string, any>): Promise<any> {
         url.searchParams.set(key, value);
     })
 
-    const response = await $fetch<any>(url.toString());
-    console.log(response)
+    // last.fm returns errors (incl. "not found") with a non-2xx status, which $fetch would throw on
+    const res = await $fetch.raw<any>(url.toString(), { ignoreResponseError: true });
+    const body = res._data;
+
     // error 6 = not found (e.g. album.getinfo for an album last.fm doesn't know about)
-    if (response?.error === 6) return null;
-    if (!response || response.error) throw createError({
+    if (body?.error === 6) return null;
+    if (!res.ok || !body || body.error) throw createError({
         statusCode: 502,
-        message: `last.fm: ${response?.message ?? "request failed"}`
+        message: `last.fm: ${body?.message ?? `request failed (${res.status})`}`
     })
 
-    return response;
+    return body;
 }
 
 export const getAlbumInfo = defineCachedFunction(async (album: string, artist: string) => {

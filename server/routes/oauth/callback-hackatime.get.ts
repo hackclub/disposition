@@ -11,11 +11,15 @@ export default defineEventHandler(async event => {
     })
 
     const config = useRuntimeConfig();
-    const { code, state } = getQuery(event);
+    const { code, state, error } = getQuery(event);
     const savedState = getCookie(event, "hackatime_oauth_state");
     deleteCookie(event, "hackatime_oauth_rsvp");
 
-    if (!code || !state || state !== savedState) {
+    if(!code || !state || error) {
+        return sendRedirect(event, '/'); // user denied app. oh well!
+    }
+
+    if (state !== savedState) {
         throw createError({
             statusCode: 401,
             statusMessage: "Invalid OAuth State"

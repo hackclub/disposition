@@ -69,6 +69,24 @@ const userForm = useForm({
 });
 
 const [usernameModel] = userForm.defineField("username");
+const usernameStatus = ref<"idle" | "checking" | "available" | "taken" | "invalid">("idle");
+let usernameTimer: ReturnType<typeof setTimeout> | undefined;
+
+watch(usernameModel, value => {
+    clearTimeout(usernameTimer);
+    if (!value) { usernameStatus.value = "idle"; return; }
+
+    usernameStatus.value = "checking";
+    usernameTimer = setTimeout(async () => {
+        const res = await $fetch<{ available: boolean; reason?: string }>(
+            "/api/user/username-available",
+            { query: { username: value } }
+        ).catch(() => undefined);
+        if (usernameModel.value !== value) return; // user kept typing
+        usernameStatus.value = !res ? "idle" : res.available ? "available" : res.reason === "invalid" ? "invalid" : "taken";
+    }, 400);
+});
+
 const [bioModel] = userForm.defineField("bio");
 
 const previewUrl = ref<string>(defaultBanner);
@@ -202,7 +220,11 @@ function advance3() {
                         <img class="avatar" :src="info.imageUrl" alt="">
                         <div class="profile-info">
                             <input type="text" v-model="usernameModel" />
-                            <textarea v-model="bioModel" class="bio" placeholder="Your amazing bio goes here..." ></textarea>
+                            <span class="error" v-if="usernameStatus === 'taken'">That username is taken.</span>
+                            <span class="status" v-if="usernameStatus === 'available'">Username is available!</span>
+
+                            <textarea v-model="bioModel" class="bio"
+                                placeholder="Your amazing bio goes here..."></textarea>
                         </div>
                     </div>
 
@@ -214,7 +236,7 @@ function advance3() {
 
         <div class="footer">
             <button class="btn" @click="cancel">Cancel</button>
-            <button class="btn" @click="advance2">Link account</button>
+            <button class="btn" @click="advance3">Next</button>
         </div>
     </div>
     <div v-else>

@@ -21,27 +21,19 @@ export default defineEventHandler(async event => {
 
     const body = await readFormData(event);
 
-    let parsed;
-    if (admin) { // i dont like this if statement either
-        parsed = OrderAdminPatchBody.safeParse(Object.fromEntries(body));
-        if (!parsed.success) throw createError({
-            statusCode: 400,
-            message: "Invalid input",
-            data: z.flattenError(parsed.error)
-        })
-    } else {
-        parsed = OrderPatchBody.safeParse(Object.fromEntries(body));
-        if (!parsed.success) throw createError({
-            statusCode: 400,
-            message: "Invalid input",
-            data: z.flattenError(parsed.error)
-        })
-    }
-
+    const schema = admin ? OrderAdminPatchBody : OrderPatchBody;
+    const parsed = schema.safeParse(Object.fromEntries(body));
+    if (!parsed.success) throw createError({
+        statusCode: 400,
+        message: "Invalid input",
+        data: z.flattenError(parsed.error),
+    });
+    
     const [existing] = await db.select().from(shopOrders)
         .where(eq(shopOrders.id, id));
     if (!existing) throw createError({ statusCode: 404, message: "Order not found" });
     if (!admin && existing.user != session.user.id) throw createError({ statusCode: 403, message: "Forbidden from patching this order" })
+    if (!admin && parsed.data.status == "cancelled" && (existing.status == "claimed" || existing.status == "fulfilled")) throw createError({ statusCode: 409, message: "Cannot cancel a claimed or fulfilled order." });
 
     await db.update(shopOrders)
         .set(parsed.data)
