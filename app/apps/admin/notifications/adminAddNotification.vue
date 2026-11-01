@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { computed } from 'vue'
 import { useForm } from "vee-validate";
 import { toTypedSchema } from '@vee-validate/zod'
 import type { WindowInstance } from '~/types/window';
@@ -10,19 +10,9 @@ const props = defineProps<{ instance: WindowInstance }>()
 const admin = await isAdmin();
 if (!admin) manager.close(props.instance.id);
 
-// Assumes GET /api/users returns [{ id, username }]
-const users = ref<{ id: string | number; username: string }[]>([]);
-if (admin) {
-    try {
-        users.value = await $fetch("/api/users");
-    } catch {
-        users.value = [];
-    }
-}
-
 const { defineField, errors, handleSubmit, isSubmitting } = useForm({
     validationSchema: toTypedSchema(z.object({
-        user: z.string().min(1, "Recipient is required"),
+        user: z.string().trim().min(1, "User id is required"),
         title: z.string().trim().min(1, "Title is required"),
         description: z.string().trim().min(1, "Description is required")
     })),
@@ -60,11 +50,8 @@ const onSubmit = handleSubmit(async (values) => {
 
 <template>
     <form class="content" v-if="admin" @submit.prevent="onSubmit">
-        <label for="user">User</label>
-        <select id="user" v-model="user">
-            <option value="" disabled>Select a user</option>
-            <option v-for="u in users" :key="u.id" :value="String(u.id)">@{{ u.username }}</option>
-        </select>
+        <label for="user">User id</label>
+        <input type="text" id="user" v-model="user" placeholder="User id" autocomplete="off" />
         <span class="error" v-if="errors.user">{{ errors.user }}</span>
 
         <label for="title">Title</label>

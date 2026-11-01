@@ -35,6 +35,7 @@ import NewDevlog from "~/apps/projects/newDevlog.vue"
 import DispoInator3000 from "~/apps/misc/dispoInator3000.vue"
 
 import AdminAddAnnouncement from "~/apps/admin/notifications/adminAddAnnouncement.vue"
+import AdminAddNotification from "~/apps/admin/notifications/adminAddNotification.vue"
 import AdminNotifications from "~/apps/admin/notifications/adminNotifications.vue"
 
 // don't ask me why, but all app id's should be snake case.
@@ -349,6 +350,20 @@ export const APPS: { [key: string]: AppDef } = {
         tool: true,
         resizeable: false,
         hidden: true,
+    },
+
+    admin_add_notification: {
+        appId: 'admin_add_notification',
+        title: "Add Notifications",
+        component: AdminAddNotification,
+
+        minWidth: 400,
+        minHeight: 300,
+
+        tool: true,
+        resizeable: false,
+        hidden: true,
+
     },
 
     admin_shop: {

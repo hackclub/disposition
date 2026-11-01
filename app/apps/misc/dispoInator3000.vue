@@ -4,22 +4,21 @@ import frame1 from '~/assets/misc/DispoInator3000.png'
 import frame2 from '~/assets/misc/DispoInator3000-2.png'
 import frame3 from '~/assets/misc/DispoInator3000-3.png'
 
-const FRAME_MS = 150
+const FPS = 20
+const FRAME_MS = 1000 / FPS
 
 const frames = [frame1, frame2, frame3]
 const current = ref(0)
 const playing = ref(false)
 
-let timers: ReturnType<typeof setTimeout>[] = []
+const spins = useState('dispo-inator-spins', () => 0)
 
-const emit = defineEmits<{
-    (e: 'spin'): void
-}>()
+let timers: ReturnType<typeof setTimeout>[] = []
 
 function play() {
     if (playing.value) return
     playing.value = true
-    emit('spin')
+    spins.value++
 
     current.value = 1
     timers.push(setTimeout(() => { current.value = 2 }, FRAME_MS))
@@ -107,27 +106,43 @@ onBeforeUnmount(() => {
 }
 
 .machine {
-    display: grid;
-    flex: 1;
+    --machine-shadow: drop-shadow(3px 6px 5px var(--color-black));
+
+    position: relative;
+    flex: 0 1 280px;
+    width: 240px;
     min-height: 0;
-    max-width: 100%;
     padding: 0;
     margin: 0;
     background: none;
     border: none;
     border-radius: 0;
     box-shadow: none;
+    filter: var(--machine-shadow);
     cursor: pointer;
     outline: none;
 }
 
+.machine:hover,
+.machine:active,
+.machine:focus,
+.machine:focus-visible {
+    background: none;
+    border: none;
+    box-shadow: none;
+    filter: var(--machine-shadow);
+    transform: none;
+    outline: none;
+}
+
+
 .frame {
-    grid-area: 1 / 1;
-    justify-self: center;
-    width: auto;
-    height: 100%;
-    max-width: 100%;
-    object-fit: contain;
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    width: 100%;
+    height: auto;
+    transform: translateX(-50%);
     visibility: hidden;
     pointer-events: none;
 }

@@ -14,7 +14,7 @@ const announcements = ref<Notification[]>([]);
 const notifications = ref<Notification[]>([]);
 
 if (admin) {
-    announcements.value = await $fetch<Notification[]>("/api/announcements");
+    announcements.value = await $fetch<Notification[]>("/api/announcements?readFilter=all");
     notifications.value = await $fetch<Notification[]>("/api/notifications?user=all");
 }
 </script>
@@ -83,8 +83,8 @@ if (admin) {
                                 <td>{{ announcement.timestamp }}</td>
                                 <td @click="manager.open('profile', { id: announcement.author!.id })">@{{
                                     announcement.author!.username }}</td>
-                                <td v-if="session.user.value?.id == announcement.author"><button
-                                        @click="manager.open('admin_edit_announcement', { id: announcement.serverId })">Edit</button>
+                                <td>
+                                    <button @click="manager.open('admin_edit_announcement', { id: announcement.serverId })">Edit</button>
                                 </td>
                             </tr>
                         </tbody>
