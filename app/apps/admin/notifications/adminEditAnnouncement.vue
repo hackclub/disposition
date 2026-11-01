@@ -61,4 +61,51 @@ const onSubmit = handleSubmit(async (values) => {
         manager.messageBox("Error!", e.data?.message ?? "Update failed", { error: true });
     }
 });
-</script>
+</script>\
+
+<template>
+<form class="content" v-if="admin && current" @submit.prevent="onSubmit">
+    <label for="title">Title</label>
+    <input type="text" id="title" v-model="title" placeholder="Title" />
+    <span class="error" v-if="errors.title">{{ errors.title }}</span>
+
+    <label for="description">Description</label>
+    <textarea id="description" class="description" v-model="description" placeholder="Description"></textarea>
+    <span class="error" v-if="errors.description">{{ errors.description }}</span>
+
+    <button type="submit" :disabled="isSubmitting || !canSubmit">Save changes</button>
+</form>
+
+<div v-else-if="admin" class="content">
+    <span class="error" v-if="loadFailed">Couldn't load announcements (/api/announcements?readFilter=all).</span>
+    <span class="error" v-else>Announcement {{ announcementId }} wasn't found.</span>
+</div>
+
+</template>
+
+<style scoped>
+.description {
+    height: 100%;
+    flex-grow: 1;
+
+    width: 100%;
+    min-widht: 100%;
+    max-width: 100%;
+}
+
+.content {
+    padding: 10px;
+    gap: 6px;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.error {
+    color: var(--color-accent-red, #c33);
+    font-size: 0.85em;
+}
+
+
+
+</style>
