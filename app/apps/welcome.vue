@@ -2,7 +2,7 @@
 const { loggedIn } = useUserSession();
 const { read, write, has } = useConfiguration("welcome");
 
-let funFacts = [
+const funFacts = [
     "I love eating shawarma!",
     "The fetuccini sequence or something like that",
     "Embrace physical, Slander digital",
@@ -17,6 +17,8 @@ let funFacts = [
     "Help!! my cat has been possesed by the cruel evil!",
     "Optical media GOOD!"
 ];
+
+const funFact = ref(funFacts[Math.floor(Math.random() * funFacts.length)]);
 
 const openNext = ref(read("openNext"));
 const manager = useWindowManager();
@@ -52,7 +54,7 @@ function openNextChanged() {
                         <img src="~/assets/logos/Docs.png" alt="Information Icon" width="40px" height="40px" />
                         <h3>Fun Fact!</h3>
                     </span>
-                    <p>{{ funFacts[Math.floor(Math.random() * (funFacts.length))] }}</p>
+                    <p>{{ funFact }}</p>
                 </div>
 
                 <div class="buttons">
