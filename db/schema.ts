@@ -43,6 +43,7 @@ export const projects = pgTable("projects", {
 	description: text().notNull(),
 
 	hackatimeProjects: text("hackatime_projects").array().notNull().default([]),
+	hours: numeric("hours", { precision: 10, scale: 2, mode: "number" }).default(0), // only gets updated once you push a devlog :)
 
 	banner: text(),
 	repository: text(),

@@ -28,9 +28,16 @@ export default defineNuxtConfig({
 			appToken: process.env.SLACK_APP_TOKEN
 		},
 
+		ari: {
+			inboundSecret: process.env.ARI_INBOUND_SECRET,
+			outboundSecret: process.env.ARI_OUTBOUND_SECRET,
+			programId: process.env.ARI_PROGRAM_ID
+		},
+
 		public: {
 			baseUrl: "http://localhost:3000",
 			adminIds: ["U0A9S13HQF3", "U0AFWJX9CP2", "U0A9M9LC5PV"], // org slack ids
+			startDate: new Date(1796076000), // 01/12/2026 00:00 bucharest time :3
 
 			defaultConfig: {
 				welcome: {

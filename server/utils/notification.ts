@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 import * as z from "zod";
 import { notifications, users } from "~~/db/schema";
-import { sendSlackNotification } from "./slack";
+import { sendSlackNotification } from "./external/slack";
 
 export const NotificationPostBody = z.object({
     user: z.string().min(1).max(16),

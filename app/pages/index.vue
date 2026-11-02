@@ -7,6 +7,7 @@ import Taskbar from '~/components/taskbar.vue';
 import TaskbarItem from '~/components/taskbarItem.vue';
 import BenjiBuddy from "~/components/benjiBuddy.vue";
 import AugustBuddy from "~/components/augustBuddy.vue";
+import onboardingWallpaper from "~/assets/misc/onboardingBackground.png"
 import { APPS } from "~/registry/apps";
 import { onMounted, nextTick, computed } from "vue";
 
@@ -33,22 +34,23 @@ onMounted(async () => {
 const wallpaper = computed(() =>
     useConfiguration("settings").read("wallpaperSource") || "/wallpaper/default.png"
 );
+
+const onboardingOn = computed(() => windows.value.find((w) => w.appId == 'onboarding'))
 </script>
 
 <template>
     <ClientOnly>
-        <div :style="{
-            backgroundImage: `url('` + wallpaper + `')`
-        }" class="wallpaper">
-        </div>
+        <div v-if="onboardingOn" :style="{ backgroundImage: `url('${onboardingWallpaper}')` }" class="wallpaper"></div>
+        <div v-else :style="{ backgroundImage: `url('${wallpaper}')` }" class="wallpaper"></div>
     </ClientOnly>
 
+    <template v-for="w in windows" :key="w.id">
+        <Window v-if="!onboardingOn || w.appId === 'onboarding'" :instance="w">
+            <Component :is="APPS[w.appId]?.component" :instance="w" v-bind="w.props" />
+        </Window>
+    </template>
 
-    <Window v-for="w in windows" :key="w.id" :instance="w">
-        <Component :is="APPS[w.appId]?.component" :instance="w" v-bind="w.props" />
-    </Window>
-
-    <Taskbar>
+    <Taskbar v-if="!onboardingOn">
         <template v-for="w in windows" :key="w.id">
             <TaskbarItem v-if="!w.tool" :instance="w" />
         </template>
@@ -60,7 +62,7 @@ const wallpaper = computed(() =>
         </NotificationShim>
     </ClientOnly>
 
-    <ClientOnly>
+    <ClientOnly v-if="!onboardingOn">
         <BenjiBuddy v-if="useConfiguration('settings').read('showBuddies')" />
         <AugustBuddy v-if="useConfiguration('settings').read('showBuddies')" />
     </ClientOnly>

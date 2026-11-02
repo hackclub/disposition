@@ -1,5 +1,6 @@
 import { eq } from "drizzle-orm";
 import { users } from "~~/db/schema";
+import { getProjects } from "~~/server/utils/external/hackatime";
 
 export default defineEventHandler(async event => {
     const session = await requireUserSession(event);
@@ -9,11 +10,5 @@ export default defineEventHandler(async event => {
         message: "User not found or user hasn't linked hackatime"
     })
 
-    // where tf would i store the launch date..? anyways...
-    // TODO: add ?since=LAUNCH_DATE
-    return await $fetch("https://hackatime.hackclub.com/api/v1/authenticated/projects" as string, {
-        headers: {
-            Authorization: `Bearer ${user.hackatimeToken}`
-        }
-    })
+    return await getProjects(user.hackatimeToken);
 });

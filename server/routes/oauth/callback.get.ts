@@ -2,7 +2,7 @@ import { addresses, rsvps } from "~~/db/schema";
 import { db } from "~~/server/utils/db";
 import { eq } from "drizzle-orm";
 import { users } from "~~/db/schema";
-import { getCachetInfo } from "~~/server/utils/cachet"
+import { getCachetInfo } from "~~/server/utils/external/cachet"
 import { generateUsername } from "~~/server/utils/user/user";
 
 export default defineEventHandler(async (event) => {

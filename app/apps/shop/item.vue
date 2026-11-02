@@ -35,7 +35,7 @@ async function callback(result: boolean) {
         return;
     }
 
-    await manager.messageBox("Success!", `Order ID ${response.id} placed successfully! You can check it's status in the future from the "my orders" buttons in the shop!`, { info: true });
+    await manager.messageBox("Success!", `Order ID ${response.id} placed successfully!`, { info: true });
     await refreshNuxtData("balance");
     await refreshNuxtData("notifications");
     await refreshNuxtData("orders");

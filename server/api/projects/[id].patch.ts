@@ -14,25 +14,24 @@ export default defineEventHandler(async event => {
     const [existing] = await db.select().from(projects).where(eq(projects.id, id));
     if (!existing) throw createError({ statusCode: 404, message: "Project not found" });
 
-    if (!admin && session.user.id !== existing.author) throw createError({
+    const isOwner = session.user.id === existing.author;
+    if (!admin && !isOwner) throw createError({
         statusCode: 403,
         message: "Unauthorized to edit this project"
     });
 
-    const raw = Object.fromEntries(await readFormData(event));
-    const parsed = admin
-        ? ProjectAdminPatchBody.safeParse(raw)
-        : ProjectPatchBody.safeParse(raw);
-
+    const schema = admin ? (isOwner ? ProjectPatchBody : ProjectAdminPatchBody) : ProjectPatchBody;
+    const form = await readFormData(event);
+    const parsed = schema.safeParse(Object.fromEntries(form));
     if (!parsed.success) throw createError({
         statusCode: 400,
         message: "Invalid input",
         data: z.flattenError(parsed.error as z.ZodError),
     });
 
-    // admins shouldnt change banner
+    // only the project's owner can change the banner
     const { banner, ...data } = parsed.data as z.infer<typeof ProjectPatchBody>;
-    const bannerFile = !admin && banner instanceof File && banner.size > 0 ? banner : undefined;
+    const bannerFile = isOwner && banner instanceof File && banner.size > 0 ? banner : undefined;
 
     if (!Object.keys(data).length && !bannerFile) throw createError({
         statusCode: 400,
@@ -49,7 +48,8 @@ export default defineEventHandler(async event => {
     }
 
     try {
-        await db.update(projects)
+        await db
+            .update(projects)
             .set({ ...data, ...(newImage && { banner: newImage.pathname }) })
             .where(eq(projects.id, id));
     } catch (err) {

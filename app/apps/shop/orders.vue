@@ -3,6 +3,17 @@ import type { ServerOrder } from '~/types/database';
 
 const manager = useWindowManager();
 const { data: orders } = await useFetch<ServerOrder[]>("/api/shop/orders", { key: "orders" });
+
+async function cancelOrder(id: number) {
+    await manager.dialogBox("Cancel order?", `Are you sure you want to canel order ${id}?`, async (result: boolean) => {
+        if(!result) return;
+        const data = new FormData();
+        data.append("status", "cancelled");
+        const response = await $fetch(`/api/shop/orders/${id}`, { method: "PATCH", body: data });
+        if(!response) manager.messageBox("Error!", `Error cancelling order ${id}. Check browser console.`, { error: true }); 
+        await refreshNuxtData("orders");
+    }, { question: true })
+}
 </script>
 
 <template>
@@ -19,7 +30,7 @@ const { data: orders } = await useFetch<ServerOrder[]>("/api/shop/orders", { key
                 <div>
                     <button @click="manager.open('order', { id: order.id })">View</button>
                     <button v-if="order.status != 'idle'" disabled>Cancel</button>
-                    <button v-else @click="manager.open('cancel_order', { id: order.id })">Cancel</button>
+                    <button v-else @click="cancelOrder(order.id)">Cancel</button>
                 </div>
             </div>
         </div>

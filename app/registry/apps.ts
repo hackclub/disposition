@@ -78,7 +78,7 @@ export const APPS: { [key: string]: AppDef } = {
         minWidth: 600,
         minHeight: 470,
 
-        tool: false,
+        tool: true, // can't minimize xdxd
         resizeable: false,
     },
 

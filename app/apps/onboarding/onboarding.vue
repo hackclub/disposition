@@ -20,7 +20,7 @@ const props = defineProps<{
 }>()
 
 const PROFILE_SIZE = { width: 768, height: 440 };
-const REGION_SIZE = { width: 520, height: 455 };
+const REGULAR_SIZE = { width: 600, height: 470 };
 
 const regions = ['Europe', 'North America', 'South America', 'Asia', 'Africa', 'Oceania'];
 const region = ref<string>('Europe');
@@ -70,6 +70,10 @@ async function advance2() {
 
     // resize window to fit the big ahh screen
     manager.resize(props.instance.id, PROFILE_SIZE);
+    manager.move(props.instance.id, { // center window
+        posX: window.innerWidth / 2 - PROFILE_SIZE.width / 2,
+        posY: window.innerHeight / 2 - PROFILE_SIZE.height / 2
+    })
 
     // get cachet data (we should have user session by now)
     await loadInfo();
@@ -113,18 +117,30 @@ onBeforeUnmount(() => {
 });
 
 onMounted(async () => {
-    if (step.value === 4) {
+    if (step.value === 4) { // profile screen
         manager.resize(props.instance.id, PROFILE_SIZE);
+        manager.move(props.instance.id, { // center window
+            posX: window.innerWidth / 2 - PROFILE_SIZE.width / 2,
+            posY: window.innerHeight / 2 - PROFILE_SIZE.height / 2
+        })
         await loadInfo();
-    } else if (step.value === 5) {
-        manager.resize(props.instance.id, REGION_SIZE);
+    } else if (step.value === 5) { // region screen
+        manager.resize(props.instance.id, REGULAR_SIZE);
+        manager.move(props.instance.id, { // center window
+            posX: window.innerWidth / 2 - REGULAR_SIZE.width / 2,
+            posY: window.innerHeight / 2 - REGULAR_SIZE.height / 2
+        })
     }
 })
 
 // profile screen -> region screen
 function advance3() {
     config.write("step", 5);
-    manager.resize(props.instance.id, REGION_SIZE);
+    manager.resize(props.instance.id, REGULAR_SIZE);
+    manager.move(props.instance.id, { // center window
+        posX: window.innerWidth / 2 - REGULAR_SIZE.width / 2,
+        posY: window.innerHeight / 2 - REGULAR_SIZE.height / 2
+    })
 }
 
 // region screen
@@ -230,13 +246,8 @@ function advance4() {
             <div class="page profile-page">
                 <h2 class="title">Customize your profile</h2>
 
-                <div
-                    class="header-bg"
-                    :class="{ dragging }"
-                    @dragover.prevent="dragging = true"
-                    @dragleave="dragging = false"
-                    @drop.prevent="onDrop"
-                >
+                <div class="header-bg" :class="{ dragging }" @dragover.prevent="dragging = true"
+                    @dragleave="dragging = false" @drop.prevent="onDrop">
                     <input ref="fileInput" type="file" accept="image/jpeg,image/png,image/webp" v-show="false"
                         @change="(e) => setImage((e.target as HTMLInputElement).files?.[0])" />
                     <img class="banner" :src="previewUrl" alt="Banner image" />

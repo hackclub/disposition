@@ -1,8 +1,8 @@
 import { isAdmin } from "#imports"
 import { eq } from "drizzle-orm";
 import { shopItems } from "~~/db/schema";
-import { getAlbumInfo } from "~~/server/utils/lastfm";
-import { getReleaseInfo } from "~~/server/utils/musicbrainz";
+import { getAlbumInfo } from "~~/server/utils/external/lastfm";
+import { getReleaseInfo } from "~~/server/utils/external/musicbrainz";
 import * as z from "zod";
 
 export default defineEventHandler(async event => {
