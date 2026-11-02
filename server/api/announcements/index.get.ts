@@ -5,8 +5,9 @@ import * as z from "zod";
 
 export default defineEventHandler(async event => {
     const session = await requireUserSession(event);
-    const { readFilter } = await getValidatedQuery(event, z.object({
+    const { readFilter, author } = await getValidatedQuery(event, z.object({
         readFilter: z.enum(["all", "read", "unread"]).optional().default("unread"),
+        author: z.string().optional()
     }).parse);
 
     const rows = await db
@@ -27,11 +28,12 @@ export default defineEventHandler(async event => {
                 eq(announcementReads.user, session.user.id),
             ),
         )
-        .where(
+        .where(and(
             readFilter === "unread" ? isNull(announcementReads.seenAt)
                 : readFilter === "read" ? isNotNull(announcementReads.seenAt)
                     : undefined,
-        )
+            author ? eq(announcements.author, author) : undefined
+        ))
         .orderBy(desc(announcements.timestamp));
 
     return rows.map(({ announcement, seenAt, author }): Notification => ({

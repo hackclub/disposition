@@ -27,7 +27,6 @@ import ProjectProfile from "~/apps/projects/projectProfile.vue"
 import ProjectBrowser from "~/apps/projects/projectBrowser.vue"
 import Requests from "~/apps/shop/requests.vue"
 import AdminShopRequest from "~/apps/admin/shop/adminShopRequest.vue"
-import Feedback from "~/apps/feedback.vue"
 import ProjectEdit from "~/apps/projects/projectEdit.vue"
 import DevlogView from "~/apps/projects/devlogView.vue"
 import Onboarding from "~/apps/onboarding/onboarding.vue"
@@ -37,6 +36,8 @@ import DispoInator3000 from "~/apps/misc/dispoInator3000.vue"
 import AdminAddAnnouncement from "~/apps/admin/notifications/adminAddAnnouncement.vue"
 import AdminAddNotification from "~/apps/admin/notifications/adminAddNotification.vue"
 import AdminNotifications from "~/apps/admin/notifications/adminNotifications.vue"
+import AdminEditAnnouncement from "~/apps/admin/notifications/adminEditAnnouncement.vue"
+import AdminViewAnnouncement from "~/apps/admin/notifications/adminViewAnnouncement.vue"
 
 // don't ask me why, but all app id's should be snake case.
 export const APPS: { [key: string]: AppDef } = {
@@ -156,18 +157,6 @@ export const APPS: { [key: string]: AppDef } = {
 
         tool: false,
         resizeable: false
-    },
-
-    feedback: {
-        appId: 'feedback',
-        title: 'Feedback',
-        component: Feedback,
-
-        minWidth: 400,
-        minHeight: 550,
-
-        tool: false,
-        resizeable: true,
     },
 
     documentation: {
@@ -363,7 +352,32 @@ export const APPS: { [key: string]: AppDef } = {
         tool: true,
         resizeable: false,
         hidden: true,
+    },
 
+    admin_edit_announcement: {
+        appId: 'admin_edit_announcement',
+        title: "Edit Announcement",
+        component: AdminEditAnnouncement,
+
+        minWidth: 400,
+        minHeight: 300,
+
+        tool: true,
+        resizeable: true,
+        hidden: true,
+    },
+
+    admin_view_announcement: {
+        appId: 'admin_view_announcement',
+        title: "View Announcement",
+        component: AdminViewAnnouncement,
+
+        minWidth: 400,
+        minHeight: 300,
+
+        tool: true,
+        resizeable: true,
+        hidden: true,
     },
 
     admin_shop: {

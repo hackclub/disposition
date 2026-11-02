@@ -42,9 +42,9 @@ export const projects = pgTable("projects", {
 	title: text().notNull(),
 	description: text().notNull(),
 
-	hackatimeProjects: text("hackatime_projects").array().notNull(),
+	hackatimeProjects: text("hackatime_projects").array().notNull().default([]),
 
-	banner: varchar({ length: 255 }),
+	banner: text(),
 	repository: text(),
 	demo: text(),
 
@@ -110,6 +110,19 @@ export const devlogs = pgTable("devlogs", {
 		foreignColumns: [ships.id, ships.project],
 		name: "devlogs_linked_ship_project_fk"
 	}),
+])
+
+export const devlogComments = pgTable("devlog_comments", {
+	id: integer().primaryKey().generatedByDefaultAsIdentity(),
+
+	devlog: integer().notNull().references(() => devlogs.id),
+	author: varchar({ length: 16 }).notNull().references(() => users.hcaId),
+
+	content: text().notNull(),
+	tiemstamp: timestamp({ mode: 'date', withTimezone: true }).notNull().defaultNow(),
+}, (table) => [
+	index("fk_devlog_comments_users1_idx").on(table.author),
+	index("fk_devlog_comments_devlogs1_idx").on(table.devlog),
 ])
 
 export const addresses = pgTable("addresses", {

@@ -7,7 +7,7 @@ const props = defineProps<{ instance: WindowInstance, id: number }>()
 const admin = await isAdmin();
 const session = await useUserSession();
 
-let balance;
+let balance = ref<number>();
 if (session.loggedIn) {
     const { data: balanceData } = await useFetch<number>("/api/user/balance", { key: "balance" });
     balance = balanceData;
