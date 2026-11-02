@@ -42,9 +42,9 @@ export const projects = pgTable("projects", {
 	title: text().notNull(),
 	description: text().notNull(),
 
-	hackatimeProjects: text("hackatime_projects").array().notNull(),
+	hackatimeProjects: text("hackatime_projects").array().notNull().default([]),
 
-	banner: varchar({ length: 255 }),
+	banner: text(),
 	repository: text(),
 	demo: text(),
 
