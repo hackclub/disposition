@@ -9,11 +9,21 @@ import { toTypedSchema } from '@vee-validate/zod'
 import defaultBanner from '~/assets/misc/banner.png'
 import { urlToFile } from '~/utils'
 import * as z from "zod";
+import onb1 from '~/assets/misc/onboard-1.png'
+import onb2 from '~/assets/misc/onboard-2.png'
+import onb3 from '~/assets/misc/onboard-3.png'
+import onb4 from '~/assets/misc/onboard-4.png'
 
 const manager = useWindowManager();
 const props = defineProps<{
     instance: WindowInstance
 }>()
+
+const PROFILE_SIZE = { width: 768, height: 440 };
+const REGION_SIZE = { width: 520, height: 455 };
+
+const regions = ['Europe', 'North America', 'South America', 'Asia', 'Africa', 'Oceania'];
+const region = ref<string>('Europe');
 
 const config = useConfiguration("onboarding");
 const step = computed(() => (config.has("step") ? config.read("step") : 1));
@@ -42,20 +52,30 @@ function advance1() {
 
 // hackatime screen
 let info = ref<CachetInfo | undefined>(undefined);
+
+async function loadInfo() {
+    try {
+        const session = useUserSession();
+        info.value = session.loggedIn.value && session.user.value?.slackId
+            ? await getUserInfo(session.user.value.slackId)
+            : undefined;
+    } catch {
+        info.value = undefined;
+    }
+}
+
 async function advance2() {
     config.write("step", 4);
     navigateTo("/oauth-hackatime", { external: true })
 
     // resize window to fit the big ahh screen
-    manager.resize(props.instance.id, { width: 500, height: 500 });
+    manager.resize(props.instance.id, PROFILE_SIZE);
 
     // get cachet data (we should have user session by now)
-    const session = useUserSession();
-    info.value = session.loggedIn.value && session.user.value?.slackId ? await getUserInfo(session.user.value.slackId) : undefined;
+    await loadInfo();
 }
 
 // user profile screen
-console.log(useUserSession().user.value?.username)
 const userForm = useForm({
     validationSchema: toTypedSchema(z.object({
         banner: z.instanceof(File, { message: "Please choose an image" }),
@@ -69,28 +89,11 @@ const userForm = useForm({
 });
 
 const [usernameModel] = userForm.defineField("username");
-const usernameStatus = ref<"idle" | "checking" | "available" | "taken" | "invalid">("idle");
-let usernameTimer: ReturnType<typeof setTimeout> | undefined;
-
-watch(usernameModel, value => {
-    clearTimeout(usernameTimer);
-    if (!value) { usernameStatus.value = "idle"; return; }
-
-    usernameStatus.value = "checking";
-    usernameTimer = setTimeout(async () => {
-        const res = await $fetch<{ available: boolean; reason?: string }>(
-            "/api/user/username-available",
-            { query: { username: value } }
-        ).catch(() => undefined);
-        if (usernameModel.value !== value) return; // user kept typing
-        usernameStatus.value = !res ? "idle" : res.available ? "available" : res.reason === "invalid" ? "invalid" : "taken";
-    }, 400);
-});
-
 const [bioModel] = userForm.defineField("bio");
 
 const previewUrl = ref<string>(defaultBanner);
 const fileInput = ref<HTMLInputElement | null>(null);
+const dragging = ref<boolean>(false);
 
 function setImage(file: File | undefined) {
     if (!file || !file.type.startsWith("image/")) return;
@@ -100,20 +103,32 @@ function setImage(file: File | undefined) {
     userForm.setFieldValue("banner", file);
 }
 
+function onDrop(e: DragEvent) {
+    dragging.value = false;
+    setImage(e.dataTransfer?.files?.[0]);
+}
+
 onBeforeUnmount(() => {
     if (previewUrl.value) URL.revokeObjectURL(previewUrl.value);
 });
 
 onMounted(async () => {
     if (step.value === 4) {
-        manager.resize(props.instance.id, { width: 500, height: 500 });
-
-        const session = useUserSession();
-        info.value = session.loggedIn.value && session.user.value?.slackId ? await getUserInfo(session.user.value.slackId) : undefined;
+        manager.resize(props.instance.id, PROFILE_SIZE);
+        await loadInfo();
+    } else if (step.value === 5) {
+        manager.resize(props.instance.id, REGION_SIZE);
     }
 })
 
+// profile screen -> region screen
 function advance3() {
+    config.write("step", 5);
+    manager.resize(props.instance.id, REGION_SIZE);
+}
+
+// region screen
+function advance4() {
 
 }
 </script>
@@ -122,6 +137,7 @@ function advance3() {
     <div class="onboarding" v-if="step === 1">
         <div class="body">
             <div class="side blue">
+                <img class="side-bg" :src="onb1" alt="">
                 <img class="side-logo" :src="onboardingLogo" alt="">
             </div>
 
@@ -149,9 +165,10 @@ function advance3() {
         </div>
     </div>
 
-    <div class="onboarding" v-if="step === 2">
+    <div class="onboarding" v-else-if="step === 2">
         <div class="body">
             <div class="side red">
+                <img class="side-bg" :src="onb2" alt="">
                 <img class="side-logo" :src="onboardingLogo" alt="">
             </div>
 
@@ -181,9 +198,10 @@ function advance3() {
         </div>
     </div>
 
-    <div class="onboarding" v-if="step === 3">
+    <div class="onboarding" v-else-if="step === 3">
         <div class="body">
             <div class="side red">
+                <img class="side-bg" :src="onb2" alt="">
                 <img class="side-logo" :src="onboardingLogo" alt="">
             </div>
 
@@ -202,16 +220,23 @@ function advance3() {
         </div>
     </div>
 
-    <div class="onboarding" v-if="step === 4 && info">
+    <div class="onboarding" v-else-if="step === 4 && info">
         <div class="body">
             <div class="side-small green">
+                <img class="side-bg" :src="onb3" alt="">
                 <img class="side-logo" :src="onboardingLogo" alt="">
             </div>
 
-            <div class="page">
+            <div class="page profile-page">
                 <h2 class="title">Customize your profile</h2>
 
-                <div class="header-bg">
+                <div
+                    class="header-bg"
+                    :class="{ dragging }"
+                    @dragover.prevent="dragging = true"
+                    @dragleave="dragging = false"
+                    @drop.prevent="onDrop"
+                >
                     <input ref="fileInput" type="file" accept="image/jpeg,image/png,image/webp" v-show="false"
                         @change="(e) => setImage((e.target as HTMLInputElement).files?.[0])" />
                     <img class="banner" :src="previewUrl" alt="Banner image" />
@@ -219,18 +244,22 @@ function advance3() {
                     <div class="profile-card">
                         <img class="avatar" :src="info.imageUrl" alt="">
                         <div class="profile-info">
-                            <input type="text" v-model="usernameModel" />
-                            <span class="error" v-if="usernameStatus === 'taken'">That username is taken.</span>
-                            <span class="status" v-if="usernameStatus === 'available'">Username is available!</span>
-
+                            <input type="text" v-model="usernameModel" placeholder="Username" />
                             <textarea v-model="bioModel" class="bio"
-                                placeholder="Your amazing bio goes here..."></textarea>
+                                placeholder="Change your bio... (you can use markdown!)"></textarea>
                         </div>
                     </div>
 
-                    <button type="button" @click="fileInput?.click()">Upload from files</button>
+                    <button type="button" class="banner-btn" @click="fileInput?.click()">Change/Delete banner</button>
                 </div>
+
+                <span class="drop-hint">(or, drag and drop an image on the banner)</span>
                 <span class="error" v-if="userForm.errors.value.banner">{{ userForm.errors.value.banner }}</span>
+
+                <p class="profile-note">
+                    This is a preview of how your profile will look when viewed by someone else. You can
+                    customize your username and your bio. Have fun with it!
+                </p>
             </div>
         </div>
 
@@ -239,6 +268,34 @@ function advance3() {
             <button class="btn" @click="advance3">Next</button>
         </div>
     </div>
+
+    <div class="onboarding" v-else-if="step === 5">
+        <div class="body">
+            <div class="side yellow">
+                <img class="side-bg" :src="onb4" alt="">
+                <img class="side-logo" :src="onboardingLogo" alt="">
+            </div>
+
+            <div class="page region-page">
+                <h2 class="title">Region preferences</h2>
+
+                <label class="region-label" for="region">Shop region</label>
+                <select id="region" class="region-select" v-model="region">
+                    <option v-for="r in regions" :key="r" :value="r">{{ r }}</option>
+                </select>
+
+                <p class="region-text">
+                    Shop region dictates what items are available to you. Please set this to your actual region.
+                </p>
+            </div>
+        </div>
+
+        <div class="footer">
+            <button class="btn" @click="cancel">Cancel</button>
+            <button class="btn" @click="advance4">Next</button>
+        </div>
+    </div>
+
     <div v-else>
     </div>
 </template>
@@ -247,7 +304,7 @@ function advance3() {
 .header-bg {
     position: relative;
     width: 100%;
-    height: 140px;
+    height: 175px;
     overflow: hidden;
 
     .banner {
@@ -261,21 +318,38 @@ function advance3() {
     }
 }
 
+.header-bg.dragging {
+    outline: 2px dashed var(--color-white);
+    outline-offset: -4px;
+}
+
+.side-bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    pointer-events: none;
+}
+
 .profile-card {
     position: absolute;
     top: 24px;
     left: 24px;
-    width: 330px;
+    width: 66%;
     max-width: calc(100% - 48px);
+    box-sizing: border-box;
     display: flex;
-    gap: 12px;
-    padding: 6px;
+    gap: 8px;
+    padding: 14px;
     background: var(--color-panel-bg);
     border: 1px solid var(--color-gray-medium);
 
     .avatar {
-        width: 90px;
-        height: 90px;
+        flex-shrink: 0;
+        width: 104px;
+        height: 104px;
         object-fit: cover;
         border: 1px solid var(--color-gray-dark);
         background: var(--color-gray-medium);
@@ -284,21 +358,49 @@ function advance3() {
     .profile-info {
         display: flex;
         flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        gap: 5px;
+        gap: 2px;
         flex: 1;
+        min-width: 0;
 
         input[type="text"] {
+            box-sizing: border-box;
             width: 100%;
+            height: 26px;
+            font-size: 15px;
         }
 
         .bio {
+            box-sizing: border-box;
             width: 100%;
+            flex: 1;
+            min-height: 0;
             resize: none;
-            height: 70px;
+            font-size: 15px;
+            line-height: 1.2;
         }
     }
+}
+
+.banner-btn {
+    position: absolute;
+    right: 4px;
+    bottom: 4px;
+    padding: 1px 6px;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.drop-hint {
+    margin: 3px 4px 0 0;
+    text-align: right;
+    font-size: 12px;
+    color: var(--color-gray-dark);
+}
+
+.profile-note {
+    margin: 16px 0 0 6px;
+    font-size: 16px;
+    line-height: 1.25;
 }
 
 .onboarding {
@@ -325,7 +427,7 @@ function advance3() {
 
 .side-small {
     position: relative;
-    flex: 0 0 10%;
+    flex: 0 0 14%;
 }
 
 .blue {
@@ -337,7 +439,11 @@ function advance3() {
 }
 
 .green {
-    background: linear-gradient(180deg, #6bb430 0%, #45ff2d 100%);
+    background: linear-gradient(180deg, #2fbf3a 0%, #2dff55 100%);
+}
+
+.yellow {
+    background: linear-gradient(180deg, #b0902c 0%, #ffc42e 100%);
 }
 
 .side-logo {
@@ -348,6 +454,12 @@ function advance3() {
     aspect-ratio: 1;
     object-fit: contain;
     display: block;
+}
+
+.side-small .side-logo {
+    top: 8px;
+    right: 8px;
+    width: 52%;
 }
 
 .page {
@@ -367,6 +479,10 @@ function advance3() {
     }
 }
 
+.page.profile-page {
+    padding: 8px 14px 14px 20px;
+}
+
 .page h2.title {
     display: block;
     margin: 0 0 16px;
@@ -375,6 +491,35 @@ function advance3() {
     font-weight: 700;
     line-height: 1.2;
     color: inherit;
+}
+
+.page.profile-page h2.title {
+    margin-bottom: 10px;
+}
+
+.page.region-page h2.title {
+    margin-bottom: 6px;
+}
+
+.region-label {
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.region-select {
+    box-sizing: border-box;
+    width: 100%;
+    height: 22px;
+    margin: 2px 0 0;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.page .region-text {
+    margin: 14px 0 0;
+    font-size: 16px;
+    line-height: 1.25;
 }
 
 .hint {
