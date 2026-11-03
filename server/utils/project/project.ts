@@ -1,6 +1,6 @@
 import * as z from "zod";
-import { getTableColumns } from "drizzle-orm";
-import { projects } from "~~/db/schema";
+import { desc, eq, getTableColumns, and, gt } from "drizzle-orm";
+import { projects, ships, users, devlogs } from "~~/db/schema";
 
 function getPublicProjectColumns() {
     const { deletedAt, hackatimeProjects, ...publicProjectColumns } = getTableColumns(projects);
@@ -29,10 +29,63 @@ export const ProjectAdminPatchBody = z.object({
 })
 
 // ships //
+const config = useRuntimeConfig();
+export async function getSecondsSinceLastShip(id: number): Promise<number> {
+    const [project] = await db.select().from(projects).where(eq(projects.id, id));
+    if (!project) return -1;
+
+    const [author] = await db.select().from(users).where(eq(users.hcaId, project.author));
+    if (!author) return -1;
+    if (!author.hackatimeToken) return -1;
+
+    const [lastShip] = await db.select().from(ships).where(eq(ships.project, id)).orderBy(desc(ships.timestamp));
+    let since: Date;
+    if (!lastShip) since = config.public.startDate;
+    else since = lastShip.timestamp;
+
+    let seconds: number = 0;
+    const logs = await db
+        .select()
+        .from(devlogs)
+        .where(and(
+            eq(devlogs.project, id),
+            gt(devlogs.timestamp, since)
+        ))
+        .orderBy(desc(devlogs.timestamp));
+    
+    logs.forEach(log => {
+        seconds += log.seconds;
+    })
+
+    return seconds;
+}
+
+export async function getSecondsSinceLastDevlog(id: number): Promise<number> {
+    const [project] = await db.select().from(projects).where(eq(projects.id, id));
+    if (!project) return -1;
+
+    const [author] = await db.select().from(users).where(eq(users.hcaId, project.author));
+    if (!author) return -1;
+    if (!author.hackatimeToken) return -1;
+
+    const [lastDevlog] = await db.select().from(devlogs).where(eq(devlogs.project, id)).orderBy(desc(devlogs.timestamp));
+    let since: Date;
+    if (!lastDevlog) since = config.public.startDate;
+    else since = lastDevlog.timestamp;
+
+    let seconds: number = 0;
+    project.hackatimeProjects.forEach(async hackatimeProject => {
+        const details = await getProjectDetails(author.hackatimeToken!, hackatimeProject, author.slackId, since);
+        seconds += details.total_seconds
+    })
+
+    return seconds;
+}
+
 export const ShipPostBody = z.object({
     project: z.number().min(1),
     reviewerNote: z.string().optional(),
-    
+
     ai: z.boolean().default(false).optional(),
     aiDeclaration: z.string().optional(),
 

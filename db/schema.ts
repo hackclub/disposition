@@ -43,7 +43,7 @@ export const projects = pgTable("projects", {
 	description: text().notNull(),
 
 	hackatimeProjects: text("hackatime_projects").array().notNull().default([]),
-	hours: numeric("hours", { precision: 10, scale: 2, mode: "number" }).default(0), // only gets updated once you push a devlog :)
+	seconds: integer("seconds").default(0).notNull(), // only gets updated once you push a devlog :)
 
 	banner: text(),
 	repository: text(),
@@ -63,13 +63,13 @@ export const ships = pgTable("ships", {
 	project: integer().notNull().references(() => projects.id),
 
 	hackatimeProjects: text("hackatime_projects").array().notNull(),
-	hackatimeHours: numeric("hackatime_hours", { precision: 10, scale: 2, mode: "number" }).notNull(), // calculated when project is shipped
+	hackatimeSeconds: integer("hackatime_seconds").notNull().default(0), // at the time of shipping
 
 	status: shipStatus().notNull().default("idle"),
 	statusMessage: text("status_message"), // from reviewer to user
 	reviewerNote: text("reviewer_note"), // from user to reviewers
 
-	overrideHours: numeric("override_hours", { precision: 10, scale: 2, mode: "number" }),
+	overrideSeconds: integer("override_seconds"),
 	overrideReason: text("override_reason"),
 
 	internalMessage: text("internal_message"),
@@ -98,10 +98,11 @@ export const devlogs = pgTable("devlogs", {
 	description: text().notNull(),
 	attachments: text().array().notNull().default([]),
 
-	hours: numeric("hours", { precision: 10, scale: 2, mode: "number" }).default(0),
+	seconds: integer("seconds").default(0).notNull(),
+	overrideSeconds: integer("override_seconds"),
+	overrideReason: text("override_reason"),
 
-	overrideHours: numeric("override_hours", { precision: 10, scale: 2, mode: "number" }),
-	overrideReason: text("override_reason")
+	timestamp: timestamp({ mode: 'date', withTimezone: true }).notNull().defaultNow()
 }, (table) => [
 	index("fk_devlogs_projects1_idx").on(table.project),
 	index("fk_devlogs_ships1_idx").on(table.linkedShip),

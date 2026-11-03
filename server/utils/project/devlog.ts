@@ -3,7 +3,7 @@ import * as z from "zod";
 import { devlogs } from "~~/db/schema";
 
 function getPublicDevlogColumns() {
-    const {overrideHours, overrideReason, ...publicDevlogColumns} = getTableColumns(devlogs);
+    const {overrideSeconds: overrideHours, overrideReason, ...publicDevlogColumns} = getTableColumns(devlogs);
     return publicDevlogColumns
 }
 

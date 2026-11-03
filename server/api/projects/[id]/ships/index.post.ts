@@ -1,4 +1,4 @@
-import { ShipPostBody } from "~~/server/utils/project/project";
+import { getSecondsSinceLastShip, ShipPostBody } from "~~/server/utils/project/project";
 import * as z from "zod";
 import { projects, ships } from "~~/db/schema";
 import { eq } from "drizzle-orm";
@@ -33,7 +33,13 @@ export default defineEventHandler(async event => {
 
     if ((parsed.data.ai && !parsed.data.aiDeclaration) || (parsed.data.update && !parsed.data.updateDeclaration)) throw createError({
         statusCode: 400,
-        message: "AI/Update declaration must'nt be empty."
+        message: "AI/Update declaration must'nt be empty"
+    })
+
+    const seconds = await getSecondsSinceLastShip(parsed.data.project);
+    if(seconds < 3600) throw createError({
+        statusCode: 400,
+        message: "Must have atleast 1 hour logged before shipping"
     })
 
     const ship: typeof ships.$inferInsert = {
@@ -41,7 +47,7 @@ export default defineEventHandler(async event => {
         user: session.user.id,
 
         hackatimeProjects: project.hackatimeProjects,
-        hackatimeHours: 50000, // TODO: get hackatime hours and if its under like an hour make it unable to ship!!!!
+        hackatimeSeconds: seconds, // TODO: get hackatime hours and if its under like an hour make it unable to ship!!!!
 
         ai: parsed.data.ai,
         aiDeclaration: parsed.data.aiDeclaration,
