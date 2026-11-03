@@ -8,28 +8,6 @@ declare module '#auth-utils' {
         slackId: string,
         yswsEligible: boolean,
         verificationStatus: string,
-
-        bio?: string,
-        banner?: string,
-        onboardedAt?: Date,
-
-        birthday?: Date,
-        legalFirstName?: string,
-        legalLastName?: string,
-        phoneNumber?: string,
-        addresses?: {
-            id: string,
-            firstName: string,
-            lastName: string,
-            line1: string,
-            line2: string,
-            city: string,
-            state: string,
-            postalCode: string,
-            country: string,
-            phoneNumber: string,
-            primary: boolean
-        }[]
     }
 
     interface UserSession {

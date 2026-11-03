@@ -61,6 +61,43 @@ export type ServerItem = {
     tags: string[],
 }
 
+/* what you get from GET /api/users */
+export type PrivateUser = {
+    hcaId: string,
+    email: string,
+    slackId: string,
+    firstName: string,
+    lastName: string,
+    username: string,
+    created: Date,
+
+    yswsEligible: boolean,
+    verificationStatus: string,
+
+    banner: string,
+    bio: string,
+    onboardedAt: Date | undefined,
+
+    // sensitive info !!!! :scream:
+    birthday?: Date,
+    legalFirstName?: string,
+    legalLastName?: string,
+    phoneNumber?: string,
+    addresses?: {
+        id: string,
+        firstName: string,
+        lastName: string,
+        line1: string,
+        line2?: string,
+        city: string,
+        state: string,
+        postalCode: string,
+        country: string,
+        phoneNumber: string,
+        primary: boolean
+    }[]
+}
+
 export type User = {
     hcaId: string,
     slackId: string,

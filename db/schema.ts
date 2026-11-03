@@ -9,7 +9,6 @@ export const users = pgTable("users", {
 	username: text().notNull(),
 	created: timestamp({ withTimezone: true, mode: 'date' }).defaultNow().notNull(),
 
-	system: boolean().notNull().default(false),
 	yswsEligible: boolean("ysws_eligible").notNull(),
 	verificationStatus: varchar("verification_status", { length: 16 }).notNull(),
 
@@ -22,12 +21,15 @@ export const users = pgTable("users", {
 	legalFirstName: text("legal_first_name"),
 	legalLastName: text("legal_last_name"),
 	phoneNumber: text("phone_number"),
+
+	// really sensitive info that should only stay on the server
 	hackatimeToken: text("hackatime_token"),
+	system: boolean().notNull().default(false),
 },
-(table) => [
-	unique("users_slack_id_unique").on(table.slackId),
-	unique("users_username_unique").on(table.username)
-]);
+	(table) => [
+		unique("users_slack_id_unique").on(table.slackId),
+		unique("users_username_unique").on(table.username)
+	]);
 
 export const shipStatus = pgEnum("ship_status", [
 	"idle",
@@ -43,7 +45,6 @@ export const projects = pgTable("projects", {
 	description: text().notNull(),
 
 	hackatimeProjects: text("hackatime_projects").array().notNull().default([]),
-	seconds: integer("seconds").default(0).notNull(), // only gets updated once you push a devlog :)
 
 	banner: text(),
 	repository: text(),
@@ -63,7 +64,7 @@ export const ships = pgTable("ships", {
 	project: integer().notNull().references(() => projects.id),
 
 	hackatimeProjects: text("hackatime_projects").array().notNull(),
-	hackatimeSeconds: integer("hackatime_seconds").notNull().default(0), // at the time of shipping
+	hackatimeSeconds: integer("hackatime_seconds").notNull().default(0), // fetched when shipping
 
 	status: shipStatus().notNull().default("idle"),
 	statusMessage: text("status_message"), // from reviewer to user
@@ -97,10 +98,6 @@ export const devlogs = pgTable("devlogs", {
 	title: text().notNull(),
 	description: text().notNull(),
 	attachments: text().array().notNull().default([]),
-
-	seconds: integer("seconds").default(0).notNull(),
-	overrideSeconds: integer("override_seconds"),
-	overrideReason: text("override_reason"),
 
 	timestamp: timestamp({ mode: 'date', withTimezone: true }).notNull().defaultNow()
 }, (table) => [

@@ -15,8 +15,8 @@ export default defineEventHandler(async event => {
         message: "Invalid input",
         data: z.flattenError(parsed.error),
     })
-
-    const file = form.get("image");
+    
+    const file = parsed.data.image;
     if (!(file instanceof File && file.size > 0)) {
         throw createError({ statusCode: 400, message: "image is required" });
     }
@@ -33,7 +33,7 @@ export default defineEventHandler(async event => {
         genre: parsed.data.genre,
         description: parsed.data.description,
         media: parsed.data.media,
-        urls: parsed.data.urls,
+        urls: JSON.parse(parsed.data.urls),
         image: uploaded.pathname,
         price: parsed.data.price,
         staffPickAt: parsed.data.staffPick ? sql`now()` : null,

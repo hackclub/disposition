@@ -2,6 +2,7 @@ import { notifications, users } from "~~/db/schema";
 import { eq, and, desc } from "drizzle-orm";
 import * as z from "zod";
 import type { Notification, NotificationType } from "~~/server/utils/notification";
+import { isAdmin } from "~~/server/utils/requireAdmin"
 
 export default defineEventHandler(async event => {
     const { admin, session } = await isAdmin(event);

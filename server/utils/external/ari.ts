@@ -35,7 +35,7 @@ export async function sendShip(ship: typeof ships) {
         demo_url: project.demo,
         thumbnail_url: `${config.public.baseUrl}/images/${project.banner}`,
         hackatime_projects: ship.hackatimeProjects,
-        evidence: ["commits", "elapsed", "devlog"],
+        evidence: ["commits", "elapsed"],
         meta: {
             //"Project page": "https://example.com/project1/page", // TODO: implement ts
             "Internal note": ship.internalMessage,

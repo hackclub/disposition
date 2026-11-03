@@ -65,7 +65,7 @@ function deleteItem(id: number) {
 
         <div class="main">
             <AuthState v-slot="{ loggedIn, user }">
-                <div v-if="loggedIn && $config.public.adminIds.includes(user.slackId)" class="flex">
+                <div v-if="loggedIn && user && user.slackId && $config.public.adminIds.includes(user.slackId)" class="flex">
                     <div v-if="currentTab === 'items'">
                         <table>
                             <thead>

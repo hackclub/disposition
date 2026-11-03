@@ -4,11 +4,17 @@ import { users } from "~~/db/schema";
 import { like } from "drizzle-orm";
 import { db } from "~~/server/utils/db";
 
+function getPrivateUserColumns() {
+    const { system, hackatimeToken, ...privateUserColumns } = getTableColumns(users);
+    return privateUserColumns
+}
+
 function getPublicUserColumns() {
-    const { email, firstName, lastName, legalLastName, legalFirstName, birthday, phoneNumber, yswsEligible, verificationStatus, ...publicUserColumns } = getTableColumns(users);
+    const { system, hackatimeToken, email, firstName, lastName, legalLastName, legalFirstName, birthday, phoneNumber, yswsEligible, verificationStatus, ...publicUserColumns } = getTableColumns(users);
     return publicUserColumns;
 }
 
+export const privateUserColumns = getPrivateUserColumns();
 export const publicUserColumns = getPublicUserColumns();
 
 export function slugifyUsername(raw?: string | null) {
@@ -47,5 +53,6 @@ export const UserPostBody = z.object({
 export const UserPatchBody = z.object({
     username: z.string().optional(),
     bio: z.string().optional(),
-    onboardedAt: z.date().optional()
+    onboardedAt: z.date().optional(),
+    banner: z.instanceof(File).optional(),
 })

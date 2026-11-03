@@ -2,24 +2,24 @@ import { rsvps } from "~~/db/schema";
 import { db } from "~~/server/utils/db";
 
 export default defineEventHandler(async (event) => {
-    const session = await requireUserSession(event);
+    const user = await getDBUser(event);
 
     const rsvp: typeof rsvps.$inferInsert = {
-        hcaId: session.user.id,
-        slackId: session.user.slackId,
-        email: session.user.email,
-        name: session.user.name,
-        yswsEligible: session.user.yswsEligible,
-        verificationStatus: session.user.verificationStatus
+        hcaId: user.hcaId,
+        slackId: user.slackId,
+        email: user.email,
+        name: `${user.firstName} ${user.lastName}`,
+        yswsEligible: user.yswsEligible,
+        verificationStatus: user.verificationStatus
     };
 
     const inserted = await db.insert(rsvps).values(rsvp)
         .onConflictDoNothing()
-        .returning({ hcaId: rsvps.hcaId });
+        .returning({ id: rsvps.hcaId });
 
     if (!inserted.length) {
         throw createError({ statusCode: 409, message: "RSVP already exists" });
     }
 
-    return { ok: true };
+    return inserted;
 });

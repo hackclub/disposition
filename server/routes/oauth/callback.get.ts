@@ -104,31 +104,31 @@ export default defineEventHandler(async (event) => {
             yswsEligible: identity.ysws_eligible,
             verificationStatus: identity.verification_status,
 
-            birthday: identity.birthday ? new Date(identity.birthday) : undefined,
-            // legalFirstName: identity.legal_first_name,
-            // legalLastName: identity.legal_last_name,
-            // archer told me to use the legal name from the primary address so here it is
-            legalFirstName: primaryAddress?.first_name,
-            legalLastName: primaryAddress?.last_name,
+            // birthday: identity.birthday ? new Date(identity.birthday) : undefined,
+            // // legalFirstName: identity.legal_first_name,
+            // // legalLastName: identity.legal_last_name,
+            // // archer told me to use the legal name from the primary address so here it is
+            // legalFirstName: primaryAddress?.first_name,
+            // legalLastName: primaryAddress?.last_name,
 
-            bio: existing?.bio ? existing.bio : undefined,
-            banner: existing?.banner ? existing.banner : undefined,
-            onboardedAt: existing?.onboardedAt ? existing.onboardedAt : undefined, // defaults to undefined :)
+            // bio: existing?.bio ? existing.bio : undefined,
+            // banner: existing?.banner ? existing.banner : undefined,
+            // onboardedAt: existing?.onboardedAt ? existing.onboardedAt : undefined, // defaults to undefined :)
 
-            phoneNumber: identity.phone_number,
-            addresses: identity.addresses?.map((address) => ({
-                id: address.id,
-                firstName: address.first_name,
-                lastName: address.last_name,
-                line1: address.line_1,
-                line2: address.line_2,
-                city: address.city,
-                state: address.state,
-                postalCode: address.postal_code,
-                country: address.country,
-                phoneNumber: address.phone_number,
-                primary: address.primary,
-            })),
+            // phoneNumber: identity.phone_number,
+            // addresses: identity.addresses?.map((address) => ({
+            //     id: address.id,
+            //     firstName: address.first_name,
+            //     lastName: address.last_name,
+            //     line1: address.line_1,
+            //     line2: address.line_2,
+            //     city: address.city,
+            //     state: address.state,
+            //     postalCode: address.postal_code,
+            //     country: address.country,
+            //     phoneNumber: address.phone_number,
+            //     primary: address.primary,
+            // })),
         },
         secure: { hcRefreshToken: tokens.refresh_token }, // not exposed to client
     })

@@ -1,9 +1,10 @@
-import { sql, lte, isNotNull, desc, gte, eq, count, notInArray, AnyColumn, SQL, inArray, ne, and } from "drizzle-orm";
+import { sql, lte, isNotNull, desc, gte, eq, count, notInArray, SQL, inArray, ne, and } from "drizzle-orm";
+import type { AnyColumn } from "drizzle-orm";
 import { shopItems, shopOrders } from "~~/db/schema";
 import { db } from "~~/server/utils/db";
 
-const shelf_size = 15;
-const genre_shelves = 8;
+const SHELF_SIZE = 15;
+const GENRE_SHELVES = 8;
 
 function latestPer(partitionBy: AnyColumn, filter?: SQL) {
     const ranked = db.select({
@@ -16,7 +17,7 @@ function latestPer(partitionBy: AnyColumn, filter?: SQL) {
         .where(filter)
         .as("ranked");
 
-    return db.select().from(ranked).where(lte(ranked.rn, shelf_size));
+    return db.select().from(ranked).where(lte(ranked.rn, SHELF_SIZE));
 }
 
 function groupBy<T extends { rn: number }>(
@@ -72,21 +73,21 @@ export default defineEventHandler(async (event) => {
     const staffPicks = await db.select(publicItemColumns).from(shopItems)
         .where(isNotNull(shopItems.staffPickAt))
         .orderBy(desc(shopItems.staffPickAt))
-        .limit(shelf_size);
+        .limit(SHELF_SIZE);
 
     const trending = await db.select(publicItemColumns).from(shopOrders)
         .innerJoin(shopItems, eq(shopOrders.item, shopItems.id))
         .where(and(gte(shopOrders.timestamp, sql`now() - interval '7 days'`), ne(shopOrders.status, 'cancelled')))
         .groupBy(shopItems.id)
         .orderBy(desc(count()), desc(shopItems.id))
-        .limit(shelf_size);
+        .limit(SHELF_SIZE);
 
     // if there arent enough trending items just add random items
-    if (trending.length < shelf_size) {
+    if (trending.length < SHELF_SIZE) {
         const filler = await db.select(publicItemColumns).from(shopItems)
             .where(trending.length ? notInArray(shopItems.id, trending.map(t => t.id)) : undefined)
             .orderBy(sql`random()`)
-            .limit(shelf_size - trending.length)
+            .limit(SHELF_SIZE - trending.length)
         trending.push(...filler);
     }
 
@@ -96,7 +97,7 @@ export default defineEventHandler(async (event) => {
         .where(isNotNull(shopItems.genre))
         .groupBy(shopItems.genre)
         .orderBy(desc(count()), shopItems.genre)
-        .limit(genre_shelves)
+        .limit(GENRE_SHELVES)
         .then(rows => rows.map(r => r.genre).filter((genre): genre is string => genre !== null))
 
     const genreRows = topGenres.length

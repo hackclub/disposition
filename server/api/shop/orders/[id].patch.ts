@@ -1,8 +1,9 @@
 import { eq } from "drizzle-orm";
 import * as z from "zod";
 import { shopItems, shopOrders } from "~~/db/schema";
-import { Notification, sendNotification } from "~~/server/utils/notification";
+import { sendNotification } from "~~/server/utils/notification";
 import { OrderAdminPatchBody, OrderPatchBody } from "~~/server/utils/shop/order";
+import { isAdmin } from "~~/server/utils/requireAdmin"
 
 const orderStatusLabels: Record<string, string> = {
     idle: "Idle",

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { WindowInstance } from '~/types/window';
-import type { ServerItem, Address } from '~/types/database';
+import type { ServerItem, Address, PrivateUser } from '~/types/database';
 
 const manager = useWindowManager();
 const props = defineProps<{ instance: WindowInstance, id: number }>()
@@ -13,10 +13,11 @@ if (session.loggedIn) {
     balance = balanceData;
 }
 const { data: item } = await useFetch<ServerItem>(`/api/shop/items/${props.id}`);
+const { data: user } = await useFetch<PrivateUser>("/api/user");
 
 const address = ref<string>();
-if (session.user.value && session.user.value.addresses) {
-    address.value = session.user.value.addresses.find((address) => address.primary)?.id;
+if (user.value && user.value.addresses) {
+    address.value = user.value.addresses.find((address) => address.primary)?.id;
 }
 
 async function callback(result: boolean) {
@@ -43,8 +44,8 @@ async function callback(result: boolean) {
 </script>
 
 <template>
-    <AuthState v-slot="{ loggedIn, user }">
-        <div class="content" v-if="item">
+    <AuthState v-slot="{ loggedIn }">
+        <div class="content" v-if="item && user">
             <div class="horizontal">
                 <div class="vertical">
                     <img class="image" :src="`/images/${item.image}`" alt="Item image" />

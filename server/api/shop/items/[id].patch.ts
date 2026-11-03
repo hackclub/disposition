@@ -9,27 +9,21 @@ const PatchBody = ItemPostBody.partial();
 
 export default defineEventHandler(async event => {
     await requireAdmin(event);
+    
     // i love typescript
     const id = await getValidatedRouterParams(event, z.object({
         id: z.coerce.number().int().positive(),
     }).parse).then(p => p.id);
 
     const form = await readFormData(event);
-    const raw: Record<string, unknown> = {}
-    for (const k of ["album", "artist", "genre", "description", "media"])
-        if (form.has(k)) raw[k] = form.get(k)
-    if (form.has("urls")) raw.urls = form.getAll("urls")
-    const parsed = PatchBody.safeParse(raw);
+    const parsed = PatchBody.safeParse(Object.fromEntries(form));
+    if (!parsed.success) throw createError({
+        statusCode: 400,
+        message: "Invalid input",
+        data: z.flattenError(parsed.error),
+    })
 
-    if (!parsed.success) {
-        throw createError({
-            statusCode: 400,
-            message: "Invalid input",
-            data: z.flattenError(parsed.error),
-        })
-    }
-
-    const file = form.get("image");
+    const file = parsed.data.image;
     if (!(file instanceof File) && !Object.keys(parsed.data).length) {
         throw createError({
             statusCode: 400,
@@ -54,9 +48,14 @@ export default defineEventHandler(async event => {
         });
     }
 
+    const { image, urls, ...setData } = parsed.data
     try {
         await db.update(shopItems)
-            .set({ ...parsed.data, ...(newImage && { image: newImage.pathname }) })
+            .set({
+                ...setData,
+                ...(newImage && { image: newImage.pathname }),
+                ...(parsed.data.urls && { urls: JSON.parse(parsed.data.urls)})
+            })
             .where(eq(shopItems.id, id))
     } catch (err) {
         if (newImage) await blob.del(newImage.pathname);

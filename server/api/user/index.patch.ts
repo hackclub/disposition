@@ -44,12 +44,11 @@ export default defineEventHandler(async event => {
         })
     }
 
-    const file = form.get("banner");
     let uploaded;
-    if (file instanceof File && file.size > 0) {
-        validateImage(file);
+    if (parsed.data.banner instanceof File && parsed.data.banner.size > 0) {
+        validateImage(parsed.data.banner);
 
-        uploaded = await blob.put(file.name, file, {
+        uploaded = await blob.put(parsed.data.banner.name, parsed.data.banner, {
             addRandomSuffix: true,
             prefix: "banner",
         });
@@ -65,7 +64,7 @@ export default defineEventHandler(async event => {
                 banner: uploaded?.pathname,
             })
             .where(eq(users.hcaId, session.user.id))
-            .returning({ hcaId: users.hcaId })
+            .returning({ id: users.hcaId })
     } catch (error) {
         // someone could have grabbed the username between the check and the update
         if (isUniqueViolation(error, "users_username_unique")) throw createError({
@@ -87,11 +86,8 @@ export default defineEventHandler(async event => {
         user: {
             ...session.user,
             username: parsed.data.username ? parsed.data.username : session.user.username,
-            bio: parsed.data.bio ?? session.user.bio,
-            onboardedAt: parsed.data.onboardedAt ?? session.user.onboardedAt,
-            banner: uploaded?.pathname ?? session.user.banner
         }
     });
 
-    return { id: users.hcaId }
+    return { id: result.id }
 });

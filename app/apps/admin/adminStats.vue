@@ -32,7 +32,7 @@ if (admin) info.value = await $fetch<RsvpStats>("/api/rsvps/stats");
 
         <div class="main">
             <AuthState v-slot="{ loggedIn, user }">
-                <div v-if="loggedIn && $config.public.adminIds.includes(user.slackId) && info" class="flex">
+                <div v-if="loggedIn && $config.public.adminIds.includes(user!.slackId) && info" class="flex">
                     <span>
                         <h1>RSVP's total</h1>
                         <p class="data">{{ info.total }}</p>

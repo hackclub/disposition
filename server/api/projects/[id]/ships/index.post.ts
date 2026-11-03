@@ -1,12 +1,14 @@
 import { getSecondsSinceLastShip, ShipPostBody } from "~~/server/utils/project/project";
 import * as z from "zod";
-import { projects, ships } from "~~/db/schema";
+import { projects, ships, users } from "~~/db/schema";
 import { eq } from "drizzle-orm";
+import { getDBUser, isAdmin } from "~~/server/utils/requireAdmin"
 
 export default defineEventHandler(async event => {
     const { admin, session } = await isAdmin(event);
+    const user = await getDBUser(event);
 
-    if (!session.user.onboardedAt || !session.user.addresses) throw createError({
+    if (!user.onboardedAt || !user.addresses) throw createError({
         statusCode: 403,
         message: "You must onboard and authorize Disposition to access sensitive data before shipping a project."
     })

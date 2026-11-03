@@ -108,10 +108,7 @@ const onSubmit = handleSubmit(async (values) => {
     body.append("price", String(values.price));
     body.append("description", values.description);
     body.append("staffPick", String(values.staffPick));
-    values.urls
-        .map(u => u.trim())
-        .filter(Boolean)
-        .forEach(u => body.append("urls", u));
+    body.append("urls", JSON.stringify(values.urls));
 
     try {
         const response = await $fetch("/api/shop/items", { method: "POST", body });

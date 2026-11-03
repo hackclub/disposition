@@ -1,6 +1,6 @@
 import { App } from "@slack/bolt";
 import type { KnownBlock } from "@slack/types";
-import { Notification } from "./notification";
+import type { Notification } from "~~/server/utils/notification";
 
 const config = useRuntimeConfig();
 export const slackBot = new App({

@@ -2,6 +2,7 @@ import { eq } from "drizzle-orm";
 import { users } from "~~/db/schema";
 import * as z from "zod";
 import { publicUserColumns } from "~~/server/utils/user/user";
+import { isAdmin } from "~~/server/utils/requireAdmin"
 
 export default defineEventHandler(async event => {
     await requireUserSession(event);

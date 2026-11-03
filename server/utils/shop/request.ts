@@ -7,8 +7,8 @@ const RequestPostBody = z.object({
     message: z.string()
 })
 
-const RequestPatchBody = z.object({
-    status: z.string().min(1).max(24)
+const RequestAdminPatchBody = z.object({
+    status: z.enum(["accepted", "rejected", "claimed", "idle"])
 });
 
-export { RequestPostBody, RequestPatchBody }
+export { RequestPostBody, RequestAdminPatchBody }

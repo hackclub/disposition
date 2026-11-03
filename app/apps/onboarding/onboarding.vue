@@ -51,6 +51,14 @@ function advance1() {
 }
 
 // hackatime screen
+function resizeAndCenter(size: { width: number; height: number }) {
+    manager.resize(props.instance.id, size);
+    manager.move(props.instance.id, {
+        posX: window.innerWidth / 2 - size.width / 2,
+        posY: window.innerHeight / 2 - size.height / 2,
+    });
+}
+
 let info = ref<CachetInfo | undefined>(undefined);
 
 async function loadInfo() {
@@ -67,19 +75,10 @@ async function loadInfo() {
 async function advance2() {
     config.write("step", 4);
     navigateTo("/oauth-hackatime", { external: true })
-
-    // resize window to fit the big ahh screen
-    manager.resize(props.instance.id, PROFILE_SIZE);
-    manager.move(props.instance.id, { // center window
-        posX: window.innerWidth / 2 - PROFILE_SIZE.width / 2,
-        posY: window.innerHeight / 2 - PROFILE_SIZE.height / 2
-    })
-
-    // get cachet data (we should have user session by now)
-    await loadInfo();
 }
 
 // user profile screen
+const defaultBannerFile = await urlToFile(defaultBanner, 'banner.png');
 const userForm = useForm({
     validationSchema: toTypedSchema(z.object({
         banner: z.instanceof(File, { message: "Please choose an image" }),
@@ -88,61 +87,75 @@ const userForm = useForm({
     })),
     initialValues: {
         username: useUserSession().user.value?.username,
-        banner: await urlToFile(defaultBanner, 'banner.png')
+        banner: defaultBannerFile
     },
 });
 
 const [usernameModel] = userForm.defineField("username");
 const [bioModel] = userForm.defineField("bio");
+const [bannerModel] = userForm.defineField("banner");
 
 const previewUrl = ref<string>(defaultBanner);
+let objectUrl: string | null = null;
 const fileInput = ref<HTMLInputElement | null>(null);
-const dragging = ref<boolean>(false);
+
+watch(bannerModel, (file) => {
+    if (objectUrl) URL.revokeObjectURL(objectUrl);
+    objectUrl = file instanceof Blob ? URL.createObjectURL(file) : null;
+    previewUrl.value = objectUrl ?? defaultBanner;
+});
+
+onBeforeUnmount(() => {
+    if (objectUrl) URL.revokeObjectURL(objectUrl);
+});
 
 function setImage(file: File | undefined) {
     if (!file || !file.type.startsWith("image/")) return;
-
-    if (previewUrl.value) URL.revokeObjectURL(previewUrl.value);
-    previewUrl.value = URL.createObjectURL(file);
-    userForm.setFieldValue("banner", file);
+    bannerModel.value = file;
 }
 
-function onDrop(e: DragEvent) {
-    dragging.value = false;
-    setImage(e.dataTransfer?.files?.[0]);
+function onFileChange(e: Event) {
+    const input = e.target as HTMLInputElement;
+    setImage(input.files?.[0]);
+    input.value = ""; // allow re-selecting the same file
 }
 
-onBeforeUnmount(() => {
-    if (previewUrl.value) URL.revokeObjectURL(previewUrl.value);
-});
+async function resetBanner() {
+    bannerModel.value = defaultBannerFile;
+}
 
 onMounted(async () => {
-    if (step.value === 4) { // profile screen
-        manager.resize(props.instance.id, PROFILE_SIZE);
-        manager.move(props.instance.id, { // center window
-            posX: window.innerWidth / 2 - PROFILE_SIZE.width / 2,
-            posY: window.innerHeight / 2 - PROFILE_SIZE.height / 2
-        })
+    if (step.value === 4) {
+        resizeAndCenter(PROFILE_SIZE);
         await loadInfo();
-    } else if (step.value === 5) { // region screen
-        manager.resize(props.instance.id, REGULAR_SIZE);
-        manager.move(props.instance.id, { // center window
-            posX: window.innerWidth / 2 - REGULAR_SIZE.width / 2,
-            posY: window.innerHeight / 2 - REGULAR_SIZE.height / 2
-        })
+    } else if (step.value === 5) {
+        resizeAndCenter(REGULAR_SIZE);
     }
-})
+});
 
 // profile screen -> region screen
-function advance3() {
-    config.write("step", 5);
-    manager.resize(props.instance.id, REGULAR_SIZE);
-    manager.move(props.instance.id, { // center window
-        posX: window.innerWidth / 2 - REGULAR_SIZE.width / 2,
-        posY: window.innerHeight / 2 - REGULAR_SIZE.height / 2
-    })
-}
+const saving = ref(false);
+const saveError = ref<string | null>(null);
 
+const advance3 = userForm.handleSubmit(async (values) => {
+    saving.value = true;
+    saveError.value = null;
+    try {
+        const form = new FormData();
+        form.append("username", values.username);
+        if (values.bio) form.append("bio", values.bio);
+        form.append("banner", values.banner);
+
+        await $fetch("/api/user", { method: "PATCH", body: form });
+
+        config.write("step", 5);
+        resizeAndCenter(REGULAR_SIZE);
+    } catch (e: any) {
+        saveError.value = e?.data?.message ?? "Couldn't save your profile. Try again.";
+    } finally {
+        saving.value = false;
+    }
+});
 // region screen
 function advance4() {
 
@@ -246,10 +259,9 @@ function advance4() {
             <div class="page profile-page">
                 <h2 class="title">Customize your profile</h2>
 
-                <div class="header-bg" :class="{ dragging }" @dragover.prevent="dragging = true"
-                    @dragleave="dragging = false" @drop.prevent="onDrop">
-                    <input ref="fileInput" type="file" accept="image/jpeg,image/png,image/webp" v-show="false"
-                        @change="(e) => setImage((e.target as HTMLInputElement).files?.[0])" />
+                <div class="header-bg">
+                    <input ref="fileInput" type="file" accept="image/jpeg,image/png,image/webp" hidden
+                        @change="onFileChange" />
                     <img class="banner" :src="previewUrl" alt="Banner image" />
 
                     <div class="profile-card">
@@ -261,22 +273,27 @@ function advance4() {
                         </div>
                     </div>
 
-                    <button type="button" class="banner-btn" @click="fileInput?.click()">Change/Delete banner</button>
+                    <span class="banner-buttons">
+                        <button v-if="bannerModel != defaultBannerFile" @click="resetBanner">Reset banner</button>
+                        <button @click="fileInput?.click()">Change banner</button>
+                    </span>
                 </div>
-
-                <span class="drop-hint">(or, drag and drop an image on the banner)</span>
                 <span class="error" v-if="userForm.errors.value.banner">{{ userForm.errors.value.banner }}</span>
 
                 <p class="profile-note">
                     This is a preview of how your profile will look when viewed by someone else. You can
                     customize your username and your bio. Have fun with it!
                 </p>
+
+                <span class="error" v-if="saveError">{{ saveError }}</span>
             </div>
         </div>
 
         <div class="footer">
             <button class="btn" @click="cancel">Cancel</button>
-            <button class="btn" @click="advance3">Next</button>
+            <button class="btn" :disabled="saving || !userForm.meta.value.valid" @click="advance3">
+                {{ saving ? 'Saving…' : 'Next' }}
+            </button>
         </div>
     </div>
 
@@ -327,11 +344,6 @@ function advance4() {
         user-select: none;
         pointer-events: none;
     }
-}
-
-.header-bg.dragging {
-    outline: 2px dashed var(--color-white);
-    outline-offset: -4px;
 }
 
 .side-bg {
@@ -392,11 +404,16 @@ function advance4() {
     }
 }
 
-.banner-btn {
+.banner-buttons {
     position: absolute;
     right: 4px;
     bottom: 4px;
-    padding: 1px 6px;
+    padding: 2px 2px;
+
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+
     font-size: 12px;
     cursor: pointer;
 }

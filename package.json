@@ -31,10 +31,14 @@
 		"zod": "^4.6.5"
 	},
 	"devDependencies": {
+		"@golar/vue": "^0.1.11",
 		"@types/node": "^26.6.2",
 		"@types/pg": "^8.23.1",
 		"drizzle-kit": "0.31.11",
-		"tsx": "^4.23.15"
+		"golar": "^0.1.11",
+		"tsx": "^4.23.15",
+		"typescript": "^7.0.2",
+		"vue-tsc": "^3.3.14"
 	},
 	"packageManager": "pnpm@12.15.0"
 }

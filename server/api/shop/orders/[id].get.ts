@@ -2,6 +2,7 @@ import { eq } from "drizzle-orm";
 import * as z from "zod";
 import { addresses, shopItems, shopOrders, users } from "~~/db/schema";
 import { publicOrderColumns } from "~~/server/utils/shop/order";
+import { isAdmin } from "~~/server/utils/requireAdmin"
 
 export default defineEventHandler(async event => {
     const { admin, session } = await isAdmin(event);

@@ -3,7 +3,7 @@ import * as z from "zod";
 import { devlogs } from "~~/db/schema";
 
 function getPublicDevlogColumns() {
-    const {overrideSeconds: overrideHours, overrideReason, ...publicDevlogColumns} = getTableColumns(devlogs);
+    const { ...publicDevlogColumns } = getTableColumns(devlogs); // remnant and lowk should be deleted but ill keep it because im lazy
     return publicDevlogColumns
 }
 

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { WindowInstance } from '~/types/window';
 import type { RequestStatus, Request } from "~/types/database";
-import Item from '../shop/item.vue';
+import type { Item } from '~/types/database';
 const manager = useWindowManager();
 const props = defineProps<{ instance: WindowInstance, id: number }>()
 const admin = await isAdmin();

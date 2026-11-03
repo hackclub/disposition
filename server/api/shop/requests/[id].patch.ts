@@ -1,6 +1,6 @@
 import { requireAdmin } from "~~/server/utils/requireAdmin"
 import * as z from "zod";
-import { RequestPatchBody } from "~~/server/utils/shop/request";
+import { RequestAdminPatchBody } from "~~/server/utils/shop/request";
 import { shopRequests } from "~~/db/schema";
 import { eq } from "drizzle-orm";
 import { sendNotification } from "~~/server/utils/notification";
@@ -21,7 +21,7 @@ export default defineEventHandler(async event => {
     }).parse).then(p => p.id);
 
     const form = await readFormData(event);
-    const parsed = RequestPatchBody.safeParse(Object.fromEntries(form));
+    const parsed = RequestAdminPatchBody.safeParse(Object.fromEntries(form));
 
     if (!parsed.success) {
         throw createError({

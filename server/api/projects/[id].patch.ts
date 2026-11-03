@@ -1,8 +1,9 @@
-import { BlobObject } from "@nuxthub/core/blob";
+import type { BlobObject } from "@nuxthub/core/blob";
 import { eq } from "drizzle-orm";
 import * as z from "zod";
 import { projects } from "~~/db/schema";
 import { ProjectPatchBody, ProjectAdminPatchBody } from "~~/server/utils/project/project";
+import { isAdmin } from "~~/server/utils/requireAdmin"
 
 export default defineEventHandler(async event => {
     const { admin, session } = await isAdmin(event);
