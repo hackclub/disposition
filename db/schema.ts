@@ -1,5 +1,12 @@
 import { pgTable, numeric, integer, varchar, text, boolean, timestamp, index, unique, primaryKey, pgEnum, foreignKey, type AnyPgColumn } from "drizzle-orm/pg-core"
 
+export const verificationStatus = pgEnum("verification_status", [
+	"needs_submission",
+	"pending",
+	"verified",
+	"ineligible"
+])
+
 export const users = pgTable("users", {
 	hcaId: varchar("hca_id", { length: 16 }).primaryKey(),
 	email: varchar({ length: 255 }).notNull(),
@@ -10,7 +17,7 @@ export const users = pgTable("users", {
 	created: timestamp({ withTimezone: true, mode: 'date' }).defaultNow().notNull(),
 
 	yswsEligible: boolean("ysws_eligible").notNull(),
-	verificationStatus: varchar("verification_status", { length: 16 }).notNull(),
+	verificationStatus: verificationStatus("verification_status").notNull(),
 
 	banner: text(),
 	bio: text(),
