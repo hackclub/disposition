@@ -8,6 +8,7 @@ import projectBrowserIcon from "~/assets/icons/browser.png"
 import adminAnnouncementIcon from "~/assets/icons/megaphone.png"
 import feedbackPostIcon from "~/assets/icons/feedback.png"
 import managerIcon from "~/assets/icons/manager.png"
+import NotificationIcon from "~/assets/icons/notification.png"
 export const ICONS: { [key: string]: string } = {
     project_manager: managerIcon,
     feedback: feedbackPostIcon,

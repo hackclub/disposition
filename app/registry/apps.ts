@@ -32,6 +32,7 @@ import DevlogView from "~/apps/projects/devlogView.vue"
 import Onboarding from "~/apps/onboarding/onboarding.vue"
 import NewDevlog from "~/apps/projects/newDevlog.vue"
 import DispoInator3000 from "~/apps/misc/dispoInator3000.vue"
+import Countdown from "~/apps/misc/countdown.vue"
 
 import AdminAddAnnouncement from "~/apps/admin/notifications/adminAddAnnouncement.vue"
 import AdminAddNotification from "~/apps/admin/notifications/adminAddNotification.vue"
@@ -42,6 +43,19 @@ import AdminViewAnnouncement from "~/apps/admin/notifications/adminViewAnnouncem
 // don't ask me why, but all app id's should be snake case.
 export const APPS: { [key: string]: AppDef } = {
 
+    countdown: {
+        appId: 'countdown',
+        title: 'Countdown',
+        component: Countdown,
+
+        width: 400,
+        height: 600,
+        minWidth: 579,
+        minHeight: 841,
+
+        tool: false,
+        resizeable: false,
+    },
     dispo_inator_3000: {
         appId: 'dispo_inator_3000',
         title: 'Surprise me',
@@ -224,12 +238,13 @@ export const APPS: { [key: string]: AppDef } = {
         title: 'Authorize',
         component: Auth,
 
-        width: 500,
-        minWidth: 400,
-        minHeight: 150,
+        width: 289,
+        height: 285,
+        minWidth: 289,
+        minHeight: 285,
 
         tool: true,
-        resizeable: true
+        resizeable: false
     },
 
     run: {
