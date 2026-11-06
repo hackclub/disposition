@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, onBeforeUnmount } from 'vue'
-import frame1 from '~/assets/misc/DispoInator3000.png'
-import frame2 from '~/assets/misc/DispoInator3000-2.png'
-import frame3 from '~/assets/misc/DispoInator3000-3.png'
+import frame1 from '~/assets/misc/dispoInator.png'
+import frame2 from '~/assets/misc/dispoInator2.png'
+import frame3 from '~/assets/misc/dispoInator3.png'
 
 const FPS = 20
 const FRAME_MS = 1000 / FPS

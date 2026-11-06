@@ -39,8 +39,7 @@ onMounted(() => {
     <div class="notifications-app">
         <div class="header">
             <div class="striped-bg">
-                <img src="~/assets/logos/Disposition.png" alt="Disposition Logo" class="logo" />
-                <!-- todo change to bell icon -->
+                <img src="~/assets/logos/notifications.png" alt="Notifications Logo" class="logo" />
                 <span>
                     <h2>Notifications</h2>
                     <p>your shop order was just lost at sea! sorry...</p>

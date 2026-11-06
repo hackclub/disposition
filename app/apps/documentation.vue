@@ -19,7 +19,7 @@ function selectArticle(path: string) {
     <div class="content">
         <div class="header">
             <div class="striped-bg">
-                <img src="~/assets/logos/Docs.png" alt="DispoDocs Logo" class="logo" />
+                <img src="~/assets/logos/docs.png" alt="DispoDocs Logo" class="logo" />
                 <span>
                     <h2>DispoDocs</h2>
                     <p>a pretty boring documentation viewer</p>

@@ -48,7 +48,7 @@ function deleteItem(id: number) {
     <div class="content">
         <div class="header">
             <div class="striped-bg">
-                <img src="~/assets/logos/Shop.png" alt="DispoAdminShopThing Logo" class="logo" />
+                <img src="~/assets/logos/shop.png" alt="DispoAdminShopThing Logo" class="logo" />
                 <span>
                     <h2>DispoAdminShopThing</h2>
                     <p>super secret admin app for super secret people 🙏</p>

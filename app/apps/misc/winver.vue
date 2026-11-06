@@ -5,7 +5,7 @@
     <div class="content">
         <div class="header">
             <div class="striped-bg">
-                <img src="~/assets/logos/Docs.png" alt="DispoVer Logo" class="logo" />
+                <img src="~/assets/logos/docs.png" alt="DispoVer Logo" class="logo" />
                 <span>
                     <h2>DispoVer</h2>
                     <p>hey kid, you want some... information?</p>

@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted, onBeforeUnmount } from 'vue'
 
-import idleImg from "~/assets/augustBuddy/idleAugust.png"
-import walkImg from "~/assets/augustBuddy/walkAugust.png"
-import emoteImg from "~/assets/augustBuddy/emoteAugust.png"
+import idleImg from "~/assets/augustBuddy/idle.png"
+import walkImg from "~/assets/augustBuddy/walk.png"
+import emoteImg from "~/assets/augustBuddy/emote.png"
 
 const emojis = [ 'Hi!!', 'What\'s up?', 'Doing much?' ]
 

@@ -13,7 +13,7 @@ let info = loggedIn.value && user.value?.slackId ? await getUserInfo(user.value.
         <AuthState v-slot="{ loggedIn, clear }">
             <div class="left">
                 <div class="header">
-                    <img src="~/assets/logos/Disposition.png" alt="Disposition logo" />
+                    <img src="~/assets/logos/disposition.png" alt="Disposition logo" />
                     <span>
                         <h1>Disposition</h1>
                         <p>a physical-media based ysws</p>
@@ -33,6 +33,8 @@ let info = loggedIn.value && user.value?.slackId ? await getUserInfo(user.value.
             <div class="right">
                 <!-- here we can put some tool apps like dispover. not all of the tool apps tho -->
                 <div v-if="loggedIn" class="menu-item" @click="manager.open('rigby')">Secret...</div>
+
+                <div class="menu-item" @click="manager.open('run')">DispoRun</div>
                 <div class="menu-item" @click="manager.open('winver')">DispoVer</div>
 
                 <div v-if="loggedIn" class="menu-item" @click="clear">Sign Out</div>

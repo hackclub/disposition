@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
-import logo from '~/assets/logos/DispositionAlt.png'
+import logo from '~/assets/logos/dispositionAlt.png'
 import countdownTile from '~/assets/misc/countdownTile.png'
 
 // CHANGE THIS to your real launch date and time cus idk the real time lmao

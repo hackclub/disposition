@@ -11,7 +11,7 @@ const { data } = await useFetch<Record<string, Record<string, Item[]>>>("/api/sh
 			<div class="header">
 				<div class="striped-bg">
 					<div class="app-logo">
-						<img src="~/assets/logos/Shop.png" alt="DispoShop Logo" class="logo" />
+						<img src="~/assets/logos/shop.png" alt="DispoShop Logo" class="logo" />
 						<span>
 							<h2>DispoShop</h2>
 							<p>a physical-media based shop</p>

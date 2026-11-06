@@ -57,7 +57,7 @@ export type HackatimeProjectDetails = {
 }
 
 export async function getProjectDetails(token: string, project: string, slackId: string, since?: Date): Promise<HackatimeProjectDetails> {
-    return call<HackatimeProjectDetails>(token, `users/${slackId}/project/${project}`, {
+    return call<HackatimeProjectDetails>(token, `users/${encodeURIComponent(slackId)}/project/${encodeURIComponent(project)}`, {
         start: since? since : config.public.startDate
     });
 }

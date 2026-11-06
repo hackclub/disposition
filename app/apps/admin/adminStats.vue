@@ -20,7 +20,7 @@ if (admin) info.value = await $fetch<RsvpStats>("/api/rsvps/stats");
     <div class="content">
         <div class="header">
             <div class="striped-bg">
-                <img src="~/assets/logos/Docs.png" alt="DispoVer Logo" class="logo" />
+                <img src="~/assets/logos/docs.png" alt="bro idfk" class="logo" />
                 <span>
                     <h2>DispoStats</h2>
                     <p>super secret stats app for super secret people 🙏</p>

@@ -37,12 +37,12 @@
 
 @font-face {
     font-family: 'Joan';
-    src: url("~/assets/fonts/Joan.ttf");
+    src: url("~/assets/fonts/joan.ttf");
 }
 
 @font-face {
     font-family: 'Fira Sans';
-    src: url("~/assets/fonts/FiraSans.ttf");
+    src: url("~/assets/fonts/firaSans.ttf");
 }
 
 h1,

@@ -37,7 +37,7 @@ onMounted(async () => {
     <div class="content">
         <div class="header">
             <div class="striped-bg">
-                <img src="~/assets/logos/Run.png" alt="DispoVer Logo" class="logo" />
+                <img src="~/assets/logos/run.png" alt="Run Logo" class="logo" />
                 <span>
                     <h2>DispoRun</h2>
                     <p>Type in the ID of any app and Disposition will open it for you.</p>

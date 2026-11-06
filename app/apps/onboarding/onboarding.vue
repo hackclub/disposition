@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import type { WindowInstance } from '~/types/window'
-import onboardingLogo from '~/assets/icons/onboarding-logo.png'
+import onboardingLogo from '~/assets/icons/onboardingLogo.png'
 import headerbg from '~/assets/misc/header.png'
 import avatar from '~/assets/misc/avatar.png'
 import { useForm } from "vee-validate";
@@ -9,10 +9,10 @@ import { toTypedSchema } from '@vee-validate/zod'
 import defaultBanner from '~/assets/misc/banner.png'
 import { urlToFile } from '~/utils'
 import * as z from "zod";
-import onb1 from '~/assets/misc/onboard-1.png'
-import onb2 from '~/assets/misc/onboard-2.png'
-import onb3 from '~/assets/misc/onboard-3.png'
-import onb4 from '~/assets/misc/onboard-4.png'
+import onb1 from '~/assets/misc/onboard1.png'
+import onb2 from '~/assets/misc/onboard2.png'
+import onb3 from '~/assets/misc/onboard3.png'
+import onb4 from '~/assets/misc/onboard4.png'
 
 const manager = useWindowManager();
 const props = defineProps<{

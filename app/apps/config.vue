@@ -42,7 +42,7 @@ function handleImageFile(file: File) {
     <div class="content">
         <div class="header">
             <div class="striped-bg">
-                <img src="~/assets/logos/Config.png" alt="DispoConfig Logo" class="logo" />
+                <img src="~/assets/logos/config.png" alt="DispoConfig Logo" class="logo" />
                 <span>
                     <h2>DispoConfig</h2>
                     <p>Push all the buttons you want!</p>

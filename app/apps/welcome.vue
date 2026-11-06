@@ -35,7 +35,7 @@ function openNextChanged() {
     <div class="content">
         <div class="header">
             <div class="striped-bg">
-                <img src="~/assets/logos/Disposition.png" alt="Disposition Logo" class="logo" />
+                <img src="~/assets/logos/disposition.png" alt="Disposition Logo" class="logo" />
                 <span>
                     <h2>Welcome to Disposition!</h2>
                     <p>a physical-media based ysws sponsored by Archer</p>
@@ -51,7 +51,7 @@ function openNextChanged() {
             <div class="horizontal">
                 <div class="fun-fact">
                     <span>
-                        <img src="~/assets/logos/Docs.png" alt="Information Icon" width="40px" height="40px" />
+                        <img src="~/assets/logos/docs.png" alt="Information Icon" width="40px" height="40px" />
                         <h3>Fun Fact!</h3>
                     </span>
                     <p>{{ funFact }}</p>

@@ -3,12 +3,11 @@ import welcomeIcon from "~/assets/icons/start.png"
 import documentationIcon from "~/assets/icons/info.png"
 import configIcon from "~/assets/icons/config.png"
 import runIcon from "~/assets/icons/run.png"
-import notificationIcon from "~/assets/icons/notification.png"
+import notificationsIcon from "~/assets/icons/notifications.png"
 import projectBrowserIcon from "~/assets/icons/browser.png"
 import adminAnnouncementIcon from "~/assets/icons/megaphone.png"
 import feedbackPostIcon from "~/assets/icons/feedback.png"
 import managerIcon from "~/assets/icons/manager.png"
-import NotificationIcon from "~/assets/icons/notification.png"
 import errorIcon from "~/assets/icons/error.png"
 export const ICONS: { [key: string]: string } = {
     project_manager: managerIcon,
@@ -21,7 +20,7 @@ export const ICONS: { [key: string]: string } = {
     config: configIcon,
     run: runIcon,
     shop: shopIcon,
-    notification: notificationIcon,
+    notifications: notificationsIcon,
     admin_shop: shopIcon,
     evil: errorIcon
 }

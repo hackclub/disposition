@@ -47,7 +47,7 @@ watch(announcementAuthor, loadAnnouncements);
     <div class="content">
         <div class="header">
             <div class="striped-bg">
-                <img src="~/assets/logos/Shop.png" alt="DispoAdminShopThing Logo" class="logo" />
+                <img src="~/assets/logos/notifications.png" alt="DispoAdminNotificationsThing Logo" class="logo" />
                 <span>
                     <h2>DispoAdminNotifications</h2>
                     <p>super secret admin app for super secret people 🙏</p>
