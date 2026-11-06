@@ -17,6 +17,8 @@ export type WindowInstance = {
 
     tool: Boolean, // just like on windows, this defines if the app shows up in the taskbar and if it can be minimized.
     resizeable: Boolean,
+    fullscreen?: boolean,
+    wallpaper?: string,
     props: Record<string, any>
 }
 
@@ -36,4 +38,6 @@ export type AppDef = {
     tool: Boolean, // just like on windows, this defines if the app shows up in the taskbar and if it can be minimized.
     resizeable: Boolean,
     hidden?: Boolean,
+    fullscreen?: boolean,
+    wallpaper?: string,
 }

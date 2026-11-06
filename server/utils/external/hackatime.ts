@@ -12,6 +12,22 @@ async function call<T>(token: string, path: string, params?: Record<string, stri
 
 // where tf would i store the launch date..? anyways...
 // TODO: add ?since=LAUNCH_DATE
+export type HackatimeTrustFactor = {
+    trust_level: "green" | "blue" | "red";
+    trust_value: number;
+};
+
+export async function getTrustFactor(slackId: string): Promise<HackatimeTrustFactor | null> {
+    try {
+        return await $fetch<HackatimeTrustFactor>(
+            `https://hackatime.hackclub.com/api/v1/users/${encodeURIComponent(slackId)}/trust_factor`
+        );
+    } catch (error: any) {
+        if ((error?.statusCode ?? error?.response?.status) === 404) return null;
+        throw error;
+    }
+}
+
 export type HackatimeProject = {
     projects: {
         name: string;

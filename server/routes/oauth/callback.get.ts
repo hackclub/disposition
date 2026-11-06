@@ -1,11 +1,21 @@
+import type { H3Event } from "h3";
 import { addresses, rsvps } from "~~/db/schema";
 import { db } from "~~/server/utils/db";
 import { eq } from "drizzle-orm";
 import { users } from "~~/db/schema";
 import { getCachetInfo } from "~~/server/utils/external/cachet"
+import { getTrustFactor } from "~~/server/utils/external/hackatime"
 import { generateUsername } from "~~/server/utils/user/user";
 
 export default defineEventHandler(async (event) => {
+    try {
+        return await callback(event);
+    } catch (error) {
+        return sendAuthError(event, error);
+    }
+});
+
+async function callback(event: H3Event) {
     const config = useRuntimeConfig();
     const { code, state } = getQuery(event);
     const savedState = getCookie(event, "oauth_state");
@@ -83,12 +93,23 @@ export default defineEventHandler(async (event) => {
     // create or update user row
     const [existing] = await db.select().from(users).where(eq(users.hcaId, identity.id));
 
-    if (!existing && !identity.ysws_eligible && !config.public.adminIds.includes(identity.slack_id)) {
-        throw createError({
-            statusCode: 403,
-            statusMessage: "Not YSWS eligible",
-            message: "You must be eligible for YSWS to sign up for Disposition.",
-        });
+    if (!existing && !config.public.adminIds.includes(identity.slack_id)) {
+        if (!identity.ysws_eligible) {
+            throw createError({
+                statusCode: 403,
+                statusMessage: "Not YSWS eligible",
+                message: "You must be eligible for YSWS to sign up for Disposition.",
+            });
+        }
+
+        const trust = await getTrustFactor(identity.slack_id);
+        if (trust?.trust_level !== "green") {
+            throw createError({
+                statusCode: 403,
+                statusMessage: "Not Hackatime trusted",
+                message: "You must be trusted on Hackatime to sign up for Disposition.",
+            });
+        }
     }
 
     // we have to get the username, fancy style.
@@ -229,4 +250,4 @@ export default defineEventHandler(async (event) => {
     }
 
     return sendRedirect(event, '/');
-});
+}

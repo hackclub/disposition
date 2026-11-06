@@ -14,6 +14,22 @@ let startWidth = 0, startHeight = 0;
 let startPosX = 0, startPosY = 0;
 let drag = false;
 
+const windowStyle = computed(() => props.instance.fullscreen
+    ? {
+        width: '100vw',
+        height: '100vh',
+        left: '0px',
+        top: '0px',
+        zIndex: props.instance.z
+    }
+    : {
+        width: props.instance.width + 'px',
+        height: props.instance.height + 'px',
+        left: props.instance.posX + 'px',
+        top: props.instance.posY + 'px',
+        zIndex: props.instance.z
+    });
+
 function startResize(event: MouseEvent) {
     event.preventDefault();
     const target = event.currentTarget;
@@ -67,6 +83,7 @@ function onMouseUp(event: MouseEvent) {
 
 function startDrag(event: MouseEvent) {
     event.preventDefault();
+    if (props.instance.fullscreen) return;
 
     drag = true;
     startX = event.clientX;
@@ -96,14 +113,9 @@ function onDragEnd(event: MouseEvent) {
 
 <template>
     <Transition name="window">
-        <div class="window active" :style="{
-            width: instance.width + 'px',
-            height: instance.height + 'px',
-            left: instance.posX + 'px',
-            top: instance.posY + 'px',
-            zIndex: instance.z
-        }" @mousedown="manager.focus(instance.id)" v-show="!instance.minimized">
-            <div class="resize-bars" v-if="props.instance.resizeable">
+        <div class="window active" :class="{ fullscreen: instance.fullscreen }" :style="windowStyle"
+            @mousedown="manager.focus(instance.id)" v-show="!instance.minimized">
+            <div class="resize-bars" v-if="props.instance.resizeable && !instance.fullscreen">
                 <div class="resize-bar left" data-dir="left" @mousedown="startResize"></div>
                 <div class="resize-bar right" data-dir="right" @mousedown="startResize"></div>
                 <div class="resize-bar top" data-dir="top" @mousedown="startResize"></div>
@@ -114,10 +126,11 @@ function onDragEnd(event: MouseEvent) {
                 <div class="resize-bar bottom-right" data-dir="bottom-right" @mousedown="startResize"></div>
             </div>
 
-            <div class="title-bar" @mousedown="startDrag" style="background-attachment: local;">
+            <div v-if="!instance.fullscreen" class="title-bar" @mousedown="startDrag"
+                style="background-attachment: local;">
                 <div class="title-bar-text">{{ instance.title }}</div>
                 <div class="title-bar-controls">
-                    <button v-if="!props.instance.tool" class="minimize" @mousedown.stop
+                    <button v-if="!props.instance.tool && !instance.fullscreen" class="minimize" @mousedown.stop
                         @click="manager.minimize(instance.id)"></button>
                     <button class="close" @mousedown.stop @click="manager.close(instance.id)"></button>
                 </div>

@@ -13,7 +13,11 @@ export const useWindowManager = () => {
         const ordered = [...windows.value].sort((a, b) => a.z - b.z);
         const topIndex = ordered.findIndex(w => w.id === topId);
         if (topIndex !== -1) ordered.push(...ordered.splice(topIndex, 1));
-        ordered.forEach((w, i) => w.z = i + 1);
+
+        // fullscreen windows always sit above everything else
+        const normal = ordered.filter(w => !w.fullscreen);
+        const fullscreen = ordered.filter(w => w.fullscreen);
+        [...normal, ...fullscreen].forEach((w, i) => w.z = i + 1);
     }
 
     function add(instance: Omit<WindowInstance, "id" | "z">) {
@@ -51,6 +55,8 @@ export const useWindowManager = () => {
 
             tool: app.tool,
             resizeable: app.resizeable,
+            fullscreen: app.fullscreen ?? false,
+            wallpaper: app.wallpaper,
 
             posX,
             posY,

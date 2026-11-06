@@ -1,7 +1,16 @@
+import type { H3Event } from "h3";
 import { eq } from "drizzle-orm";
 import { users } from "~~/db/schema";
 
 export default defineEventHandler(async event => {
+    try {
+        return await callback(event);
+    } catch (error) {
+        return sendAuthError(event, error);
+    }
+});
+
+async function callback(event: H3Event) {
     const session = await requireUserSession(event);
 
     const [existing] = await db.select().from(users).where(eq(users.hcaId, session.user.id));
@@ -48,4 +57,4 @@ export default defineEventHandler(async event => {
 
     // that's pretty much all we need
     return sendRedirect(event, '/');
-});
+}

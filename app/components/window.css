@@ -15,6 +15,12 @@
     filter: drop-shadow(0 0 0.75rem var(--color-black));
 }
 
+.window.fullscreen {
+    border: none;
+    border-radius: 0;
+    filter: none;
+}
+
 /* title bar */
 
 .title-bar {

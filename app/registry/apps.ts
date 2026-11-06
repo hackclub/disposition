@@ -1,44 +1,47 @@
-import Welcome from "~/apps/welcome.vue"
-import Documentation from "~/apps/documentation.vue"
-import type { AppDef } from "~/types/window"
-import Winver from "~/apps/misc/winver.vue"
-import Auth from "~/apps/misc/auth.vue"
-import Run from "~/apps/misc/run.vue"
-import Rigby from "~/apps/misc/rigby.vue"
-import AdminStats from "~/apps/admin/adminStats.vue"
-import Config from "~/apps/config.vue"
-import Shop from "~/apps/shop/shop.vue"
-import Notifications from "~/apps/notifications.vue"
-import projectManager from "~/apps/projects/projectManager.vue"
-import profileViewer from "~/apps/users/profileViewer.vue"
-import AdminShop from "~/apps/admin/shop/adminShop.vue"
-import ProfileEdit from "~/apps/users/profileEdit.vue"
-import AdminShopAddItem from "~/apps/admin/shop/adminShopAddItem.vue"
-import Item from "~/apps/shop/item.vue"
-import ShopRequest from "~/apps/shop/request.vue"
-import Orders from "~/apps/shop/orders.vue"
-import AdminShopOrder from "~/apps/admin/shop/adminShopOrder.vue"
-import Order from "~/apps/shop/order.vue"
-import Messagebox from "~/components/messageBox.vue"
-import Dialogbox from "~/components/dialogBox.vue"
-import AdminShopEditItem from "~/apps/admin/shop/adminShopEditItem.vue"
-import Category from "~/apps/shop/category.vue"
-import ProjectProfile from "~/apps/projects/projectProfile.vue"
-import ProjectBrowser from "~/apps/projects/projectBrowser.vue"
-import Requests from "~/apps/shop/requests.vue"
-import AdminShopRequest from "~/apps/admin/shop/adminShopRequest.vue"
-import ProjectEdit from "~/apps/projects/projectEdit.vue"
-import DevlogView from "~/apps/projects/devlogView.vue"
-import Onboarding from "~/apps/onboarding/onboarding.vue"
-import NewDevlog from "~/apps/projects/newDevlog.vue"
-import DispoInator3000 from "~/apps/misc/dispoInator3000.vue"
-import Countdown from "~/apps/misc/countdown.vue"
+import Welcome from "../apps/welcome.vue"
+import Documentation from "../apps/documentation.vue"
+import type { AppDef } from "../types/window"
+import Winver from "../apps/misc/winver.vue"
+import Auth from "../apps/misc/auth.vue"
+import Run from "../apps/misc/run.vue"
+import Rigby from "../apps/misc/rigby.vue"
+import AdminStats from "../apps/admin/adminStats.vue"
+import Config from "../apps/config.vue"
+import Shop from "../apps/shop/shop.vue"
+import Notifications from "../apps/notifications.vue"
+import projectManager from "../apps/projects/projectManager.vue"
+import profileViewer from "../apps/users/profileViewer.vue"
+import AdminShop from "../apps/admin/shop/adminShop.vue"
+import ProfileEdit from "../apps/users/profileEdit.vue"
+import AdminShopAddItem from "../apps/admin/shop/adminShopAddItem.vue"
+import Item from "../apps/shop/item.vue"
+import ShopRequest from "../apps/shop/request.vue"
+import Orders from "../apps/shop/orders.vue"
+import AdminShopOrder from "../apps/admin/shop/adminShopOrder.vue"
+import Order from "../apps/shop/order.vue"
+import Messagebox from "../components/messageBox.vue"
+import Dialogbox from "../components/dialogBox.vue"
+import ErrorApp from "../apps/misc/error.vue"
+import Evil from "../apps/misc/evil.vue"
+import onboardingWallpaper from "../assets/misc/onboardingBackground.png"
+import AdminShopEditItem from "../apps/admin/shop/adminShopEditItem.vue"
+import Category from "../apps/shop/category.vue"
+import ProjectProfile from "../apps/projects/projectProfile.vue"
+import ProjectBrowser from "../apps/projects/projectBrowser.vue"
+import Requests from "../apps/shop/requests.vue"
+import AdminShopRequest from "../apps/admin/shop/adminShopRequest.vue"
+import ProjectEdit from "../apps/projects/projectEdit.vue"
+import DevlogView from "../apps/projects/devlogView.vue"
+import Onboarding from "../apps/onboarding/onboarding.vue"
+import NewDevlog from "../apps/projects/newDevlog.vue"
+import DispoInator3000 from "../apps/misc/dispoInator3000.vue"
+import Countdown from "../apps/misc/countdown.vue"
 
-import AdminAddAnnouncement from "~/apps/admin/notifications/adminAddAnnouncement.vue"
-import AdminAddNotification from "~/apps/admin/notifications/adminAddNotification.vue"
-import AdminNotifications from "~/apps/admin/notifications/adminNotifications.vue"
-import AdminEditAnnouncement from "~/apps/admin/notifications/adminEditAnnouncement.vue"
-import AdminViewAnnouncement from "~/apps/admin/notifications/adminViewAnnouncement.vue"
+import AdminAddAnnouncement from "../apps/admin/notifications/adminAddAnnouncement.vue"
+import AdminAddNotification from "../apps/admin/notifications/adminAddNotification.vue"
+import AdminNotifications from "../apps/admin/notifications/adminNotifications.vue"
+import AdminEditAnnouncement from "../apps/admin/notifications/adminEditAnnouncement.vue"
+import AdminViewAnnouncement from "../apps/admin/notifications/adminViewAnnouncement.vue"
 
 // don't ask me why, but all app id's should be snake case.
 export const APPS: { [key: string]: AppDef } = {
@@ -94,6 +97,7 @@ export const APPS: { [key: string]: AppDef } = {
 
         tool: true, // can't minimize xdxd
         resizeable: false,
+        wallpaper: onboardingWallpaper,
     },
 
     devlog_view: {
@@ -311,6 +315,34 @@ export const APPS: { [key: string]: AppDef } = {
         tool: true,
         resizeable: true,
         hidden: true
+    },
+
+    error: {
+        appId: 'error',
+        title: 'Error',
+        component: ErrorApp,
+
+        minWidth: 1,
+        minHeight: 1,
+
+        tool: true,
+        resizeable: false,
+        hidden: true,
+        fullscreen: true
+    },
+
+    evil: {
+        appId: 'evil',
+        title: 'Evil Rigby',
+        component: Evil,
+
+        width: 320,
+        height: 200,
+        minWidth: 320,
+        minHeight: 200,
+
+        tool: true,
+        resizeable: false
     },
 
     ///////////////////////////////////////////

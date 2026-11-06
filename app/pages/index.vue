@@ -7,7 +7,6 @@ import Taskbar from '~/components/taskbar.vue';
 import TaskbarItem from '~/components/taskbarItem.vue';
 import BenjiBuddy from "~/components/benjiBuddy.vue";
 import AugustBuddy from "~/components/augustBuddy.vue";
-import onboardingWallpaper from "~/assets/misc/onboardingBackground.png"
 import { APPS } from "~/registry/apps";
 import type { PrivateUser } from "~/types/database";
 import { onMounted, nextTick, computed } from "vue";
@@ -22,8 +21,23 @@ const {
     notifications
 } = useNotificationManager();
 
+const route = useRoute();
+const { showError } = useErrorHandler();
+
 onMounted(async () => {
     await nextTick();
+
+    // callback failures redirect here with an error message
+    if (route.query.error) {
+        const { error, errorCode, message, ...query } = route.query;
+        showError({
+            error: error,
+            message: String(message),
+            statusCode: errorCode ? Number(errorCode) : undefined,
+        });
+        await navigateTo({ path: route.path, query }, { replace: true });
+        return;
+    }
 
     // launch onboarding for logged in users that haven't finished it yet
     const { loggedIn } = useUserSession();
@@ -42,26 +56,29 @@ onMounted(async () => {
     if (!isTypeOpen("welcome")) open("welcome");
 });
 
-const wallpaper = computed(() =>
-    useConfiguration("settings").read("wallpaperSource") || "/wallpaper/default.png"
-);
+const fullscreenWindow = computed(() => windows.value.find((w) => w.fullscreen));
+const wallpaperWindow = computed(() => windows.value.find((w) => w.wallpaper));
+const overlayWindow = computed(() => fullscreenWindow.value ?? wallpaperWindow.value);
 
-const onboardingOn = computed(() => windows.value.find((w) => w.appId == 'onboarding'))
+const wallpaper = computed(() =>
+    wallpaperWindow.value?.wallpaper
+    || useConfiguration("settings").read("wallpaperSource")
+    || "/wallpaper/default.png"
+);
 </script>
 
 <template>
     <ClientOnly>
-        <div v-if="onboardingOn" :style="{ backgroundImage: `url('${onboardingWallpaper}')` }" class="wallpaper"></div>
-        <div v-else :style="{ backgroundImage: `url('${wallpaper}')` }" class="wallpaper"></div>
+        <div :style="{ backgroundImage: `url('${wallpaper}')` }" class="wallpaper"></div>
     </ClientOnly>
 
     <template v-for="w in windows" :key="w.id">
-        <Window v-if="!onboardingOn || w.appId === 'onboarding'" :instance="w">
+        <Window v-if="fullscreenWindow ? w.fullscreen : (!wallpaperWindow || w.wallpaper)" :instance="w">
             <Component :is="APPS[w.appId]?.component" :instance="w" v-bind="w.props" />
         </Window>
     </template>
 
-    <Taskbar v-if="!onboardingOn">
+    <Taskbar v-if="!overlayWindow">
         <template v-for="w in windows" :key="w.id">
             <TaskbarItem v-if="!w.tool" :instance="w" />
         </template>
@@ -73,7 +90,7 @@ const onboardingOn = computed(() => windows.value.find((w) => w.appId == 'onboar
         </NotificationShim>
     </ClientOnly>
 
-    <ClientOnly v-if="!onboardingOn">
+    <ClientOnly v-if="!overlayWindow">
         <BenjiBuddy v-if="useConfiguration('settings').read('showBuddies')" />
         <AugustBuddy v-if="useConfiguration('settings').read('showBuddies')" />
     </ClientOnly>
