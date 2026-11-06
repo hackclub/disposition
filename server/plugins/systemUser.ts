@@ -9,7 +9,7 @@ export default defineNitroPlugin(async () => {
         lastName: "User",
         username: "system",
         yswsEligible: false,
-        verificationStatus: "system",
+        verificationStatus: "verified",
         system: true,
     };
 

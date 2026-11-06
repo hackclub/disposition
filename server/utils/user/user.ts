@@ -53,6 +53,6 @@ export const UserPostBody = z.object({
 export const UserPatchBody = z.object({
     username: z.string().optional(),
     bio: z.string().optional(),
-    onboardedAt: z.date().optional(),
+    onboardedAt: z.coerce.date().optional(),
     banner: z.instanceof(File).optional(),
 })

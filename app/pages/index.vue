@@ -9,6 +9,7 @@ import BenjiBuddy from "~/components/benjiBuddy.vue";
 import AugustBuddy from "~/components/augustBuddy.vue";
 import onboardingWallpaper from "~/assets/misc/onboardingBackground.png"
 import { APPS } from "~/registry/apps";
+import type { PrivateUser } from "~/types/database";
 import { onMounted, nextTick, computed } from "vue";
 
 const {
@@ -23,6 +24,16 @@ const {
 
 onMounted(async () => {
     await nextTick();
+
+    // launch onboarding for logged in users that haven't finished it yet
+    const { loggedIn } = useUserSession();
+    if (loggedIn.value) {
+        const user = await $fetch<PrivateUser>("/api/user").catch(() => null);
+        if (user && !user.onboardedAt) {
+            if (!isTypeOpen("onboarding")) open("onboarding");
+            return;
+        }
+    }
 
     // open welcome for the first app
     const { read } = useConfiguration("welcome");

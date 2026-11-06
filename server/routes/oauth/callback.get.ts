@@ -83,6 +83,14 @@ export default defineEventHandler(async (event) => {
     // create or update user row
     const [existing] = await db.select().from(users).where(eq(users.hcaId, identity.id));
 
+    if (!existing && !identity.ysws_eligible && !config.public.adminIds.includes(identity.slack_id)) {
+        throw createError({
+            statusCode: 403,
+            statusMessage: "Not YSWS eligible",
+            message: "You must be eligible for YSWS to sign up for Disposition.",
+        });
+    }
+
     // we have to get the username, fancy style.
     // i base the username off of the slack display name
     // and then add numbers to it if those alr exist in the db
@@ -101,7 +109,7 @@ export default defineEventHandler(async (event) => {
             username: username,
             email: identity.primary_email,
             slackId: identity.slack_id,
-            yswsEligible: identity.ysws_eligible,
+            yswsEligible: identity.ysws_eligible ?? true, // we already know they're eligible at this point. (or an admeme.)
             verificationStatus: identity.verification_status,
 
             // birthday: identity.birthday ? new Date(identity.birthday) : undefined,
@@ -139,7 +147,7 @@ export default defineEventHandler(async (event) => {
         firstName: identity.first_name,
         lastName: identity.last_name,
 
-        yswsEligible: identity.ysws_eligible,
+        yswsEligible: identity.ysws_eligible ?? true, // ditto
         verificationStatus: identity.verification_status,
 
         birthday: identity.birthday,

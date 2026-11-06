@@ -157,8 +157,24 @@ const advance3 = userForm.handleSubmit(async (values) => {
     }
 });
 // region screen
-function advance4() {
+const finishing = ref(false);
 
+async function advance4() {
+    finishing.value = true;
+    saveError.value = null;
+    try {
+        const form = new FormData();
+        form.append("onboardedAt", new Date().toISOString());
+
+        await $fetch("/api/user", { method: "PATCH", body: form });
+
+        config.remove("step");
+        manager.close(props.instance.id);
+    } catch (e: any) {
+        saveError.value = e?.data?.message ?? "Couldn't finish onboarding. Try again.";
+    } finally {
+        finishing.value = false;
+    }
 }
 </script>
 
@@ -315,12 +331,16 @@ function advance4() {
                 <p class="region-text">
                     Shop region dictates what items are available to you. Please set this to your actual region.
                 </p>
+
+                <span class="error" v-if="saveError">{{ saveError }}</span>
             </div>
         </div>
 
         <div class="footer">
             <button class="btn" @click="cancel">Cancel</button>
-            <button class="btn" @click="advance4">Next</button>
+            <button class="btn" :disabled="finishing" @click="advance4">
+                {{ finishing ? 'Finishing…' : 'Next' }}
+            </button>
         </div>
     </div>
 

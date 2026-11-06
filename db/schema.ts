@@ -16,8 +16,8 @@ export const users = pgTable("users", {
 	username: text().notNull(),
 	created: timestamp({ withTimezone: true, mode: 'date' }).defaultNow().notNull(),
 
-	yswsEligible: boolean("ysws_eligible").notNull(),
-	verificationStatus: verificationStatus("verification_status").notNull(),
+	yswsEligible: boolean("ysws_eligible").notNull().default(false),
+	verificationStatus: verificationStatus("verification_status").notNull().default("needs_submission"),
 
 	banner: text(),
 	bio: text(),
@@ -155,8 +155,8 @@ export const rsvps = pgTable("rsvps", {
 	slackId: varchar("slack_id", { length: 16 }).notNull(),
 	name: varchar({ length: 255 }).notNull(),
 	timestamp: timestamp({ withTimezone: true, mode: 'date' }).defaultNow().notNull(),
-	yswsEligible: boolean("ysws_eligible").notNull(),
-	verificationStatus: varchar("verification_status", { length: 16 }).notNull(),
+	yswsEligible: boolean("ysws_eligible").notNull().default(false),
+	verificationStatus: varchar("verification_status", { length: 16 }).notNull().default("needs_submission"),
 });
 
 export const announcements = pgTable("announcements", {
