@@ -105,66 +105,36 @@ export const useWindowManager = () => {
         return windows.value.find(w => w.appId === appId);
     }
 
-    function messageBox(title: string, message: string, options?: MessageBoxOptions) {
-        let posX = 200;
-        let posY = 200;
-
-        const width = getTextWidth(message, "bold 20pt Joan") + 100;
-
-        if (import.meta.client) {
-            posX = window.innerWidth / 2 - width / 2;
-            posY = window.innerHeight / 2 - 120 / 2;
-        }
+    function openBox(appId: "message_box" | "dialog_box", title: string, props: Record<string, any>) {
+        const width = 360;
+        const height = 160;
 
         add({
-            appId: "message_box",
-            title: title,
+            appId,
+            title,
             minimized: false,
 
-            width: width,
-            height: 120,
-            minWidth: width,
-            minHeight: 120,
+            width,
+            height,
+            minWidth: 260,
+            minHeight: 140,
 
             tool: true,
             resizeable: true,
 
-            posX,
-            posY,
+            posX: import.meta.client ? (window.innerWidth - width) / 2 : 200,
+            posY: import.meta.client ? (window.innerHeight - height) / 2 : 200,
 
-            props: { title, message, options }
+            props
         });
     }
 
+    function messageBox(title: string, message: string, options?: MessageBoxOptions) {
+        openBox("message_box", title, { message, options });
+    }
+
     function dialogBox(title: string, message: string, callback: Function, options?: DialogBoxOptions) {
-        let posX = 200;
-        let posY = 200;
-
-        const width = getTextWidth(message, "bold 20pt Joan") + 100;
-
-        if (import.meta.client) {
-            posX = window.innerWidth / 2 - width / 2;
-            posY = window.innerHeight / 2 - 120 / 2;
-        }
-
-        add({
-            appId: "dialog_box",
-            title: title,
-            minimized: false,
-
-            width: width,
-            height: 120,
-            minWidth: width,
-            minHeight: 120,
-
-            tool: true,
-            resizeable: true,
-
-            posX,
-            posY,
-
-            props: { title, message, callback, options }
-        });
+        openBox("dialog_box", title, { message, callback, options });
     }
 
     return {

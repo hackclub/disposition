@@ -2,73 +2,85 @@
 import type { WindowInstance } from '~/types/window';
 
 export type DialogBoxOptions = {
-    info?: boolean,
-    warning?: boolean,
-    error?: boolean,
-    question?: boolean
+	info?: boolean,
+	warning?: boolean,
+	error?: boolean,
+	question?: boolean
 }
 
 const manager = useWindowManager();
+
 const props = defineProps<{
-    instance: WindowInstance,
-    message: string,
-    callback: Function,
-    options?: DialogBoxOptions,
+	instance: WindowInstance,
+	message: string,
+	callback: Function,
+	options?: DialogBoxOptions,
 }>();
 </script>
 
 <template>
-    <div class="content">
-        <img v-if="props.options?.info" src="~/assets/icons/info.png" />
-        <img v-else-if="props.options?.warning" src="~/assets/icons/warning.png" />
-        <img v-else-if="props.options?.error" src="~/assets/icons/error.png" />
-        <img v-else-if="props.options?.question" src="~/assets/icons/question.png" />
+	<div class="dialogbox">
+		<div class="content">
+			<img v-if="props.options?.info" src="~/assets/icons/info.png" />
+			<img v-else-if="props.options?.warning" src="~/assets/icons/warning.png" />
+			<img v-else-if="props.options?.error" src="~/assets/icons/error.png" />
+			<img v-else-if="props.options?.question" src="~/assets/icons/question.png" />
 
-        <div>
-            <h2>{{ props.message }}</h2>
+			<p>{{ props.message }}</p>
+		</div>
 
-            <span>
-                <button @click="callback(true); manager.close(instance.id)">Yes</button>
-                <button @click="callback(false); manager.close(instance.id)">No</button>
-            </span>
-        </div>
-    </div>
+		<div class="buttons">
+			<button @click="callback(true); manager.close(instance.id)">Yes</button>
+			<button @click="callback(false); manager.close(instance.id)">No</button>
+		</div>
+	</div>
 </template>
 
 <style scoped>
+.dialogbox {
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+}
+
 .content {
-    padding: 10px;
+	flex: 1;
+	min-height: 0;
+	padding: 16px;
 
-    display: flex;
-    flex-direction: row;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 16px;
 
-    justify-content: start;
-    align-items: center;
-    gap: 10px;
+	img {
+		width: 48px;
+		height: 48px;
+		flex-shrink: 0;
+		object-fit: contain;
+	}
 
-    img {
-        width: 50px;
-        height: 50px;
-    }
+	p {
+		margin: 0;
+		white-space: pre-line;
+		overflow-wrap: anywhere;
+	}
+}
 
-    div {
-        h2 {
-            margin: 0;
-        }
+.buttons {
+	display: flex;
+	flex-direction: row-reverse;
+	align-items: center;
+	gap: 8px;
 
-        span {
-            display: flex;
-            flex-direction: row;
-            gap: 10px;
+	padding: 10px 12px;
 
-            button {
-                max-width: 100px;
-            }
-        }
+	background: var(--color-surface-dark, #e5e5e5);
+	border-top: 1px solid var(--color-border, #ccc);
 
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-    }
+	button {
+		min-width: 80px;
+		max-width: 120px;
+	}
 }
 </style>
