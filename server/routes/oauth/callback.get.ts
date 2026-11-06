@@ -60,7 +60,7 @@ async function callback(event: H3Event) {
             primary_email: string;
             slack_id: string;
             ysws_eligible: boolean;
-            verification_status: string;
+            verification_status: "needs_submission" | "pending" | "verified" | "ineligible";
 
             birthday?: string,
             legal_first_name?: string,
