@@ -39,7 +39,7 @@ export default defineEventHandler(async event => {
     })
 
     const seconds = await getSecondsSinceLastShip(parsed.data.project);
-    if(seconds < 3600) throw createError({
+    if (seconds < 3600) throw createError({
         statusCode: 400,
         message: "Must have atleast 1 hour logged before shipping"
     })
@@ -49,7 +49,7 @@ export default defineEventHandler(async event => {
         user: session.user.id,
 
         hackatimeProjects: project.hackatimeProjects,
-        hackatimeSeconds: seconds, // TODO: get hackatime hours and if its under like an hour make it unable to ship!!!!
+        hackatimeSeconds: seconds,
 
         ai: parsed.data.ai,
         aiDeclaration: parsed.data.aiDeclaration,
@@ -58,6 +58,11 @@ export default defineEventHandler(async event => {
         updateDeclaration: parsed.data.updateDeclaration,
     }
 
-    const [shipResult] = await db.insert(ships).values(ship).returning({ id: ships.id });
-    // TODO: push project to ari automatically here!!!
+    const [shipResult] = await db.insert(ships).values(ship).returning();
+    if (!shipResult) throw createError({
+        statusCode: 500,
+        message: "Failed to create ship"
+    })
+
+    await sendShip(shipResult); // pray
 })

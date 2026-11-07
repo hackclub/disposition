@@ -47,22 +47,9 @@ export async function getSecondsSinceLastShip(id: number): Promise<number> {
     ));
     const seconds = details.reduce((total, d) => total + d.total_seconds, 0);
 
-    // const logs = await db
-    //     .select()
-    //     .from(devlogs)
-    //     .where(and(
-    //         eq(devlogs.project, id),
-    //         gt(devlogs.timestamp, since)
-    //     ))
-    //     .orderBy(desc(devlogs.timestamp));
-
-    // logs.forEach(log => {
-    //     seconds += log.seconds;
-    // })
-
     return seconds;
 }
-`   `
+
 // export async function getSecondsSinceLastDevlog(id: number): Promise<number> {
 //     const [project] = await db.select().from(projects).where(eq(projects.id, id));
 //     if (!project) return -1;

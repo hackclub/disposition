@@ -14,7 +14,6 @@
 		"@comark/vue": "^0.8.1",
 		"@nuxt/content": "^3.16.0",
 		"@nuxt/image": "2.1.0",
-		"@nuxthub/core": "0.10.8",
 		"@slack/bolt": "^5.1.0",
 		"@slack/types": "^3.2.0",
 		"@vee-validate/nuxt": "^4.15.1",
@@ -33,6 +32,7 @@
 	},
 	"devDependencies": {
 		"@golar/vue": "^0.1.11",
+		"@nuxthub/core": "0.10.12",
 		"@types/node": "^26.6.2",
 		"@types/pg": "^8.23.1",
 		"drizzle-kit": "0.31.11",

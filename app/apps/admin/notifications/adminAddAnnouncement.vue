@@ -4,7 +4,6 @@ import { string } from 'zod'
 import { useForm } from "vee-validate";
 import { toTypedSchema } from '@vee-validate/zod'
 import type { WindowInstance } from '~/types/window';
-import megaphone from '~/assets/icons/megaphone.png'
 import * as z from "zod";
 
 const manager = useWindowManager();

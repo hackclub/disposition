@@ -5,16 +5,19 @@ import { projects, ships, users } from "~~/db/schema";
 const config = useRuntimeConfig();
 async function call(unsigned: any) {
     const url = `https://webhooks.ari.hackclub.com/api/ingest/${config.ari.programId}`;
-    const { headers, body } = signAriRequest(unsigned);
+    const { headers, body } = signAriRequest(JSON.stringify(unsigned));
 
     return $fetch(url, {
         method: "POST",
         body: body,
-        headers: headers
+        headers: {
+            ...headers,
+            "Content-Type": "application/json"
+        }
     })
 }
 
-export async function sendShip(ship: typeof ships) {
+export async function sendShip(ship: typeof ships.$inferSelect) {
     const [project] = await db.select().from(projects).where(eq(projects.id, ship.project));
     if (!project) return;
 
