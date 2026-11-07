@@ -3,8 +3,10 @@ import { APPS } from '~/registry/apps';
 import { ICONS } from '~/registry/icons';
 const { loggedIn, user } = await useUserSession()
 const manager = useWindowManager();
+const config = useRuntimeConfig();
 
-let info = loggedIn.value && user.value?.slackId ? await getUserInfo(user.value.slackId) : undefined;
+const info = loggedIn.value && user.value?.slackId ? await getUserInfo(user.value.slackId) : undefined;
+const launch = computed(() => Date.now() >= config.public.startDate * 1000)
 </script>
 
 <template>
@@ -22,7 +24,7 @@ let info = loggedIn.value && user.value?.slackId ? await getUserInfo(user.value.
 
                 <div class="apps">
                     <template v-for="app in APPS">
-                        <div v-if="!app.tool && !app.hidden" class="app" @click="manager.open(app.appId)">
+                        <div v-if="!app.tool && !app.hidden && !(app.hiddenUntilLaunch && !launch)" class="app" @click="manager.open(app.appId)">
                             <img :src="ICONS[app.appId]" />
                             <p>{{ app.title }}</p>
                         </div>

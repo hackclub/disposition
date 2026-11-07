@@ -6,13 +6,21 @@ import { Markdown } from '@comark/vue';
 
 const windowManager = useWindowManager();
 const props = defineProps<{ instance: WindowInstance, notificationId?: number, announcementId?: number }>();
+const session = useUserSession();
 
-const announcements = ref<Notification[]>(
-    await $fetch<Notification[]>("/api/announcements?readFilter=all")
-)
-const notifications = ref<Notification[]>(
-    await $fetch<Notification[]>("/api/notifications?readFilter=all")
-)
+const announcements = ref<Notification[]>([])
+const notifications = ref<Notification[]>([])
+
+if(session.loggedIn.value) {
+    const {data: announcementsData} = useFetch<Notification[]>("/api/announcements?readFilter=all")
+    announcements.value = announcementsData.value ?? []
+
+    const {data: notificationsData} = useFetch<Notification[]>("/api/notifications?readFilter=all")
+    notifications.value = notificationsData.value ?? [];
+} else {
+    const {data: announcementsData} = useFetch<Notification[]>("/api/announcements")
+    announcements.value = announcementsData.value ?? []
+}
 
 const feed = computed(() =>
     [...announcements.value, ...notifications.value].sort(
@@ -49,7 +57,7 @@ onMounted(() => {
             <div class="spacer"></div>
         </div>
 
-        <div class="notifications" ref="feedRef">
+        <div class="notifications" ref="feedRef" v-if="notifications.length > 0">
             <template v-for="notif in feed">
                 <div class="notification" v-if="notif.type === 'notification'"
                     :data-feed-key="`notification-${notif.serverId}`">
@@ -74,10 +82,21 @@ onMounted(() => {
                 </div>
             </template>
         </div>
+        <div class="else" v-else>
+            No notifications/announcements! for now...
+        </div>
     </div>
 </template>
 
 <style scoped>
+.else {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    align-items: center;
+    justify-content: start;
+}
+
 .notification-content :deep(p),
 .announcement-content :deep(p) {
     margin: 0;
@@ -279,7 +298,7 @@ onMounted(() => {
     justify-content: start;
     align-items: center;
     padding-left: 7px;
-    gap: 2px;
+    gap: 8px;
 }
 
 .spacer {

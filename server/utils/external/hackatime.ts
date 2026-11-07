@@ -10,8 +10,10 @@ async function call<T>(token: string, path: string, params?: Record<string, stri
     })
 }
 
-// where tf would i store the launch date..? anyways...
-// TODO: add ?since=LAUNCH_DATE
+export function getLaunchDate(): Date {
+    return new Date(config.public.startDate * 1000);
+}
+
 export type HackatimeTrustFactor = {
     trust_level: "green" | "blue" | "red";
     trust_value: number;
@@ -40,7 +42,7 @@ export type HackatimeProject = {
 
 export async function getProjects(token: string): Promise<HackatimeProject> {
     return call<HackatimeProject>(token, "authenticated/projects", {
-        since: config.public.startDate.now()
+        start: getLaunchDate().toISOString()
     });
 }
 
@@ -58,6 +60,6 @@ export type HackatimeProjectDetails = {
 
 export async function getProjectDetails(token: string, project: string, slackId: string, since?: Date): Promise<HackatimeProjectDetails> {
     return call<HackatimeProjectDetails>(token, `users/${encodeURIComponent(slackId)}/project/${encodeURIComponent(project)}`, {
-        start: since? since : config.public.startDate
+        start: (since ?? getLaunchDate()).toISOString()
     });
 }

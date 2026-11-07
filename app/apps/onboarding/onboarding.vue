@@ -124,10 +124,43 @@ async function resetBanner() {
     bannerModel.value = defaultBannerFile;
 }
 
+// the banner the form started with, so we only upload it again if the user changed it
+const loadedBanner = shallowRef<File>(defaultBannerFile);
+
+// prefill the profile form with whatever the server already has for this user
+async function loadUser() {
+    try {
+        const user = await $fetch("/api/user");
+        if (!user) return;
+
+        let banner = defaultBannerFile;
+        if (user.banner) {
+            try {
+                const file = await urlToFile(`/images/${user.banner}`, user.banner.split("/").pop() ?? "banner.png");
+                // urlToFile doesn't check the status, so a 404 page would come back as a "file"
+                if (file.type.startsWith("image/")) banner = file;
+            } catch {
+                // couldn't fetch the stored banner, keep the default one
+            }
+        }
+
+        loadedBanner.value = banner;
+        userForm.resetForm({
+            values: {
+                username: user.username,
+                bio: user.bio ?? undefined,
+                banner,
+            },
+        });
+    } catch {
+        // not fatal, the user can still fill the form in by hand
+    }
+}
+
 onMounted(async () => {
     if (step.value === 4) {
         resizeAndCenter(PROFILE_SIZE);
-        await loadInfo();
+        await Promise.all([loadInfo(), loadUser()]);
     } else if (step.value === 5) {
         resizeAndCenter(REGULAR_SIZE);
     }
@@ -144,7 +177,11 @@ const advance3 = userForm.handleSubmit(async (values) => {
         const form = new FormData();
         form.append("username", values.username);
         if (values.bio) form.append("bio", values.bio);
-        form.append("banner", values.banner);
+        // leaving banner out keeps whatever the server already has
+        if (values.banner !== loadedBanner.value) {
+            // back to the default: clear it on the server instead of uploading a copy of the default image
+            form.append("banner", values.banner === defaultBannerFile ? "" : values.banner);
+        }
 
         await $fetch("/api/user", { method: "PATCH", body: form });
 
@@ -156,6 +193,7 @@ const advance3 = userForm.handleSubmit(async (values) => {
         saving.value = false;
     }
 });
+
 // region screen
 const finishing = ref(false);
 

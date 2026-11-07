@@ -39,15 +39,13 @@ export async function getSecondsSinceLastShip(id: number): Promise<number> {
     if (!author.hackatimeToken) return -1;
 
     const [lastShip] = await db.select().from(ships).where(eq(ships.project, id)).orderBy(desc(ships.timestamp));
-    let since: Date;
-    if (!lastShip) since = config.public.startDate;
-    else since = lastShip.timestamp;
+    const since = lastShip ? lastShip.timestamp : getLaunchDate();
 
-    let seconds: number = 0;
-    project.hackatimeProjects.forEach(async hackatimeProject => {
-        const details = await getProjectDetails(author.hackatimeToken!, hackatimeProject, author.slackId, since);
-        seconds += details.total_seconds
-    })
+    // forEach doesn't wait for async callbacks, so this has to be Promise.all
+    const details = await Promise.all(project.hackatimeProjects.map(hackatimeProject =>
+        getProjectDetails(author.hackatimeToken!, hackatimeProject, author.slackId, since)
+    ));
+    const seconds = details.reduce((total, d) => total + d.total_seconds, 0);
 
     // const logs = await db
     //     .select()

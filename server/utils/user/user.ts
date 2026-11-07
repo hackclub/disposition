@@ -28,7 +28,6 @@ export function slugifyUsername(raw?: string | null) {
 
 export async function generateUsername(raw?: string | null) {
     const base = slugifyUsername(raw);
-    console.log("[debug] generateUsername", { raw, base });
 
     // escape wildcards
     const escaped = base.replace(/[\\%_]/g, "\\$&");
@@ -54,5 +53,6 @@ export const UserPatchBody = z.object({
     username: z.string().optional(),
     bio: z.string().optional(),
     onboardedAt: z.coerce.date().optional(),
-    banner: z.instanceof(File).optional(),
+    // a File replaces the banner, an empty string clears it (back to the default one)
+    banner: z.union([z.instanceof(File), z.literal("")]).optional(),
 })

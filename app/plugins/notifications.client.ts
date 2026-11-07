@@ -2,15 +2,16 @@ import type { Notification } from "~/types/notification";
 
 export default defineNuxtPlugin(async () => {
     const session = await useUserSession();
-    if (!session.loggedIn.value) return;
-
     const { add } = useNotificationManager();
 
     const { data: announcements, refresh: refreshAnnouncements } = await useFetch<Notification[]>("/api/announcements", { key: "announcements" });
-    const { data: notifications, refresh: refreshNotifications } = await useFetch<Notification[]>("/api/notifications", { key: "notifications" });
+    // personal notifications need a session, so only pull them while logged in
+    const { data: notifications, refresh: refreshNotifications } = await useFetch<Notification[]>("/api/notifications", {
+        key: "notifications",
+        immediate: session.loggedIn.value,
+    });
 
     const seen = new Set<string | number>();
-
     const addNew = (list?: Notification[] | null) => {
         list?.forEach((n) => {
             if (seen.has(n.serverId)) return;
@@ -32,12 +33,13 @@ export default defineNuxtPlugin(async () => {
         const interval = setInterval(() => {
             if (document.hidden) return; // skip while the tab is in the background
             refreshAnnouncements();
-            refreshNotifications();
+            if (session.loggedIn.value) refreshNotifications();
         }, 5 * 60 * 1000);
 
-        // stop polling if the user logs out
+        // logged-in state changes what announcements return, and whether notifications exist
         watch(session.loggedIn, (loggedIn) => {
-            if (!loggedIn) clearInterval(interval);
+            refreshAnnouncements();
+            if (loggedIn) refreshNotifications();
         });
     }
 })

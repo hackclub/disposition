@@ -1,10 +1,13 @@
-import { eq, and, isNull, isNotNull, desc } from "drizzle-orm";
+import { eq, and, isNull, isNotNull, desc, gte, sql } from "drizzle-orm";
 import { announcementReads, announcements, users } from "~~/db/schema";
 import type { Notification } from "~~/server/utils/notification";
 import * as z from "zod";
 
 export default defineEventHandler(async event => {
-    const session = await requireUserSession(event);
+    const session = await getUserSession(event);
+    // logged out: no read state, so return every announcement from the past week (newest first)
+    const userId = session.user?.id;
+    const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
     const { readFilter, author } = await getValidatedQuery(event, z.object({
         readFilter: z.enum(["all", "read", "unread"]).optional().default("unread"),
         author: z.string().optional()
@@ -23,16 +26,20 @@ export default defineEventHandler(async event => {
         .leftJoin(users, eq(users.hcaId, announcements.author))
         .leftJoin(
             announcementReads,
-            and(
-                eq(announcementReads.announcement, announcements.id),
-                eq(announcementReads.user, session.user.id),
-            ),
+            userId
+                ? and(
+                    eq(announcementReads.announcement, announcements.id),
+                    eq(announcementReads.user, userId),
+                )
+                : sql`false`,
         )
         .where(and(
-            readFilter === "unread" ? isNull(announcementReads.seenAt)
+            !userId ? undefined
+                : readFilter === "unread" ? isNull(announcementReads.seenAt)
                 : readFilter === "read" ? isNotNull(announcementReads.seenAt)
                     : undefined,
-            author ? eq(announcements.author, author) : undefined
+            author ? eq(announcements.author, author) : undefined,
+            !userId ? gte(announcements.timestamp, oneWeekAgo) : undefined,
         ))
         .orderBy(desc(announcements.timestamp));
 

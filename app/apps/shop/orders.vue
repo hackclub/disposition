@@ -2,15 +2,19 @@
 import type { ServerOrder } from '~/types/database';
 
 const manager = useWindowManager();
-const { data: orders } = await useFetch<ServerOrder[]>("/api/shop/orders", { key: "orders" });
+const session = useUserSession();
+const { data: orders } = await useFetch<ServerOrder[]>("/api/shop/orders", { key: "orders", immediate: session.loggedIn.value });
 
 async function cancelOrder(id: number) {
     await manager.dialogBox("Cancel order?", `Are you sure you want to canel order ${id}?`, async (result: boolean) => {
-        if(!result) return;
+        if (!result) return;
+        
         const data = new FormData();
         data.append("status", "cancelled");
+
         const response = await $fetch(`/api/shop/orders/${id}`, { method: "PATCH", body: data });
-        if(!response) manager.messageBox("Error!", `Error cancelling order ${id}. Check browser console.`, { error: true }); 
+        if (!response) manager.messageBox("Error!", `Error cancelling order ${id}. Check browser console.`, { error: true });
+        
         await refreshNuxtData("orders");
     }, { question: true })
 }
@@ -37,6 +41,9 @@ async function cancelOrder(id: number) {
     </div>
     <div class="content" v-else-if="orders && orders.length == 0">
         <h1>No orders :(</h1>
+    </div>
+    <div class="content" v-else-if="!session.loggedIn.value">
+        <h1>Sorry, not logged in :(</h1>
     </div>
 </template>
 

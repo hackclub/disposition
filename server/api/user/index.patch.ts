@@ -44,6 +44,7 @@ export default defineEventHandler(async event => {
         })
     }
 
+    const clearBanner = parsed.data.banner === "";
     let uploaded;
     if (parsed.data.banner instanceof File && parsed.data.banner.size > 0) {
         validateImage(parsed.data.banner);
@@ -54,6 +55,11 @@ export default defineEventHandler(async event => {
         });
     }
 
+    // remember the old banner so its blob can be deleted once it's been replaced or cleared
+    const [existing] = (uploaded || clearBanner)
+        ? await db.select({ banner: users.banner }).from(users).where(eq(users.hcaId, session.user.id))
+        : [];
+
     let result;
     try {
         [result] = await db.update(users)
@@ -61,11 +67,14 @@ export default defineEventHandler(async event => {
                 username,
                 bio: parsed.data.bio,
                 onboardedAt: parsed.data.onboardedAt,
-                banner: uploaded?.pathname,
+                banner: clearBanner ? null : uploaded?.pathname,
             })
             .where(eq(users.hcaId, session.user.id))
             .returning({ id: users.hcaId })
     } catch (error) {
+        // the update didn't happen, so don't leave the new upload lying around
+        if (uploaded) await blob.del(uploaded.pathname).catch(console.error);
+
         // someone could have grabbed the username between the check and the update
         if (isUniqueViolation(error, "users_username_unique")) throw createError({
             statusCode: 409,
@@ -80,6 +89,8 @@ export default defineEventHandler(async event => {
         statusCode: 500,
         message: "Error updating database user"
     })
+
+    if (existing?.banner) await blob.del(existing.banner).catch(console.error);
 
     await setUserSession(event, {
         ...session,

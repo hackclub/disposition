@@ -6,6 +6,7 @@ import { renderMarkdown } from 'comark/render';
 import { truncateComark, visibleLength } from '~/utils/index'; // the functions from before, exported
 
 const props = defineProps<{ notification: NotificationInstance }>();
+const session = useUserSession();
 const windowManager = useWindowManager();
 const notifManager = useNotificationManager();
 
@@ -21,10 +22,11 @@ const desc = await limit(props.notification.description.trim(), maxLength);
 
 async function close() {
     if (props.notification.type == "notification") {
-        await $fetch(`/api/notifications/${props.notification.serverId}/read`, { method: "POST" });
         notifManager.remove(props.notification.id);
+        if(!session.loggedIn.value) return;
+        await $fetch(`/api/notifications/${props.notification.serverId}/read`, { method: "POST" });
     } else {
-        await $fetch(`/api/announcements/${props.notification.serverId}/read`, { method: "POST" });
+        if(session.loggedIn.value) await $fetch(`/api/announcements/${props.notification.serverId}/read`, { method: "POST" });
         notifManager.remove(props.notification.id);
     }
 }
@@ -33,9 +35,14 @@ async function more() {
     await close();
 
     if (props.notification.type == "notification") {
+        notifManager.remove(props.notification.id);
+        if(!session.loggedIn.value) return;
+        await $fetch(`/api/notifications/${props.notification.serverId}/read`, { method: "POST" });
         windowManager.open('notifications', { notificationId: props.notification.serverId });
     } else {
+        if(session.loggedIn.value) await $fetch(`/api/announcements/${props.notification.serverId}/read`, { method: "POST" });
         windowManager.open('notifications', { announcementId: props.notification.serverId });
+        notifManager.remove(props.notification.id);
     }
 }
 </script>

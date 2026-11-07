@@ -6,6 +6,7 @@ import type { DialogBoxOptions } from "~/components/dialogBox.vue";
 import type { MessageBoxOptions } from "~/components/messageBox.vue";
 
 export const useWindowManager = () => {
+    const config = useRuntimeConfig();
     const windows = useState<WindowInstance[]>("wm-windows", () => []);
 
     // keeps z values at 1..n so they never grow without bound
@@ -29,6 +30,7 @@ export const useWindowManager = () => {
     function open(appId: keyof typeof APPS, props: Record<string, any> = {}) {
         const app = APPS[appId];
         if (!app) return;
+        if (app.hiddenUntilLaunch && Date.now() < config.public.startDate * 1000) return;
 
         const width = app.width ?? app.minWidth;
         const height = app.height ?? app.minHeight;

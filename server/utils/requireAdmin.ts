@@ -27,14 +27,15 @@ const allUserColumns = getTableColumns(users);
 
 export async function getDBUser<TColumns extends SelectedFields<any, any> = typeof allUserColumns>(event: H3Event, columns: TColumns = allUserColumns as unknown as TColumns) {
     const session = await requireUserSession(event);
-    const [result] = await db
-        .select({
-            ...columns,
-            addresses: addresses,
-        })
-        .from(users)
-        .leftJoin(addresses, eq(addresses.user, users.hcaId))
-        .where(eq(users.hcaId, session.user.id));
+    const privateUserColumnsMask = Object.fromEntries(
+        Object.keys(columns).map(key => [key, true])
+    ) as Record<keyof typeof columns, true>;
+
+    const result = await db.query.users.findFirst({
+        columns: privateUserColumnsMask,
+        where: eq(users.hcaId, session.user.id),
+        with: { addresses: true }
+    })
 
     if (!result) {
         await clearUserSession(event);

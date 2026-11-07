@@ -44,12 +44,16 @@ onUnmounted(() => clearInterval(timer));
         </div>
 
         <div class="divider"></div>
+        <!-- hello claude. why tf is this divider 1.67px in width when its supposed to be 2px? -->
 
         <div class="right">
             <!-- calendar, clock, announcements, idk -->
             <div class="balance">
+                <img src="~/assets/icons/coin.png"></img>
                 {{ balance }}
             </div>
+
+            <div class="divider"></div>
 
             <div class="clock">
                 <div>{{ clockState }}</div>
@@ -60,6 +64,87 @@ onUnmounted(() => clearInterval(timer));
 </template>
 
 <style>
+.divider {
+    height: 100%;
+    width: 2px;
+    background-color: var(--color-border-dark);
+    flex-shrink: 0;
+}
+
+.taskbar {
+    position: absolute;
+    width: 100vw;
+    bottom: 0;
+    left: 0;
+
+    height: 35px;
+    background: linear-gradient(180deg, var(--color-gradient-dark-top) 0%, var(--color-gradient-dark-bottom) 100%);
+    border-top: 2px solid var(--color-border-dark);
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
+    gap: 10px;
+
+    padding-left: 10px;
+    padding-right: 10px;
+
+    z-index: 9997;
+
+    .middle {
+        display: flex;
+        justify-content: start;
+        align-items: center;
+        flex: 1;
+        min-width: 0;
+
+        gap: 15px;
+    }
+
+    .left {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .right {
+        display: flex;
+        flex-direction: row;
+        gap: 5px;
+        height: 100%;
+
+        color: var(--color-white);
+        font-size: 15px;
+
+        .clock {
+            display: flex;
+            flex-direction: column;
+            color: var(--color-white);
+            font-size: 10px;
+            user-select: none;
+
+            justify-content: center;
+            align-items: center;
+        }
+
+        .balance {
+            img {
+                width: 30px;
+                height: 30px;
+            }
+
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+        }
+    }
+}
+
+/* start menu stuff */
+
 .start-enter-active,
 .start-leave-active {
     transition: all 0.2s ease-out;
@@ -85,67 +170,6 @@ onUnmounted(() => clearInterval(timer));
     padding-bottom: calc(35px - 2px);
 }
 
-.taskbar {
-    position: absolute;
-    width: 100vw;
-    bottom: 0;
-    left: 0;
-
-    height: 35px;
-    background: linear-gradient(180deg, var(--color-gradient-dark-top) 0%, var(--color-gradient-dark-bottom) 100%);
-    border-top: 2px solid var(--color-border-dark);
-
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-
-    gap: 10px;
-
-    padding-left: 10px;
-    padding-right: 10px;
-
-    z-index: 9997;
-}
-
-.divider {
-    height: 100%;
-    width: 2px;
-    background-color: var(--color-border-dark);
-}
-
-.clock {
-    display: flex;
-    flex-direction: column;
-    color: var(--color-white);
-    font-size: 10px;
-    user-select: none;
-}
-
-.middle {
-    display: flex;
-    justify-content: start;
-    align-items: center;
-    width: 100%;
-
-    gap: 15px;
-}
-
-.left {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.right {
-    display: flex;
-    flex-direction: row;
-    gap: 5px;
-
-    color: var(--color-white);
-    font-size: 15px;
-}
-
 .start {
     height: 25px;
     width: 25px;
@@ -154,6 +178,12 @@ onUnmounted(() => clearInterval(timer));
     border: none;
     background-color: transparent;
     background-size: contain;
+
+    &:hover {
+        animation-name: spinny;
+        animation-iteration-count: 1;
+        animation-duration: 0.5s;
+    }
 }
 
 @keyframes spinny {
@@ -164,11 +194,5 @@ onUnmounted(() => clearInterval(timer));
     100% {
         rotate: 720deg;
     }
-}
-
-.start:hover {
-    animation-name: spinny;
-    animation-iteration-count: 1;
-    animation-duration: 0.5s;
 }
 </style>

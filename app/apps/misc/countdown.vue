@@ -3,8 +3,8 @@ import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import logo from '~/assets/logos/dispositionAlt.png'
 import countdownTile from '~/assets/misc/countdownTile.png'
 
-// CHANGE THIS to your real launch date and time cus idk the real time lmao
-const LAUNCH_DATE = new Date('2967-12-01T00:00:00Z')
+const config = useRuntimeConfig();
+const LAUNCH_DATE = new Date(config.public.startDate * 1000)
 
 const now = ref<number | null>(null)
 let timer: ReturnType<typeof setInterval> | undefined

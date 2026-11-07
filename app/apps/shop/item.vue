@@ -7,13 +7,16 @@ const props = defineProps<{ instance: WindowInstance, id: number }>()
 const admin = await isAdmin();
 const session = await useUserSession();
 
-let balance = ref<number>();
-if (session.loggedIn) {
+const balance = ref<number>();
+const user = ref<PrivateUser>();
+if (session.loggedIn.value) {
     const { data: balanceData } = await useFetch<number>("/api/user/balance", { key: "balance" });
-    balance = balanceData;
+    const { data: userData } = await useFetch<PrivateUser>("/api/user");
+    balance.value = balanceData.value;
+    user.value = userData.value;
 }
 const { data: item } = await useFetch<ServerItem>(`/api/shop/items/${props.id}`);
-const { data: user } = await useFetch<PrivateUser>("/api/user");
+
 
 const address = ref<string>();
 if (user.value && user.value.addresses) {
@@ -21,6 +24,7 @@ if (user.value && user.value.addresses) {
 }
 
 async function callback(result: boolean) {
+    if (!session.loggedIn.value) return; // this would be weird
     if (!result) return;
     if (!address.value) return;
     const data = new FormData();
@@ -45,7 +49,7 @@ async function callback(result: boolean) {
 
 <template>
     <AuthState v-slot="{ loggedIn }">
-        <div class="content" v-if="item && user">
+        <div class="content" v-if="item && (user || !loggedIn)">
             <div class="horizontal">
                 <div class="vertical">
                     <img class="image" :src="`/images/${item.image}`" alt="Item image" />
@@ -96,7 +100,7 @@ async function callback(result: boolean) {
                     </div> -->
                 </div>
 
-                <div class="vertical order" v-if="loggedIn && balance">
+                <div class="vertical order" v-if="loggedIn && balance && user">
                     <h2>Finish your order</h2>
 
                     <b>Shipping address</b>

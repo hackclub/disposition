@@ -1,0 +1,38 @@
+# usage: fill in .env (see .env.example), then `docker compose up -d --build`
+#
+# Nuxt bakes `process.env.X` from nuxt.config.ts in at BUILD time, so plain
+# HCA_CLIENT_ID etc. do nothing in a built image. At runtime it only reads
+# NUXT_-prefixed vars that match the runtimeConfig path, so this maps the names
+# from .env onto those. (compose reads .env automatically for ${...} substitution.)
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "${PORT:-3000}:3000"
+    environment:
+      NUXT_SESSION_PASSWORD: ${NUXT_SESSION_PASSWORD:?set NUXT_SESSION_PASSWORD in .env}
+      NUXT_DATABASE_URL: ${DATABASE_URL:?set DATABASE_URL in .env}
+
+      NUXT_HACKCLUB_CLIENT_ID: ${HCA_CLIENT_ID}
+      NUXT_HACKCLUB_CLIENT_SECRET: ${HCA_CLIENT_SECRET}
+
+      NUXT_HACKATIME_CLIENT_ID: ${HACKATIME_CLIENT_ID}
+      NUXT_HACKATIME_CLIENT_SECRET: ${HACKATIME_CLIENT_SECRET}
+
+      NUXT_LASTFM_API_KEY: ${LASTFM_API_KEY}
+
+      NUXT_SLACK_TOKEN: ${SLACK_TOKEN}
+      NUXT_SLACK_APP_TOKEN: ${SLACK_APP_TOKEN}
+
+      NUXT_ARI_INBOUND_SECRET: ${ARI_INBOUND_SECRET}
+      NUXT_ARI_OUTBOUND_SECRET: ${ARI_OUTBOUND_SECRET}
+      NUXT_ARI_PROGRAM_ID: ${ARI_PROGRAM_ID}
+
+      # public URL the site is served from (used for oauth redirects etc.)
+      NUXT_PUBLIC_BASE_URL: ${BASE_URL:-http://localhost:3000}
+    volumes:
+      - data:/app/.data
+
+volumes:
+  data:

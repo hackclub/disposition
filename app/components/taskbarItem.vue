@@ -21,9 +21,9 @@ function open() {
 
 <template>
     <div class="item" @click="open">
-        <button class="icon" :style="{
+        <button class="icon" :style="ICONS[instance.appId] ? {
             backgroundImage: `url(${ICONS[instance.appId]})`
-        }"></button>
+        } : undefined"></button>
         <div v-if="!instance.minimized" class="open"></div>
         <div v-else class="minimized"></div>
     </div>

@@ -8,6 +8,7 @@ function save(key: string, value: any) {
 }
 
 const showBuddies = ref(read("showBuddies"));
+const streamerMode = ref(read("streamerMode"));
 
 // wallpaper stuff //
 const fileInput = ref<HTMLInputElement | null>(null);
@@ -58,9 +59,16 @@ function handleImageFile(file: File) {
 
         <div class="main">
             <div v-if="currentTab == 'general'">
+                <!-- TODO: add streamer mode here (settings.streamerMode) -->
+
                 <label>
                     <input type="checkbox" v-model="showBuddies" @change="save('showBuddies', showBuddies)" />
                     Show desktop buddies
+                </label>
+
+                <label>
+                    <input type="checkbox" v-model="streamerMode" @change="save('streamerMode', streamerMode)" />
+                    Streamer mode (blurs sensitive data)
                 </label>
             </div>
 
@@ -69,7 +77,8 @@ function handleImageFile(file: File) {
                     <h2>Wallpaper</h2>
                     <p>Add a little spark to your desktop when browsing through Disposition :)</p>
 
-                    <button v-if="read('wallpaperSource') != '/wallpaper/default.png'" @click="write('wallpaperSource', '/wallpaper/default.png')">Restore default wallpaper</button>
+                    <button v-if="read('wallpaperSource') != '/wallpaper/default.png'"
+                        @click="write('wallpaperSource', '/wallpaper/default.png')">Restore default wallpaper</button>
 
                     <button @click="fileInput!.click()">Upload from files</button>
                     <input ref="fileInput" type="file" accept="image/*" style="display: none"

@@ -22,8 +22,38 @@ const funFact = ref(funFacts[Math.floor(Math.random() * funFacts.length)]);
 
 const openNext = ref(read("openNext"));
 const manager = useWindowManager();
+const config = useRuntimeConfig();
+const launch = computed(() => Date.now() >= config.public.startDate * 1000)
+
+const rsvpButton = ref<HTMLElement>();
+async function rsvp() {
+    if (loggedIn.value) {
+        try {
+            await $fetch('/api/rsvps', { method: "POST" });
+            rsvpButton.value!.innerText = "RSVP'd!";
+        } catch (err: any) {
+            if (err.statusCode === 409) {
+                rsvpButton.value!.innerText = "Already RSVP'd!";
+            } else {
+                rsvpButton.value!.innerText = "Error :(";
+            }
+        }
+    } else {
+        manager.open("auth", { rsvp: true });
+    }
+
+    setTimeout(() => {
+        rsvpButton.value!.innerText = "RSVP";
+    }, 5000);
+}
+
 async function login() {
     manager.open("auth", { rsvp: true });
+}
+
+async function logout() {
+    useUserSession().clear();
+    navigateTo("/", { external: true });
 }
 
 function openNextChanged() {
@@ -38,7 +68,7 @@ function openNextChanged() {
                 <img src="~/assets/logos/disposition.png" alt="Disposition Logo" class="logo" />
                 <span>
                     <h2>Welcome to Disposition!</h2>
-                    <p>a physical-media based ysws sponsored by Archer</p>
+                    <p>a physical-media based ysws sponsored by Archer (shoutout Archer)</p>
                 </span>
             </div>
 
@@ -58,10 +88,19 @@ function openNextChanged() {
                 </div>
 
                 <div class="buttons">
-                    <button @click="login">Log in</button>
+                    <AuthState v-slot="{ loggedIn }">
+                        <button ref="rsvpButton" v-if="!launch" @click="rsvp">RSVP</button>
+                        <button v-else-if="launch && loggedIn" @click="logout">Log out</button>
+                        <button v-else-if="launch && !loggedIn" @click="login">Log in</button>
+                    </AuthState>
                     <button @click="manager.open('documentation')">What's this about?</button>
-                    <button @click="manager.open('winver')">Information</button>
-                    <button @click="manager.open('config')">Config</button>
+                    <button @click="manager.open('shop')">Shop</button>
+
+                    <AuthState v-slot="{ loggedIn }">
+                        <button v-if="!launch" @click="manager.open('countdown')">Countdown</button>
+                        <button v-else-if="launch && loggedIn" @click="manager.open('manager')">DispoManager</button>
+                        <button v-else-if="launch && !loggedIn" @click="manager.open('config')">Config</button>
+                    </AuthState>
                 </div>
             </div>
 
