@@ -66,7 +66,7 @@ async function more() {
             <p>{{ props.notification.title }}</p>
             <button class="announcement-close" @click="close"></button>
         </div>
-        <p class="from">From <a @click="windowManager.open('profile', { id: props.notification.author!.id })">@{{
+        <p class="from">From <a class="streamer-sensitive" @click="windowManager.open('profile', { id: props.notification.author!.id })">@{{
             props.notification.author!.username }}</a></p>
 
         <div class="announcement-content">

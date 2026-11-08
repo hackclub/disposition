@@ -21,8 +21,8 @@ export default defineNuxtConfig({
 
 	runtimeConfig: {
 		hackclub: {
-			clientId: process.env.HCA_CLIENT_ID,
-			clientSecret: process.env.HCA_CLIENT_SECRET,
+			clientId: process.env.NUXT_HACKCLUB_CLIENT_ID || process.env.HCA_CLIENT_ID || '',
+			clientSecret: process.env.NUXT_HACKCLUB_CLIENT_SECRET || process.env.HCA_CLIENT_SECRET || '',
 		},
 
 		hackatime: {

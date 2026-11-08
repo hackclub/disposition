@@ -33,7 +33,7 @@ async function save() {
             </div>
             <div class="vertical fields">
                 <p><b>Price: </b>{{ order.item.price }}</p>
-                <p><b>Shipping address: </b>{{ order.shippingAddress.line1 }}, {{ order.shippingAddress.line2 ? order.shippingAddress.line2 + "," : "" }} {{
+                <p class="streamer-sensitive"><b>Shipping address: </b>{{ order.shippingAddress.line1 }}, {{ order.shippingAddress.line2 ? order.shippingAddress.line2 + "," : "" }} {{
                     order.shippingAddress.city }}, {{ order.shippingAddress.state }}, {{ order.shippingAddress.country }}, {{
                         order.shippingAddress.postalCode }}</p>
                 <p><b>Ordered on: </b>{{ new Date(order.timestamp).getDate() }}/{{ new Date(order.timestamp).getMonth()

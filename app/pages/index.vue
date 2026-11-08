@@ -23,6 +23,8 @@ const {
 
 const route = useRoute();
 const { showError } = useErrorHandler();
+const settings = useConfiguration("settings");
+const streamerMode = computed(() => settings.read("streamerMode") === true);
 
 onMounted(async () => {
     await nextTick();
@@ -70,32 +72,34 @@ const wallpaper = computed(() =>
 </script>
 
 <template>
-    <ClientOnly>
-        <div :style="{ backgroundImage: `url('${wallpaper}')` }" class="wallpaper"></div>
-    </ClientOnly>
+    <div :class="{ 'streamer-mode': streamerMode }">
+        <ClientOnly>
+            <div :style="{ backgroundImage: `url('${wallpaper}')` }" class="wallpaper"></div>
+        </ClientOnly>
 
-    <template v-for="w in windows" :key="w.id">
-        <Window v-if="fullscreenWindow ? w.fullscreen : (!wallpaperWindow || w.wallpaper)" :instance="w">
-            <Component :is="APPS[w.appId]?.component" :instance="w" v-bind="w.props" />
-        </Window>
-    </template>
-
-    <Taskbar v-if="!overlayWindow">
         <template v-for="w in windows" :key="w.id">
-            <TaskbarItem v-if="!w.tool" :instance="w" />
+            <Window v-if="fullscreenWindow ? w.fullscreen : (!wallpaperWindow || w.wallpaper)" :instance="w">
+                <Component :is="APPS[w.appId]?.component" :instance="w" v-bind="w.props" />
+            </Window>
         </template>
-    </Taskbar>
 
-    <ClientOnly>
-        <NotificationShim>
-            <Notification v-for="notification in notifications" :notification="notification"></Notification>
-        </NotificationShim>
-    </ClientOnly>
+        <Taskbar v-if="!overlayWindow">
+            <template v-for="w in windows" :key="w.id">
+                <TaskbarItem v-if="!w.tool" :instance="w" />
+            </template>
+        </Taskbar>
 
-    <ClientOnly v-if="!overlayWindow">
-        <BenjiBuddy v-if="useConfiguration('settings').read('showBuddies')" />
-        <AugustBuddy v-if="useConfiguration('settings').read('showBuddies')" />
-    </ClientOnly>
+        <ClientOnly>
+            <NotificationShim>
+                <Notification v-for="notification in notifications" :notification="notification"></Notification>
+            </NotificationShim>
+        </ClientOnly>
+
+        <ClientOnly v-if="!overlayWindow">
+            <BenjiBuddy v-if="settings.read('showBuddies')" />
+            <AugustBuddy v-if="settings.read('showBuddies')" />
+        </ClientOnly>
+    </div>
 </template>
 
 <style scoped>

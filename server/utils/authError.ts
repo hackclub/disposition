@@ -4,11 +4,17 @@ export function sendAuthError(event: H3Event, error: unknown) {
     const e = error as any;
     const data = e?.data ?? {};
 
-    const message = data.message
+    let message: string = data.message
         ?? data.statusMessage
         ?? e?.statusMessage
         ?? "Authentication failed.";
     const statusCode = e?.statusCode ?? e?.status ?? 500;
 
-    return sendRedirect(event, `/?error=${encodeURIComponent(String(message))}&errorCode=${encodeURIComponent(String(statusCode))}&message=${e?.message}`);
+    if(statusCode >= 500 && import.meta.dev)
+        throw error; // big smells let's not handle that
+
+    if(statusCode >= 500)
+        message = "The server encountered an error."; // let's not potentially leak sensitive information
+
+    return sendRedirect(event, `/?error=${encodeURIComponent(String(message))}&errorCode=${encodeURIComponent(String(statusCode))}&message=${encodeURIComponent(e?.message)}`);
 }

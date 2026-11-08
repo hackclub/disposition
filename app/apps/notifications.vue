@@ -73,7 +73,7 @@ onMounted(() => {
                     <div class="bar">
                         <p>{{ notif.title }}</p>
                     </div>
-                    <p class="from">From <a @click="windowManager.open('profile', { id: notif.author!.id })">@{{
+                    <p class="from">From <a class="streamer-sensitive" @click="windowManager.open('profile', { id: notif.author!.id })">@{{
                         notif.author!.username }}</a></p>
 
                     <div class="announcement-content">
