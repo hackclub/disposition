@@ -104,7 +104,7 @@ async function callback(result: boolean) {
                     <h2>Finish your order</h2>
 
                     <b>Shipping address</b>
-                    <select v-if="user.addresses" v-model="address">
+                    <select v-if="user.addresses" v-model="address" class="streamer-sensitive">
                         <template v-for="address in user.addresses">
                             <option :value="address.id">{{ address.line1 }}, {{ address.city }}, {{ address.state }}, {{
                                 address.country }}, {{ address.postalCode }}</option>

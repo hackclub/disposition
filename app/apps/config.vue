@@ -59,8 +59,6 @@ function handleImageFile(file: File) {
 
         <div class="main">
             <div v-if="currentTab == 'general'">
-                <!-- TODO: add streamer mode here (settings.streamerMode) -->
-
                 <label>
                     <input type="checkbox" v-model="showBuddies" @change="save('showBuddies', showBuddies)" />
                     Show desktop buddies
@@ -68,7 +66,7 @@ function handleImageFile(file: File) {
 
                 <label>
                     <input type="checkbox" v-model="streamerMode" @change="save('streamerMode', streamerMode)" />
-                    Streamer mode (blurs sensitive data)
+                    Streamer mode
                 </label>
             </div>
 

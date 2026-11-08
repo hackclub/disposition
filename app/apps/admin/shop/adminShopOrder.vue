@@ -59,7 +59,7 @@ async function save() {
                 <button @click="manager.open('profile', { id: order.user.hcaId })">Open User Profile</button>
 
                 <label>Shipping address:</label>
-                <p>{{ order.shippingAddress.line1 }}, {{ order.shippingAddress.line2 ? order.shippingAddress.line2 + "," : "" }} {{
+                <p class="streamer-sensitive">{{ order.shippingAddress.line1 }}, {{ order.shippingAddress.line2 ? order.shippingAddress.line2 + "," : "" }} {{
                     order.shippingAddress.city }}, {{ order.shippingAddress.state }}, {{ order.shippingAddress.country }}, {{
                         order.shippingAddress.postalCode }}</p>
             </div>

@@ -43,7 +43,7 @@ const launch = computed(() => Date.now() >= config.public.startDate * 1000)
                 <div v-else class="menu-item" @click="manager.open('auth')">Sign In</div>
 
                 <div class="menu-profile">
-                    <span v-if="loggedIn && info">
+                    <span v-if="loggedIn && info" class="streamer-sensitive">
                         <b>{{ info.displayName }}</b>
                         <img class="profile-pic" :src="info.imageUrl"></img>
                     </span>

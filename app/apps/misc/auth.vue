@@ -27,7 +27,7 @@ defineProps({
         <h2 class="heading">Log in with Hack Club Auth</h2>
 
         <form action="/oauth" method="get">
-            <input id="email" name="login_hint" type="email" placeholder="Input Email"
+            <input id="email" name="login_hint" type="email" placeholder="Input Email" class="streamer-sensitive"
                 pattern="^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$">
             <input type="hidden" id="rsvp" name="rsvp" :value="rsvp ? 'true' : 'false'" />
             <input class="login-btn" type="submit" value="Log in" />

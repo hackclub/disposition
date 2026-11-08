@@ -244,7 +244,7 @@ async function callback(event: H3Event) {
             slackId: identity.slack_id,
             email: identity.primary_email,
             name: `${identity.first_name} ${identity.last_name}`,
-            yswsEligible: identity.ysws_eligible,
+            yswsEligible: identity.ysws_eligible ?? true, // ditto
             verificationStatus: identity.verification_status,
         }).onConflictDoNothing();
     }

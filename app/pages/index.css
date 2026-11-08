@@ -66,6 +66,25 @@ body {
     color: var(--color-black);
 }
 
+.streamer-mode .streamer-sensitive {
+    position: relative;
+}
+
+.streamer-mode .streamer-sensitive::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: #000;
+    opacity: 1;
+    transition: opacity 120ms ease;
+    pointer-events: none;
+}
+
+.streamer-mode .streamer-sensitive:hover::after,
+.streamer-mode .streamer-sensitive:focus-within::after {
+    opacity: 0;
+}
+
 button {
     color: var(--color-black);
     border: 1px solid var(--color-border-light);
