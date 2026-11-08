@@ -1,5 +1,5 @@
 import type { BlobObject } from "@nuxthub/core/blob";
-import { eq } from "drizzle-orm";
+import { eq, isNull, and } from "drizzle-orm";
 import * as z from "zod";
 import { projects } from "~~/db/schema";
 import { ProjectPatchBody, ProjectAdminPatchBody } from "~~/server/utils/project/project";
@@ -12,7 +12,7 @@ export default defineEventHandler(async event => {
         id: z.coerce.number().int().positive(),
     }).parse);
 
-    const [existing] = await db.select().from(projects).where(eq(projects.id, id));
+    const [existing] = await db.select().from(projects).where(and(eq(projects.id, id), isNull(projects.deletedAt)));
     if (!existing) throw createError({ statusCode: 404, message: "Project not found" });
 
     const isOwner = session.user.id === existing.author;

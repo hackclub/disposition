@@ -1,6 +1,6 @@
-import { eq } from "drizzle-orm";
+import { eq, isNull, and } from "drizzle-orm";
 import * as z from "zod";
-import { projects } from "~~/db/schema";
+import { projects, ships } from "~~/db/schema";
 
 export default defineEventHandler(async event => {
     const session = await requireUserSession(event);
@@ -9,7 +9,7 @@ export default defineEventHandler(async event => {
         id: z.coerce.number().int().positive(),
     }).parse);
     
-    const [existing] = await db.select().from(projects).where(eq(projects.id, id));
+    const [existing] = await db.select().from(projects).where(and(eq(projects.id, id), isNull(projects.deletedAt)));
     if(!existing) throw createError({
         statusCode: 404,
         message: "Project not found"
@@ -18,6 +18,15 @@ export default defineEventHandler(async event => {
     if(session.user.id !== existing.author) throw createError({
         statusCode: 403,
         message: "Unauthorized to delete project"
+    })
+
+    const existingShips = await db.select().from(ships).where(and(
+        eq(ships.project, id),
+        isNull(ships.withdrawnAt),
+    ))
+    if(existingShips.length > 0) throw createError({
+        statusCode: 409,
+        message: "Cannot delete a project with unwithdrawn ships"
     })
 
     // fake ass delete

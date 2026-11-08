@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { eq, and, isNull } from "drizzle-orm";
 import * as z from "zod";
 import { projects } from "~~/db/schema";
 import { publicProjectColumns } from "~~/server/utils/project/project";
@@ -11,7 +11,16 @@ export default defineEventHandler(async event => {
         id: z.coerce.number().int().positive(),
     }).parse);
 
-    const [project] = admin ? await db.select().from(projects).where(eq(projects.id, id)) : await db.select(publicProjectColumns).from(projects).where(eq(projects.id, id));
+    const [project] = admin ? 
+        await db.select().from(projects).where(and(
+            eq(projects.id, id),
+            isNull(projects.deletedAt)
+        )) 
+        : await db.select(publicProjectColumns).from(projects).where(and(
+            eq(projects.id, id),
+            isNull(projects.deletedAt)
+        ));
+    
     if (!project) throw createError({
         statusCode: 404,
         message: "Project not found"

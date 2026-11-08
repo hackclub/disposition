@@ -40,8 +40,10 @@ onMounted(async () => {
     }
 
     // launch onboarding for logged in users that haven't finished it yet
+    const config = useRuntimeConfig();
+    const launch = computed(() => Date.now() >= config.public.startDate * 1000)
     const { loggedIn } = useUserSession();
-    if (loggedIn.value) {
+    if (loggedIn.value && launch) {
         const user = await $fetch<PrivateUser>("/api/user").catch(() => null);
         if (user && !user.onboardedAt) {
             if (!isTypeOpen("onboarding")) open("onboarding");

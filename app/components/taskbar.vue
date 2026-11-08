@@ -48,12 +48,14 @@ onUnmounted(() => clearInterval(timer));
 
         <div class="right">
             <!-- calendar, clock, announcements, idk -->
-            <div class="balance">
-                <img src="~/assets/icons/coin.png"></img>
-                {{ balance }}
-            </div>
+            <AuthState v-slot="{ loggedIn }">
+                <div class="balance" v-if="loggedIn">
+                    <img src="~/assets/icons/coin.png"></img>
+                    {{ balance }}
+                </div>
 
-            <div class="divider"></div>
+                <div class="divider" v-if="loggedIn"></div>
+            </AuthState>
 
             <div class="clock">
                 <div>{{ clockState }}</div>
@@ -179,10 +181,14 @@ onUnmounted(() => clearInterval(timer));
     background-color: transparent;
     background-size: contain;
 
-    &:hover {
+    &:focus {
         animation-name: spinny;
         animation-iteration-count: 1;
         animation-duration: 0.5s;
+    }
+
+    &:active {
+        animation: none;
     }
 }
 

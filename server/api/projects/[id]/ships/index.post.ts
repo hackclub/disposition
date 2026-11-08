@@ -1,7 +1,7 @@
 import { getSecondsSinceLastShip, ShipPostBody } from "~~/server/utils/project/project";
 import * as z from "zod";
 import { projects, ships, users } from "~~/db/schema";
-import { eq } from "drizzle-orm";
+import { eq, and, isNull, desc } from "drizzle-orm";
 import { getDBUser, isAdmin } from "~~/server/utils/requireAdmin"
 
 export default defineEventHandler(async event => {
@@ -21,7 +21,7 @@ export default defineEventHandler(async event => {
         data: z.flattenError(parsed.error)
     })
 
-    const [project] = await db.select().from(projects).where(eq(projects.id, parsed.data.project));
+    const [project] = await db.select().from(projects).where(and(eq(projects.id, parsed.data.project), isNull(projects.deletedAt)));
     if (!project) throw createError({
         statusCode: 404,
         message: "Project not found"
@@ -38,7 +38,18 @@ export default defineEventHandler(async event => {
         message: "AI/Update declaration must'nt be empty"
     })
 
+    const [lastShip] = await db.select().from(ships).where(and(eq(ships.project, parsed.data.project), isNull(ships.withdrawnAt), eq(ships.status, "idle"))).orderBy(desc(ships.timestamp));
+    if(lastShip) throw createError({
+        statusCode: 409,
+        message: "Cannot create another ship while your last one is still in queue."
+    })
+
     const seconds = await getSecondsSinceLastShip(parsed.data.project);
+    if(seconds === -1) throw createError({
+        statusCode: 500,
+        message: "An error occoured while getting the time since your last ship. Please try again"
+    })
+
     if (seconds < 3600) throw createError({
         statusCode: 400,
         message: "Must have atleast 1 hour logged before shipping"

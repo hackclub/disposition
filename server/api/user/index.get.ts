@@ -16,7 +16,7 @@ export default defineEventHandler(async event => {
     if (!result) {
         clearUserSession(event);
         throw createError({
-            statusCode: 404,
+            statusCode: 400,
             message: "Session expired! Please log in again"
         })
     }

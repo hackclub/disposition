@@ -1,5 +1,5 @@
 import * as z from "zod";
-import { desc, eq, getTableColumns, and, gt } from "drizzle-orm";
+import { desc, eq, getTableColumns, and, gt, isNull } from "drizzle-orm";
 import { projects, ships, users, devlogs } from "~~/db/schema";
 
 function getPublicProjectColumns() {
@@ -29,19 +29,17 @@ export const ProjectAdminPatchBody = z.object({
 })
 
 // ships // 
-const config = useRuntimeConfig();
 export async function getSecondsSinceLastShip(id: number): Promise<number> {
-    const [project] = await db.select().from(projects).where(eq(projects.id, id));
+    const [project] = await db.select().from(projects).where(and(eq(projects.id, id), isNull(projects.deletedAt)));
     if (!project) return -1;
 
     const [author] = await db.select().from(users).where(eq(users.hcaId, project.author));
     if (!author) return -1;
     if (!author.hackatimeToken) return -1;
 
-    const [lastShip] = await db.select().from(ships).where(eq(ships.project, id)).orderBy(desc(ships.timestamp));
+    const [lastShip] = await db.select().from(ships).where(and(eq(ships.project, id), isNull(ships.withdrawnAt))).orderBy(desc(ships.timestamp));
     const since = lastShip ? lastShip.timestamp : getLaunchDate();
 
-    // forEach doesn't wait for async callbacks, so this has to be Promise.all
     const details = await Promise.all(project.hackatimeProjects.map(hackatimeProject =>
         getProjectDetails(author.hackatimeToken!, hackatimeProject, author.slackId, since)
     ));

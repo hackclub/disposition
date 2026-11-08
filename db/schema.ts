@@ -88,6 +88,7 @@ export const ships = pgTable("ships", {
 	update: boolean().notNull().default(false),
 	updateDeclaration: text("update_declaration"),
 
+	withdrawnAt: timestamp({ mode: 'date', withTimezone: true }),
 	timestamp: timestamp({ mode: 'date', withTimezone: true }).defaultNow().notNull()
 }, (table) => [
 	index("fk_ships_users1_idx").on(table.user),
