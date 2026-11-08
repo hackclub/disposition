@@ -78,7 +78,6 @@
 
     .title-bar-text {
         color: var(--color-white);
-        font-family: 'Old Standard TT', serif;
         user-select: none;
     }
 }

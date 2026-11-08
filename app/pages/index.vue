@@ -24,9 +24,11 @@ const {
 const route = useRoute();
 const { showError } = useErrorHandler();
 const settings = useConfiguration("settings");
-const streamerMode = computed(() => settings.read("streamerMode") === true);
+const mounted = ref(false);
+const streamerMode = computed(() => mounted.value && settings.read("streamerMode") === true);
 
 onMounted(async () => {
+    mounted.value = true;
     await nextTick();
 
     // callback failures redirect here with an error message

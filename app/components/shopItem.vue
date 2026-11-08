@@ -17,38 +17,49 @@ const props = defineProps<{ item: Item }>()
 
 <style scoped>
 .item {
+    width: 132px;
+    min-height: 172px;
     border: 2px solid var(--color-border-light);
     background-color: var(--color-panel-bg);
     padding: 5px;
 
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: start;
-    gap: 2px;
+    align-items: stretch;
+    gap: 4px;
+    box-shadow: inset 0 0 0 1px var(--color-white);
 
     .cover {
-        width: 100px;
-        height: 100px;
+        width: 100%;
+        aspect-ratio: 1;
+        object-fit: cover;
+        border: 1px solid var(--color-border-dark);
+        box-shadow: 1px 1px 0 var(--color-white);
     }
 
     .album {
         margin: 0;
         font-weight: bold;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .artist {
         margin: 0;
+        color: var(--color-gray-dark);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .price {
         margin: 0;
-        text-align: right;
-        width: 100%;
-    }
-
-    &:hover {
-        cursor: pointer;
+        align-self: flex-end;
+        padding: 1px 4px;
+        border: 1px solid var(--color-border-dark);
+        background-color: var(--color-white);
+        font-weight: bold;
     }
 }
 </style>
