@@ -63,6 +63,11 @@ onMounted(async () => {
 const fullscreenWindow = computed(() => windows.value.find((w) => w.fullscreen));
 const wallpaperWindow = computed(() => windows.value.find((w) => w.wallpaper));
 const overlayWindow = computed(() => fullscreenWindow.value ?? wallpaperWindow.value);
+const displayedWindows = computed(() =>
+    windows.value.filter((w) => fullscreenWindow.value
+        ? w.fullscreen
+        : (!wallpaperWindow.value || w.wallpaper))
+);
 
 const wallpaper = computed(() =>
     wallpaperWindow.value?.wallpaper
@@ -77,11 +82,12 @@ const wallpaper = computed(() =>
             <div :style="{ backgroundImage: `url('${wallpaper}')` }" class="wallpaper"></div>
         </ClientOnly>
 
-        <template v-for="w in windows" :key="w.id">
-            <Window v-if="fullscreenWindow ? w.fullscreen : (!wallpaperWindow || w.wallpaper)" :instance="w">
+        <TransitionGroup name="window-spawn" tag="div" class="window-layer">
+            <Window v-for="w in displayedWindows"
+                :key="w.id" :instance="w">
                 <Component :is="APPS[w.appId]?.component" :instance="w" v-bind="w.props" />
             </Window>
-        </template>
+        </TransitionGroup>
 
         <Taskbar v-if="!overlayWindow">
             <template v-for="w in windows" :key="w.id">
