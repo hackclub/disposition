@@ -44,8 +44,8 @@ This product is licensed under the MIT license to:
 
 <style scoped>
 .logo {
-    width: 60px;
-    height: 60px;
+    width: 64px;
+    height: 64px;
 
     filter: drop-shadow(0 0 0.2rem var(--color-black));
 }
@@ -56,6 +56,7 @@ This product is licensed under the MIT license to:
 
     font-family: 'Joan', serif;
     user-select: none;
+    border-bottom: 1px solid var(--color-border-dark);
 
     h2 {
         font-weight: normal;
@@ -106,19 +107,32 @@ This product is licensed under the MIT license to:
 }
 
 .content {
+    width: 100%;
+    height: 100%;
+    background-color: var(--color-white);
     display: flex;
     flex-direction: column;
 }
 
 .main {
     padding: 10px;
+    flex: 1;
+    background: linear-gradient(135deg, var(--color-bg-light), var(--color-panel-bg));
 
     pre {
-        font-family: 'Fira Sans', sans-serif;
+        box-sizing: border-box;
+        width: 100%;
+        padding: 14px;
+        border: 2px solid var(--color-border-light);
+        background-color: var(--color-white);
+        box-shadow: inset 0 0 0 1px var(--color-panel-bg), 2px 2px 0 var(--color-shadow-dark);
 
+        font-family: 'Fira Sans', sans-serif;
         margin: 0;
-        font-size: 14px;
+        font-size: 13px;
+        line-height: 1.55;
         user-select: none;
+        white-space: pre-wrap;
     }
 }
 </style>

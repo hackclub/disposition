@@ -382,7 +382,7 @@ export const APPS: { [key: string]: AppDef } = {
         component: Winver,
 
         minWidth: 650,
-        minHeight: 300,
+        minHeight: 400,
 
         tool: true,
         resizeable: false
