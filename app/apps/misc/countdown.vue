@@ -44,9 +44,19 @@ const tiles = computed(() => {
 </script>
 
 <template>
-    <div class="countdown">
-        <img class="logo" :src="logo" alt="Disposition">
+    <div class="header">
+        <div class="striped-bg">
+            <img src="~/assets/logos/countdown.png" alt="tick tock" class="logo" />
+            <span>
+                <h2>Countdown</h2>
+                <p>time left until the platform unlocks!</p>
+            </span>
+        </div>
 
+        <div class="spacer"></div>
+    </div>
+
+    <div class="countdown">
         <div class="tiles">
             <template v-for="(tile, i) in tiles" :key="tile.label">
                 <div class="tile">
@@ -63,7 +73,7 @@ const tiles = computed(() => {
 
         <h2 class="label">Time left until we launch!</h2>
         <p class="text">
-            Get ready for the coolest YSWS that you’ve ever seen in your entire life!
+            Get ready for the coolest YSWS that you’ve ever seen in your entire life! (source: trust me)
         </p>
     </div>
 </template>
@@ -177,5 +187,63 @@ const tiles = computed(() => {
     text-align: center;
     font-size: 14px;
     line-height: 1.45;
+}
+
+.logo {
+    width: 60px;
+    height: 60px;
+
+    filter: drop-shadow(0 0 0.2rem var(--color-black));
+}
+
+.header {
+    display: flex;
+    flex-direction: column;
+
+    font-family: 'Joan', serif;
+    user-select: none;
+}
+
+.striped-bg {
+    span {
+        display: flex;
+        justify-content: center;
+        align-items: start;
+        flex-direction: column;
+
+        h2 {
+            margin: 0;
+            font-weight: normal;
+            filter: drop-shadow(1px 1px 5px var(--color-black));
+        }
+
+        p {
+            margin: 0;
+            filter: drop-shadow(1px 1px 5px var(--color-black));
+        }
+    }
+
+    width: 100%;
+
+    background: repeating-linear-gradient(0deg,
+        var(--color-gray-light) 0px,
+        var(--color-gray-light) 6px,
+        var(--color-gray-medium) 6px,
+        var(--color-gray-medium) 7px);
+    height: 80px;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: center;
+    padding-left: 7px;
+    gap: 2px;
+}
+
+.spacer {
+    width: 100%;
+    height: 12px;
+    border: 1px solid var(--color-border-light);
+    background-color: var(--color-panel-bg);
 }
 </style>
