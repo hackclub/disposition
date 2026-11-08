@@ -126,7 +126,7 @@ export const devlogComments = pgTable("devlog_comments", {
 	author: varchar({ length: 16 }).notNull().references(() => users.hcaId),
 
 	content: text().notNull(),
-	tiemstamp: timestamp({ mode: 'date', withTimezone: true }).notNull().defaultNow(),
+	timestamp: timestamp({ mode: 'date', withTimezone: true }).notNull().defaultNow(),
 }, (table) => [
 	index("fk_devlog_comments_users1_idx").on(table.author),
 	index("fk_devlog_comments_devlogs1_idx").on(table.devlog),

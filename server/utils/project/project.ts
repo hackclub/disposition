@@ -22,6 +22,12 @@ export const ProjectPatchBody = z.object({
     repository: z.string().optional(),
     demo: z.string().optional(),
     hackatimeProjects: z.array(z.string()).optional(),
+
+    ai: z.stringbool().optional(),
+    aiDeclaration: z.string().optional(),
+
+    update: z.stringbool().optional(),
+    updateDeclaration: z.string().optional(),
 })
 
 export const ProjectAdminPatchBody = z.object({
@@ -81,9 +87,9 @@ export const ShipPostBody = z.object({
     updateDeclaration: z.string().optional()
 })
 
-export const ShipAdminPatchBody = z.object({
-    overrideHours: z.number().optional(),
-    overrideReason: z.string().optional(),
-    internalMessage: z.string().optional(),
-    statusMessage: z.string(),
-})
+// export const ShipAdminPatchBody = z.object({
+//     overrideHours: z.number().optional(),
+//     overrideReason: z.string().optional(),
+//     internalMessage: z.string().optional(),
+//     statusMessage: z.string(),
+// }) // handled by ari
