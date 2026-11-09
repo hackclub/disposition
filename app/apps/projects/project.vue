@@ -5,6 +5,9 @@ import heart from '~/assets/icons/heart.png'
 import comment from '~/assets/icons/comment.png'
 import devlogPhoto from '~/assets/misc/devlog-photo.png'
 
+const props = defineProps<{ instance: WindowInstance, id: number }>();
+
+
 interface Devlog {
     id: number
     project: string

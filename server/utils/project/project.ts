@@ -54,6 +54,23 @@ export async function getSecondsSinceLastShip(id: number): Promise<number> {
     return seconds;
 }
 
+export async function getTotalSeconds(id: number): Promise<number> {
+    const [project] = await db.select().from(projects).where(and(eq(projects.id, id), isNull(projects.deletedAt)));
+    if (!project) return -1;
+
+    const [author] = await db.select().from(users).where(eq(users.hcaId, project.author));
+    if (!author) return -1;
+    if (!author.hackatimeToken) return -1;
+    const since = getLaunchDate();
+
+    const details = await Promise.all(project.hackatimeProjects.map(hackatimeProject =>
+        getProjectDetails(author.hackatimeToken!, hackatimeProject, author.slackId, since)
+    ));
+    const seconds = details.reduce((total, d) => total + d.total_seconds, 0);
+
+    return seconds;
+}
+
 // export async function getSecondsSinceLastDevlog(id: number): Promise<number> {
 //     const [project] = await db.select().from(projects).where(eq(projects.id, id));
 //     if (!project) return -1;
@@ -75,6 +92,19 @@ export async function getSecondsSinceLastShip(id: number): Promise<number> {
 
 //     return seconds;
 // }
+
+function getPublicShipColumns() {
+    const { hackatimeProjects, statusMessage, reviewerNote, overrideSeconds, overrideReason, internalMessage, ai, aiDeclaration, update, updateDeclaration, withdrawnAt, ...publicShipColumns } = getTableColumns(ships);
+    return publicShipColumns 
+}
+
+function getPrivateShipColumns() {
+    const { internalMessage, overrideSeconds, overrideReason, withdrawnAt, ...privateShipColumns } = getTableColumns(ships);
+    return privateShipColumns 
+}
+
+export const publicShipColumns = getPublicShipColumns()
+export const privateShipColumns = getPrivateShipColumns()
 
 export const ShipPostBody = z.object({
     project: z.number().min(1),

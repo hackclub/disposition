@@ -40,7 +40,7 @@ import onboardingWallpaper from "../assets/misc/onboardingBackground.png"
 // apps/projects
 import projectManager from "../apps/projects/projectManager.vue"
 import ProjectBrowser from "../apps/projects/projectBrowser.vue"
-import ProjectProfile from "../apps/projects/projectProfile.vue"
+import Project from "../apps/projects/project.vue"
 import ProjectEdit from "../apps/projects/projectEdit.vue"
 import DevlogView from "../apps/projects/devlogView.vue"
 import NewDevlog from "../apps/projects/newDevlog.vue"
@@ -438,9 +438,9 @@ export const APPS: { [key: string]: AppDef } = {
     },
 
     project_profile: {
-        appId: 'project_profile',
-        title: "Project Profile",
-        component: ProjectProfile,
+        appId: 'project',
+        title: "Project Viewer",
+        component: Project,
 
         minHeight: 700,
         minWidth: 450,
