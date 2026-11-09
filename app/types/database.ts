@@ -132,3 +132,35 @@ export type Request = {
     status: RequestStatus,
     message?: string
 }
+
+export type ServerProject = {
+    id: number,
+    author: {
+        hcaId: string,
+        slackId: string,
+        username: string
+    },
+
+    title: string,
+    description: string,
+    devlogs: {
+        id: number,
+        project: number,
+        linkedShip: number,
+        author: string,
+
+        title: string,
+        description: string,
+        attachments: string[],
+        
+        timestamp: Date,
+    },
+
+    hackatimeSeconds: number,
+    banner: string,
+    repository: string,
+    demo: string,
+    
+    timestamp: Date,
+    platinum: boolean
+}

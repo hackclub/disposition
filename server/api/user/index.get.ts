@@ -3,12 +3,12 @@ import { addresses, users } from "~~/db/schema";
 
 export default defineEventHandler(async event => {
     const session = await requireUserSession(event);
-    const privateUserColumnsMask = Object.fromEntries(
+    const mask = Object.fromEntries(
         Object.keys(privateUserColumns).map(key => [key, true])
     ) as Record<keyof typeof privateUserColumns, true>;
 
     const result = await db.query.users.findFirst({
-        columns: privateUserColumnsMask,
+        columns: mask,
         where: eq(users.hcaId, session.user.id),
         with: { addresses: true }
     })
