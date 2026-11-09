@@ -39,8 +39,8 @@ const launch = computed(() => Date.now() >= config.public.startDate * 1000)
                 <div class="menu-item" @click="manager.open('run')">DispoRun</div>
                 <div class="menu-item" @click="manager.open('winver')">DispoVer</div>
 
-                <div v-if="loggedIn" class="menu-item" @click="clear">Sign Out</div>
-                <div v-else class="menu-item" @click="manager.open('auth')">Sign In</div>
+                <div v-if="loggedIn" class="menu-item" @click="clear">Log out</div>
+                <div v-else class="menu-item" @click="manager.open('auth')">Log In</div>
 
                 <div class="menu-profile">
                     <span v-if="loggedIn && info" class="streamer-sensitive">

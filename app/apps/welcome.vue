@@ -51,11 +51,6 @@ async function login() {
     manager.open("auth", { rsvp: true });
 }
 
-async function logout() {
-    useUserSession().clear();
-    navigateTo("/", { external: true });
-}
-
 function openNextChanged() {
     write("openNext", openNext.value);
 }
@@ -88,9 +83,9 @@ function openNextChanged() {
                 </div>
 
                 <div class="buttons">
-                    <AuthState v-slot="{ loggedIn }">
+                    <AuthState v-slot="{ loggedIn, clear }">
                         <button ref="rsvpButton" v-if="!launch" @click="rsvp">RSVP</button>
-                        <button v-else-if="launch && loggedIn" @click="logout">Log out</button>
+                        <button v-else-if="launch && loggedIn" @click="clear">Log out</button>
                         <button v-else-if="launch && !loggedIn" @click="login">Log in</button>
                     </AuthState>
                     <button @click="manager.open('documentation')">What's this about?</button>

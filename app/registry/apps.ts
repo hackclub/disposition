@@ -38,7 +38,7 @@ import Onboarding from "../apps/onboarding/onboarding.vue"
 import onboardingWallpaper from "../assets/misc/onboardingBackground.png"
 
 // apps/projects
-import projectManager from "../apps/projects/projectManager.vue"
+import projectManager from "../apps/projects/manager.vue"
 import ProjectBrowser from "../apps/projects/projectBrowser.vue"
 import ProjectProfile from "../apps/projects/projectProfile.vue"
 import ProjectEdit from "../apps/projects/projectEdit.vue"

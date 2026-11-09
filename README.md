@@ -72,6 +72,7 @@ and also the user should be able to request items and have like a message to the
 200 billion edgecases. but i guess its not as bad as the post for ships.
 
 ### ships, projects, devlogs and whatnot
+
 since this is my first time ever programming a ysws platform (there's a first time for everything i guess), ships/projects seemed really daunting to me at first because i know that i should store a lot of data to make sure that fraud checks and reviewing are a bit more convenient. turns out, I was wrong!
 
 Halfway through third space, macondo open sourced (shoutout santi and nathan) and they use like basically the same stack so i was able to take a peek at their db schema. apparnetly, you dont actually have to store 1gb of data per project or whatever the hell i was thinking.

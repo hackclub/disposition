@@ -10,6 +10,7 @@ const session = await useUserSession();
 const balance = ref<number>();
 const user = ref<PrivateUser>();
 if (session.loggedIn.value) {
+    console.log("fuck you")
     const { data: balanceData } = await useFetch<number>("/api/user/balance", { key: "balance" });
     const { data: userData } = await useFetch<PrivateUser>("/api/user");
     balance.value = balanceData.value;
