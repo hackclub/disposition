@@ -49,7 +49,7 @@ export default defineNuxtConfig({
 			baseUrl: "http://localhost:3000",
 			adminIds: ["U0A9S13HQF3", "U0AFWJX9CP2", "U0A9M9LC5PV", "U0CEH91FFHD"], // org slack ids
 			//startDate: 1796076000, // 01/12/2026 00:00 bucharest time :3
-			startDate: 1700000000,
+			startDate: 1793904067,
 
 			defaultConfig: {
 				onboarding: {}, // step doesn't exist => onboarding doesn't auto launch

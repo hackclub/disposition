@@ -21,7 +21,7 @@ function submit() {
     if (open(query.value.trim())) {
         manager.close(props.instance.id);
     } else {
-        // whatever, it just closes for now
+        manager.messageBox("Error!", "Couldn't open this app!", { error: true })
     }
 }
 

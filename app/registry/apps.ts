@@ -1,4 +1,4 @@
-import type { AppDef } from "../types/window"
+import type { AppDef } from "../types/window.ts"
 
 // apps/
 import Welcome from "../apps/welcome.vue"
@@ -61,6 +61,7 @@ import ProfileEdit from "../apps/users/profileEdit.vue"
 // components (system dialogs)
 import Messagebox from "../components/messageBox.vue"
 import Dialogbox from "../components/dialogBox.vue"
+import NewProject from "~/apps/projects/newProject.vue"
 
 // don't ask me why, but all app id's should be snake case.
 export const APPS: { [key: string]: AppDef } = {
@@ -410,8 +411,8 @@ export const APPS: { [key: string]: AppDef } = {
     // apps/projects                             //
     ///////////////////////////////////////////////
 
-    project_manager: {
-        appId: 'project_manager',
+    manager: {
+        appId: 'manager',
         title: 'DispoManager',
         component: projectManager,
         height: 615,
@@ -421,6 +422,20 @@ export const APPS: { [key: string]: AppDef } = {
         tool: false,
         resizeable: false,
         hiddenUntilLaunch: true
+    },
+
+    new_project: {
+        appId: 'new_project',
+        title: "Project Creation Wizard",
+        component: NewProject,
+
+        minWidth: 600,
+        minHeight: 470,
+
+        tool: true, // can't minimize xdxd
+        resizeable: false,
+        hidden: true,
+        wallpaper: onboardingWallpaper,
     },
 
     project_browser: {

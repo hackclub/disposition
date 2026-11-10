@@ -158,6 +158,7 @@ export type ServerProject = {
 
     hackatimeSeconds: number,
     banner: string,
+    icon: string,
     repository: string,
     demo: string,
     

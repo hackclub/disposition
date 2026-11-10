@@ -103,7 +103,7 @@ button {
     }
 
     &:disabled {
-        cursor: not-allowed;
+        cursor: not-allowed; /* TODO: better style for this */
     }
 }
 

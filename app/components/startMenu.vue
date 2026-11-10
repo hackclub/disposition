@@ -24,7 +24,7 @@ const launch = computed(() => Date.now() >= config.public.startDate * 1000)
 
                 <div class="apps">
                     <template v-for="app in APPS">
-                        <div v-if="!app.tool && !app.hidden && !(app.hiddenUntilLaunch && !launch)" class="app" @click="manager.open(app.appId)">
+                        <div v-if="!app.tool && !app.hidden && !(app.hiddenUntilLaunch && !launch) && !(app.hiddenAfterLaunch && launch)" class="app" @click="manager.open(app.appId)">
                             <img :src="ICONS[app.appId]" />
                             <p>{{ app.title }}</p>
                         </div>

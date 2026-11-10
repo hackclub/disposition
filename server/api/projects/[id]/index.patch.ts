@@ -23,7 +23,12 @@ export default defineEventHandler(async event => {
 
     const schema = admin ? (isOwner ? ProjectPatchBody : ProjectAdminPatchBody) : ProjectPatchBody;
     const form = await readFormData(event);
-    const parsed = schema.safeParse(Object.fromEntries(form));
+    // Object.fromEntries only keeps the last value of a repeated key, so collect the array field separately.
+    // only include it when it was sent, otherwise every PATCH would wipe the linked projects
+    const parsed = schema.safeParse({
+        ...Object.fromEntries(form),
+        ...(form.has("hackatimeProjects") && { hackatimeProjects: form.getAll("hackatimeProjects") }),
+    });
     if (!parsed.success) throw createError({
         statusCode: 400,
         message: "Invalid input",
@@ -31,34 +36,47 @@ export default defineEventHandler(async event => {
     });
 
     // only the project's owner can change the banner
-    const { banner, ...data } = parsed.data as z.infer<typeof ProjectPatchBody>;
+    const { banner, icon, ...data } = parsed.data as z.infer<typeof ProjectPatchBody>;
     const bannerFile = isOwner && banner instanceof File && banner.size > 0 ? banner : undefined;
+    const iconFile = isOwner && icon instanceof File && icon.size > 0 ? icon : undefined;
 
-    if (!Object.keys(data).length && !bannerFile) throw createError({
+    if (!Object.keys(data).length && !bannerFile && !iconFile) throw createError({
         statusCode: 400,
         message: "Nothing to update"
     });
 
-    let newImage: BlobObject | undefined;
+    let newBanner: BlobObject | undefined;
+    let newIcon: BlobObject | undefined;
     if (bannerFile) {
         validateImage(bannerFile);
-        newImage = await blob.put(bannerFile.name, bannerFile, {
+        newBanner = await blob.put(bannerFile.name, bannerFile, {
             addRandomSuffix: true,
             prefix: "projects",
         });
     }
 
+    if (iconFile) {
+        validateImage(iconFile);
+        newIcon = await blob.put(iconFile.name, iconFile, {
+            addRandomSuffix: true,
+            prefix: "projects"
+        })
+    }
+
     try {
         await db
             .update(projects)
-            .set({ ...data, ...(newImage && { banner: newImage.pathname }) })
+            .set({
+                ...data,
+                ...(newBanner && { banner: newBanner.pathname }),
+                ...(newIcon && { icon: newIcon.pathname })
+            })
             .where(eq(projects.id, id));
     } catch (err) {
-        if (newImage) await blob.delete(newImage.pathname).catch(() => { });
+        if (newBanner) await blob.delete(newBanner.pathname).catch(() => { });
         throw err;
     }
 
-    if (newImage && existing.banner) {
-        await blob.delete(existing.banner).catch(() => { });
-    }
+    if (newBanner && existing.banner) await blob.delete(existing.banner).catch(() => { });
+    if (newIcon && existing.icon) await blob.delete(existing.icon).catch(() => { });
 });

@@ -7,11 +7,25 @@ function getPublicProjectColumns() {
     return publicProjectColumns;
 }
 
-export const publicProjectColumns = getPublicProjectColumns()
+function getPrivateProjectColumns() {
+    const { deletedAt, ...privateProjectColumns } = getTableColumns(projects);
+    return privateProjectColumns;
+}
 
+export const publicProjectColumns = getPublicProjectColumns()
+export const privateProjectColumns = getPrivateProjectColumns();
+
+// modelled after the project setup wizard thing. i don't ask for a demo url on new project because that would be stupid
+// same applies to the ai declaration and update declaration
 export const ProjectPostBody = z.object({
     title: z.string().min(1),
     description: z.string().min(1),
+
+    // banner: z.instanceof(File).optional(),
+    // icon: z.instanceof(File).optional(),
+    repository: z.string().optional(),
+    // demo: z.string().optional(),
+    hackatimeProjects: z.array(z.string()).optional(),
 })
 
 export const ProjectPatchBody = z.object({
@@ -19,6 +33,7 @@ export const ProjectPatchBody = z.object({
     description: z.string().optional(),
 
     banner: z.instanceof(File).optional(),
+    icon: z.instanceof(File).optional(),
     repository: z.string().optional(),
     demo: z.string().optional(),
     hackatimeProjects: z.array(z.string()).optional(),
@@ -49,7 +64,7 @@ export async function getSecondsSinceLastShip(id: number): Promise<number> {
     const details = await Promise.all(project.hackatimeProjects.map(hackatimeProject =>
         getProjectDetails(author.hackatimeToken!, hackatimeProject, author.slackId, since)
     ));
-    const seconds = details.reduce((total, d) => total + d.total_seconds, 0);
+    const seconds = details.reduce((total, d) => total + (d?.total_seconds ?? 0), 0);
 
     return seconds;
 }
@@ -66,7 +81,7 @@ export async function getTotalSeconds(id: number): Promise<number> {
     const details = await Promise.all(project.hackatimeProjects.map(hackatimeProject =>
         getProjectDetails(author.hackatimeToken!, hackatimeProject, author.slackId, since)
     ));
-    const seconds = details.reduce((total, d) => total + d.total_seconds, 0);
+    const seconds = details.reduce((total, d) => total + (d?.total_seconds ?? 0), 0);
 
     return seconds;
 }
@@ -95,12 +110,12 @@ export async function getTotalSeconds(id: number): Promise<number> {
 
 function getPublicShipColumns() {
     const { hackatimeProjects, statusMessage, reviewerNote, overrideSeconds, overrideReason, internalMessage, ai, aiDeclaration, update, updateDeclaration, withdrawnAt, ...publicShipColumns } = getTableColumns(ships);
-    return publicShipColumns 
+    return publicShipColumns
 }
 
 function getPrivateShipColumns() {
     const { internalMessage, overrideSeconds, overrideReason, withdrawnAt, ...privateShipColumns } = getTableColumns(ships);
-    return privateShipColumns 
+    return privateShipColumns
 }
 
 export const publicShipColumns = getPublicShipColumns()

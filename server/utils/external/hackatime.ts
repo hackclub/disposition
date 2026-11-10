@@ -58,8 +58,14 @@ export type HackatimeProjectDetails = {
     archived: boolean
 }
 
-export async function getProjectDetails(token: string, project: string, slackId: string, since?: Date): Promise<HackatimeProjectDetails> {
-    return call<HackatimeProjectDetails>(token, `users/${encodeURIComponent(slackId)}/project/${encodeURIComponent(project)}`, {
-        start: (since ?? getLaunchDate()).toISOString()
-    });
+export async function getProjectDetails(token: string, project: string, slackId: string, since?: Date): Promise<HackatimeProjectDetails | null> {
+    try {
+        return await call<HackatimeProjectDetails>(token, `users/${encodeURIComponent(slackId)}/project/${encodeURIComponent(project)}`, {
+            start: (since ?? getLaunchDate()).toISOString(),
+            start_date: (since ?? getLaunchDate()).toISOString(),
+        });
+    } catch (error: any) {
+        if ((error?.statusCode ?? error?.response?.status) === 404) return null;
+        throw error;
+    }
 }

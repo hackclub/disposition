@@ -20,7 +20,7 @@ const { data: item } = await useFetch<ServerItem>(`/api/shop/items/${props.id}`)
 
 
 const address = ref<string>();
-if (user.value && user.value.addresses) {
+if (session.loggedIn.value && user.value && user.value.addresses) {
     address.value = user.value.addresses.find((address) => address.primary)?.id;
 }
 

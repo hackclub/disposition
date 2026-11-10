@@ -48,7 +48,6 @@ export default defineEventHandler(async event => {
         message: "Project not found"
     })
 
-    
     return {
         ...project,
         hackatimeSeconds: await getTotalSeconds(id)

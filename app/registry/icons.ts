@@ -9,8 +9,9 @@ import countdownIcon from "~/assets/icons/countdown.png"
 import feedbackPostIcon from "~/assets/icons/feedback.png"
 import managerIcon from "~/assets/icons/manager.png"
 import errorIcon from "~/assets/icons/error.png"
+
 export const ICONS: { [key: string]: string } = {
-    project_manager: managerIcon,
+    manager: managerIcon,
     feedback: feedbackPostIcon,
     countdown: countdownIcon,
     project_browser: projectBrowserIcon,

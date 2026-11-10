@@ -3,7 +3,7 @@ import type { NotificationInstance } from '~/types/notification';
 import { Markdown } from '@comark/vue';
 import { parseMarkdown } from 'comark';
 import { renderMarkdown } from 'comark/render';
-import { truncateComark, visibleLength } from '~/utils/index'; // the functions from before, exported
+import { truncateComark, visibleLength } from '~/utils/index';
 
 const props = defineProps<{ notification: NotificationInstance }>();
 const session = useUserSession();
