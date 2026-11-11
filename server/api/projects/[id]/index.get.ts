@@ -29,15 +29,17 @@ export default defineEventHandler(async event => {
 
     const project = await db.query.projects.findFirst({
         columns: mask,
+        // admins can still look at deleted projects
         where: and(
             eq(projects.id, id),
-            isNull(projects.deletedAt)
+            admin ? undefined : isNull(projects.deletedAt)
         ),
         with: {
             author: { columns: { hcaId: true, slackId: true, username: true } },
             devlogs: { columns: devlogsMask },
             ships: {
-                where: (ships, { isNull }) => isNull(ships.withdrawnAt),
+                // admins also see withdrawn ships
+                where: (ships, { isNull }) => admin ? undefined : isNull(ships.withdrawnAt),
                 columns: shipsMask
             },
         },

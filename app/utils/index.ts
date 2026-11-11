@@ -28,9 +28,23 @@ export function formatTimestamp(value: string | number | Date): string {
     return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()} ${pad(hours12)}:${pad(d.getMinutes())} ${ampm}`;
 }
 
+export function timeAgo(value: string | number | Date): string {
+    const seconds = Math.floor((Date.now() - new Date(value).getTime()) / 1000);
+    if (isNaN(seconds)) return "";
+    if (seconds < 60) return "just now";
+
+    const units: [string, number][] = [["y", 31536000], ["mo", 2592000], ["d", 86400], ["h", 3600], ["m", 60]];
+    for (const [unit, size] of units) {
+        if (seconds >= size) return `${Math.floor(seconds / size)}${unit} ago`;
+    }
+    return "just now";
+}
+
 // truncating markdown and shi. god bless claude sonnet 5.5 //
 
 import type { Node, ElementNode } from 'comark';
+import { parseMarkdown } from 'comark';
+import { renderMarkdown } from 'comark/render';
 
 export function visibleLength(nodes: Node[]): number {
     return nodes.reduce((sum, n) =>
@@ -61,6 +75,13 @@ function truncateNodes(nodes: Node[], budget: { left: number }): Node[] {
 export function truncateComark(nodes: Node[], max = 150): Node[] {
     if (visibleLength(nodes) <= max) return nodes;
     return truncateNodes(nodes, { left: max });
+}
+
+/* cuts markdown down to `max` visible characters. `truncated` says whether anything got cut (so you know to show "see more") */
+export async function limitMarkdown(source: string, max = 150): Promise<{ text: string, truncated: boolean }> {
+    const doc = await parseMarkdown(source);
+    if (visibleLength(doc.nodes) <= max) return { text: source, truncated: false }; // fits, so no round-trip
+    return { text: await renderMarkdown({ ...doc, nodes: truncateComark(doc.nodes, max) }), truncated: true };
 }
 
 // file bullshit //

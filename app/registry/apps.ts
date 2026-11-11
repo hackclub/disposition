@@ -23,6 +23,11 @@ import AdminShopEditItem from "../apps/admin/shop/adminShopEditItem.vue"
 import AdminShopOrder from "../apps/admin/shop/adminShopOrder.vue"
 import AdminShopRequest from "../apps/admin/shop/adminShopRequest.vue"
 
+// apps/admin/projects
+import AdminProjects from "../apps/admin/projects/adminProjects.vue"
+import AdminProject from "../apps/admin/projects/adminProject.vue"
+import AdminShip from "../apps/admin/projects/adminShip.vue"
+
 // apps/misc
 import Auth from "../apps/misc/auth.vue"
 import Countdown from "../apps/misc/countdown.vue"
@@ -38,11 +43,10 @@ import Onboarding from "../apps/onboarding/onboarding.vue"
 import onboardingWallpaper from "../assets/misc/onboardingBackground.png"
 
 // apps/projects
-import projectManager from "../apps/projects/manager.vue"
-import ProjectBrowser from "../apps/projects/projectBrowser.vue"
+import Manager from "../apps/projects/manager.vue"
 import Project from "../apps/projects/project.vue"
 import ProjectEdit from "../apps/projects/projectEdit.vue"
-import DevlogView from "../apps/projects/devlogView.vue"
+import Devlog from "../apps/projects/devlog.vue"
 import NewDevlog from "../apps/projects/newDevlog.vue"
 
 // apps/shop
@@ -276,6 +280,49 @@ export const APPS: { [key: string]: AppDef } = {
     },
 
     ///////////////////////////////////////////////
+    // apps/admin/projects                       //
+    ///////////////////////////////////////////////
+
+    admin_projects: {
+        appId: 'admin_projects',
+        title: 'DispoAdminProjectThing',
+        component: AdminProjects,
+
+        minWidth: 600,
+        minHeight: 500,
+
+        tool: false,
+        resizeable: true,
+        hidden: true
+    },
+
+    admin_project: {
+        appId: 'admin_project',
+        title: 'View Project (admin)',
+        component: AdminProject,
+
+        minWidth: 500,
+        minHeight: 600,
+
+        tool: true,
+        resizeable: true,
+        hidden: true
+    },
+
+    admin_ship: {
+        appId: 'admin_ship',
+        title: 'View Ship (admin)',
+        component: AdminShip,
+
+        minWidth: 500,
+        minHeight: 600,
+
+        tool: true,
+        resizeable: true,
+        hidden: true
+    },
+
+    ///////////////////////////////////////////////
     // apps/misc                                 //
     ///////////////////////////////////////////////
 
@@ -414,7 +461,7 @@ export const APPS: { [key: string]: AppDef } = {
     manager: {
         appId: 'manager',
         title: 'DispoManager',
-        component: projectManager,
+        component: Manager,
         height: 615,
         minWidth: 536,
         minHeight: 515,
@@ -438,21 +485,7 @@ export const APPS: { [key: string]: AppDef } = {
         wallpaper: onboardingWallpaper,
     },
 
-    project_browser: {
-        appId: 'project_browser',
-        title: "Project Browser",
-        component: ProjectBrowser,
-
-        width: 500,
-        minHeight: 700,
-        minWidth: 450,
-
-        tool: false,
-        resizeable: false,
-        hiddenUntilLaunch: true,
-    },
-
-    project_profile: {
+    project: {
         appId: 'project',
         title: "Project Viewer",
         component: Project,
@@ -481,10 +514,10 @@ export const APPS: { [key: string]: AppDef } = {
         hiddenUntilLaunch: true,
     },
 
-    devlog_view: {
-        appId: 'devlog_view',
-        title: "Project Name | Devlog name",
-        component: DevlogView,
+    devlog: {
+        appId: 'devlog',
+        title: "Devlog Viewer",
+        component: Devlog,
 
         width: 500,
         minHeight: 700,
@@ -604,8 +637,8 @@ export const APPS: { [key: string]: AppDef } = {
     // apps/users                                //
     ///////////////////////////////////////////////
 
-    profile_viewer: {
-        appId: 'profile_viewer',
+    profile: {
+        appId: 'profile',
         title: 'Profile Viewer',
         component: profileViewer,
         minWidth: 541,
@@ -613,7 +646,7 @@ export const APPS: { [key: string]: AppDef } = {
 
         tool: false,
         resizeable: false,
-        hidden: true,
+        hidden: false,
         hiddenUntilLaunch: true
     },
 

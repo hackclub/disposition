@@ -23,5 +23,6 @@ export const ICONS: { [key: string]: string } = {
     shop: shopIcon,
     notifications: notificationsIcon,
     admin_shop: shopIcon,
+    admin_projects: managerIcon,
     evil: errorIcon
 }

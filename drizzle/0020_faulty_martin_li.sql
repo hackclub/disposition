@@ -1,0 +1,1 @@
+ALTER TABLE "ships" ADD COLUMN "attachments" text[] DEFAULT '{}' NOT NULL;

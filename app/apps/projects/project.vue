@@ -1,80 +1,35 @@
 <script setup lang="ts">
-import rigby from '~/assets/misc/rigby.jpg'
+import { Markdown } from '@comark/vue'
+import projectImage from '~/assets/misc/project.jpg'
 import badge from '~/assets/icons/badge.png'
-import heart from '~/assets/icons/heart.png'
-import comment from '~/assets/icons/comment.png'
-import devlogPhoto from '~/assets/misc/devlog-photo.png'
+import type { ServerProject } from '~/types/database'
+import type { WindowInstance } from '~/types/window'
 
 const props = defineProps<{ instance: WindowInstance, id: number }>();
+const manager = useWindowManager();
+const { data: project } = await useFetch<ServerProject>(`/api/projects/${props.id}`);
 
-
-interface Devlog {
-    id: number
-    project: string
-    number: number
-    author: string
-    posted: string
-    paragraphs: string[]
-    likes: number
-    comments: number
-    hoursLogged: string
-    photo?: string
-}
-
-const aboutText = 'My cat Rigby has been corrupted by the cruel evil and now he wants to destroy me so i am currently developing a very genius machine to suck out the evil within him'
-const photoCaption = 'This is a photo of Rigby'
-
-const devlogs: Devlog[] = [
-    {
-        id: 1,
-        project: 'Restoring Rigby\u2019s faith from the evil',
-        number: 12,
-        author: 'Username',
-        posted: 'posted 5h ago',
-        paragraphs: [
-            'I HAVE FINALLY FOUND THE CURE TO THE EVIL THAT CORRUPTS RIGBY I CAN FINALLY FREE HIM!',
-            'Here\u2019s a photo of it.',
-            'It\u2019s another cat. He\u2019s able to pulverize all the evil within Rigby.',
-            'i paid him 2 dollars and 1 peggle',
-        ],
-        likes: -2003,
-        comments: 103,
-        hoursLogged: '28h Logged',
-        photo: devlogPhoto,
-    },
-    {
-        id: 2,
-        project: 'Restoring Rigby\u2019s faith from the evil',
-        number: 11,
-        author: 'Username',
-        posted: 'posted 2d ago',
-        paragraphs: [
-            'The evil machine is half built.',
-            'I still need more cables.',
-        ],
-        likes: 12,
-        comments: 4,
-        hoursLogged: '20h Logged',
-    },
-]
-
-const emit = defineEmits<{
-    (e: 'open', id: number): void
-}>()
+const timeline = computed(() => {
+    if (!project.value) return [];
+    return [
+        ...project.value.ships.map(ship => ({ type: 'ship' as const, item: ship })),
+        ...project.value.devlogs.map(devlog => ({ type: 'devlog' as const, item: devlog })),
+    ].sort((a, b) => new Date(b.item.timestamp).getTime() - new Date(a.item.timestamp).getTime());
+});
 </script>
 
 <template>
-<div class="content">
+<div class="content" v-if="project">
     <div class="header">
 
         <div class="header-bg">
                 <button class="back-btn">&lt;</button>
 
                 <div class="profile-card">
-                    <img class="avatar" :src="rigby" alt="">
+                    <img class="avatar" :src="project.icon ? `/images/${project.icon}` : projectImage" alt="">
                     <div class="profile-info">
-                        <h2>Restoring Rigby's faith from the evil <img class="badge" :src="badge" alt=""></h2>
-                        <p>"This is a description look at me"</p>
+                        <h2>{{ project.title }} <img v-if="project.platinum" class="badge" :src="badge" alt=""></h2>
+                        <p>By <a class="author-link" @click="manager.open('profile', { id: project.author.hcaId })">@{{ project.author.username }}</a></p>
                     </div>
                 </div>
             </div>
@@ -86,50 +41,22 @@ const emit = defineEmits<{
     <h2 class="heading">About</h2>
 
     <div class="panel about">
-        <p class="about-text">{{ aboutText }}</p>
-        <div class="photo-row">
-            <img class="photo" :src="rigby" alt="">
-            <span class="caption">{{ photoCaption }}</span>
+        <div class="about-text">
+            <Markdown>{{ project.description }}</Markdown>
+        </div>
+        <div v-if="project.banner" class="photo-row">
+            <img class="photo" :src="`/images/${project.banner}`" alt="">
         </div>
     </div>
 
     <h2 class="heading">Devlogs</h2>
 
     <div class="devlogs">
-        <div v-for="devlog in devlogs" :key="devlog.id" class="devlog-card">
-            <span class="project">{{ devlog.project }}</span>
-
-            <div class="title-row">
-                <h2 class="devlog-title">Devlog {{ devlog.number }}</h2>
-                <span class="author">By {{ devlog.author }}</span>
-                <span class="posted">&bull; {{ devlog.posted }}</span>
-            </div>
-
-            <div class="devlog-content">
-                <p v-for="(text, i) in devlog.paragraphs" :key="i">{{ text }}</p>
-                <button class="see-more">See more...</button>
-                <img v-if="devlog.photo" class="devlog-photo" :src="devlog.photo" alt="">
-            </div>
-
-            <div class="footer">
-                <button class="btn" @click="emit('open', devlog.id)">Open</button>
-
-                <span class="stat">
-                    <img class="icon" :src="heart" alt="">
-                    {{ devlog.likes }}
-                </span>
-
-                <span class="stat">
-                    <img class="icon" :src="comment" alt="">
-                    {{ devlog.comments }}
-                </span>
-
-                <span class="logged">
-                    {{ devlog.hoursLogged }}
-                    <img class="icon" :src="badge" alt="">
-                </span>
-            </div>
-        </div>
+        <p v-if="timeline.length === 0" class="empty">No devlogs or ships yet!</p>
+        <template v-for="entry in timeline" :key="`${entry.type}-${entry.item.id}`">
+            <ShipCard v-if="entry.type === 'ship'" :ship="entry.item" :project="project" :author="project.author.username" :show-project="false" :show-open="false" see-more="expand" />
+            <DevlogCard v-else :devlog="entry.item" :project="project" :author="project.author.username" :show-project="false" see-more="expand" />
+        </template>
     </div>
 </div>
 </div>
@@ -294,113 +221,23 @@ const emit = defineEmits<{
     display: flex;
     flex-direction: column;
     gap: 10px;
+
+    .empty {
+        text-align: center;
+        margin: 0;
+    }
 }
 
-.devlog-card {
-    display: flex;
-    flex-direction: column;
-    flex-shrink: 0;
-    box-sizing: border-box;
-    padding: 6px 6px 8px;
-    background: var(--color-bg-light);
-    border: 1px solid var(--color-gray-light);
+.author-link {
+    cursor: pointer;
+
+    &:hover {
+        text-decoration: underline;
+    }
 }
 
-.project {
-    margin-left: 2px;
-    font-size: 14px;
-    color: var(--color-gray-medium);
-}
-
-.title-row {
-    display: flex;
-    align-items: baseline;
-    gap: 6px;
-    margin: 0 2px 4px;
-}
-
-.devlog-title {
+.about-text :deep(p) {
     margin: 0;
-    font-size: 20px;
-    font-weight: 700;
-    font-family: inherit;
-}
-
-.author {
-    font-size: 16px;
-}
-
-.posted {
-    font-size: 14px;
-}
-
-.devlog-content {
-    box-sizing: border-box;
-    padding: 6px 7px 10px;
-    background: var(--color-white);
-    border: 1px solid var(--color-border-dark);
-
-    p {
-        margin: 0 0 12px;
-        font-size: 13px;
-        line-height: 1.3;
-    }
-
-    .see-more {
-        display: block;
-        margin: 0 0 4px;
-        padding: 0;
-        font-family: inherit;
-        font-size: 15px;
-        font-weight: 700;
-        text-align: left;
-        color: inherit;
-        background: none;
-        border: none;
-        cursor: pointer;
-    }
-
-    .devlog-photo {
-        display: block;
-        width: 148px;
-        height: 129px;
-        object-fit: cover;
-        background: var(--color-panel-bg);
-    }
-}
-
-.footer {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    margin-top: 10px;
-    padding: 0 2px;
-}
-
-.btn {
-    width: 126px;
-}
-
-.stat {
-    display: flex;
-    align-items: center;
-    gap: 3px;
-    font-size: 14px;
-}
-
-.logged {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    margin-left: auto;
-    font-size: 14px;
-    white-space: nowrap;
-}
-
-.icon {
-    width: 28px;
-    height: 28px;
-    object-fit: contain;
-    flex-shrink: 0;
+    white-space: pre-line;
 }
 </style>

@@ -122,13 +122,15 @@ export const publicShipColumns = getPublicShipColumns()
 export const privateShipColumns = getPrivateShipColumns()
 
 export const ShipPostBody = z.object({
-    project: z.number().min(1),
+    project: z.coerce.number().int().min(1),
+    description: z.string().trim().min(1),
+    attachments: z.instanceof(File).array().min(1),
     reviewerNote: z.string().optional(),
 
-    ai: z.boolean().default(false).optional(),
+    ai: z.stringbool().default(false),
     aiDeclaration: z.string().optional(),
 
-    update: z.boolean().default(false).optional(),
+    update: z.stringbool().default(false),
     updateDeclaration: z.string().optional()
 })
 

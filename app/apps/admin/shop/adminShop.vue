@@ -123,7 +123,7 @@ function deleteItem(id: number) {
                                 <tr v-for="order in orders" :key="order.id">
                                     <td>{{ order.id }}</td>
                                     <td @click="manager.open('item', { id: order.item.id })">{{ order.item.id }}</td>
-                                    <td @click="manager.open('profile_viewer', { id: order.user.hcaId })">{{ order.user.hcaId }}
+                                    <td @click="manager.open('profile', { id: order.user.hcaId })">{{ order.user.hcaId }}
                                     </td>
                                     <td>{{ order.status }}</td>
                                     <td>{{ formatTimestamp(order.timestamp) }}</td>

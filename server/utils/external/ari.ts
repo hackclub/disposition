@@ -3,8 +3,9 @@ import { createHmac } from "node:crypto";
 import { projects, ships, users } from "~~/db/schema";
 
 const config = useRuntimeConfig();
-async function call(unsigned: any) {
-    const url = `https://webhooks.ari.hackclub.com/api/ingest/${config.ari.programId}`;
+// path is appended to the ingest url, e.g. "/withdraw"
+async function call(unsigned: any, path = "") {
+    const url = `https://webhooks.ari.hackclub.com/api/ingest/${config.ari.programId}${path}`;
     const { headers, body } = signAriRequest(JSON.stringify(unsigned));
 
     return $fetch(url, {
@@ -40,7 +41,7 @@ export async function sendShip(ship: typeof ships.$inferSelect) {
         hackatime_projects: ship.hackatimeProjects,
         evidence: ["commits", "elapsed"],
         meta: {
-            //"Project page": "https://example.com/project1/page", // TODO: implement ts
+            "Project page": `${config.public.baseUrl}/?project=${project.id}`, // TODO: implement ts
             "Internal note": ship.internalMessage,
             
             "Used AI?": ship.ai,
@@ -50,6 +51,24 @@ export async function sendShip(ship: typeof ships.$inferSelect) {
         is_update: ship.update,
         update_message: ship.updateDeclaration
     });
+}
+
+export async function withdrawShip(ship: typeof ships.$inferSelect): Promise<boolean> {
+    if (ship.status === "accepted" || ship.status === "rejected") throw createError({
+        statusCode: 409,
+        message: "This ship has already been reviewed, so it can't be withdrawn. Ask a reviewer to revert or requeue it in Ari."
+    });
+
+    try {
+        await call({ external_id: ship.project }, "/withdraw");
+        return true;
+    } catch (err: any) {
+        if (err?.statusCode === 404) return false;
+        throw createError({
+            statusCode: 502,
+            message: `Ari refused to withdraw the ship (${err?.statusCode ?? "no response"}). Nothing was changed.`
+        });
+    }
 }
 
 // thank you ari (more specifically thank you santi shoutout santi u the goat)

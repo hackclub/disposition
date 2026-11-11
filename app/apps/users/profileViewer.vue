@@ -1,57 +1,84 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import badge from '~/assets/icons/badge.png'
-import avatar from '~/assets/misc/avatar.png'
+import defaultBanner from '~/assets/misc/banner.png'
 import projectImage from '~/assets/misc/project.jpg'
+import type { ServerFeed, ServerUser, ServerUserProject } from '~/types/database'
+import type { WindowInstance } from '~/types/window'
 
-const activeTab = ref<'about' | 'projects'>('projects')
+const props = defineProps<{ instance: WindowInstance, id?: string }>();
+const session = useUserSession();
+const manager = useWindowManager();
+
+const userId = computed(() => props.id ?? session.user.value?.id);
+const { data: user } = await useFetch<ServerUser>(() => `/api/user/${userId.value}`, { immediate: !!userId.value });
+const { data: feed } = await useFetch<ServerFeed>(() => `/api/user/${userId.value}/feed`, { default: () => [], immediate: !!userId.value });
+
+// lazy because hackatime slow
+const { data: projects, status: projectsStatus } = useLazyFetch<ServerUserProject[]>(() => `/api/user/${userId.value}/projects`, { default: () => [], immediate: !!userId.value });
+const activeTab = ref<'projects' | 'feed'>('feed')
+
+const isOwner = computed(() => !!userId.value && session.user.value?.id === userId.value);
+const avatar = (await getUserInfo(user.value!.slackId)).imageUrl
+
+function hoursLogged(seconds: number) {
+    if (seconds < 0) return null; // no hackatime token / couldn't fetch
+    return `${Math.floor(seconds / 3600)}h Logged`;
+}
 </script>
 
 <template>
     <div class="content">
         <div class="header">
             <div class="header-bg">
-                <img src="" alt="">
-
-                <button class="back-btn">&lt;</button>
+                <img :src="user?.banner ? `/images/${user.banner}` : defaultBanner" alt="">
 
                 <div class="profile-card">
                     <img class="avatar" :src="avatar" alt="">
                     <div class="profile-info">
-                        <h2>Username <img class="badge" :src="badge" alt=""></h2>
-                        <p>"This is a bio look at me"</p>
-                        <button class="btn">Edit profile</button>
+                        <h2>{{ user?.username ?? "Unknown user" }} <img class="badge" :src="badge" alt=""></h2>
+                        <p v-if="user?.bio">"{{ user.bio }}"</p>
+                        <button v-if="isOwner" class="btn" @click="manager.open('profile_edit')">Edit profile</button>
                     </div>
                 </div>
 
                 <div class="tabs">
-                    <button :class="{ active: activeTab === 'about' }" @click="activeTab = 'about'">About</button>
+                    <button :class="{ active: activeTab === 'feed' }" @click="activeTab = 'feed'">Feed</button>
                     <button :class="{ active: activeTab === 'projects' }" @click="activeTab = 'projects'">Projects</button>
                 </div>
             </div>
             <div class="spacer"></div>
         </div>
 
-        <div class="main" v-if="activeTab === 'projects'">
-            <h2 class="section-title">User's Projects</h2>
+        <div class="main projects" v-if="activeTab === 'projects'">
+            <h2 class="section-title">{{ user?.username ?? "User" }}'s Projects</h2>
 
-            <div class="project-card">
-                <img class="thumb" :src="projectImage" alt="">
+            <p v-if="projectsStatus === 'pending'" class="empty">Loading projects...</p>
+            <p v-else-if="projects.length === 0" class="empty">No projects yet!</p>
+
+            <div v-else v-for="project in projects" :key="project.id" class="project-card">
+                <img class="thumb" :src="project.icon ? `/images/${project.icon}` : projectImage" alt="">
                 <div class="project-title">
-                    <h3>Project title</h3>
-                    <p>By Username</p>
+                    <h3>{{ project.title }}</h3>
+                    <p>By {{ user?.username }}</p>
                 </div>
                 <div class="project-footer">
-                    <button class="btn open">Open</button>
-                    <span class="logged">28h Logged <img class="badge" :src="badge" alt=""></span>
+                    <button class="btn open" @click="manager.open('project', { id: project.id })">Open</button>
+                    <span v-if="hoursLogged(project.hackatimeSeconds)" class="logged">
+                        {{ hoursLogged(project.hackatimeSeconds) }}
+                        <img class="badge" :src="badge" alt="">
+                    </span>
                 </div>
             </div>
         </div>
 
-        <div class="main" v-else>
-            <h2 class="section-title">User's About</h2>
-            <p>About content here.</p>
-            <p> Shii i'm going INSANE with this fuhhh ahhh third space shii :Sob emoji:</p>
+        <div class="main feed" v-else>
+            <p v-if="feed.length === 0" class="empty">Nothing here yet... no ships or devlogs!</p>
+
+            <template v-for="item in feed" :key="`${item.type}-${item.id}`">
+                <ShipCard v-if="item.type === 'ship'" :ship="item" :project="item.project" :author="user?.username" :show-author="false" />
+                <DevlogCard v-else :devlog="item" :project="item.project" :author="user?.username" :show-author="false" />
+            </template>
         </div>
     </div>
 </template>
@@ -251,6 +278,35 @@ const activeTab = ref<'about' | 'projects'>('projects')
             font-size: 13px;
             white-space: nowrap;
         }
+    }
+}
+
+.projects {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    .section-title {
+        margin: 0;
+    }
+
+    .empty {
+        text-align: center;
+        margin: 0;
+    }
+}
+
+/* the cards themselves live in components/devlogCard.vue + shipCard.vue */
+.feed {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-family: 'Inter', 'Fira Sans', sans-serif;
+    font-size: 14px;
+
+    .empty {
+        text-align: center;
+        margin: 0;
     }
 }
 </style>

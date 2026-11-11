@@ -1,9 +1,27 @@
 import { projects } from "~~/db/schema";
-import { eq, desc, isNull, and } from "drizzle-orm";
+import { eq, desc, isNull, and, getTableColumns } from "drizzle-orm";
 import { privateProjectColumns } from "~~/server/utils/project/project";
+
+const allProjectColumns = getTableColumns(projects);
+const allProjectsMask = Object.fromEntries(
+    Object.keys(allProjectColumns).map(key => [key, true])
+) as Record<keyof typeof allProjectColumns, true>;
 
 export default defineEventHandler(async event => {
     const session = await requireUserSession(event);
+    // ?user=all (admins) lists everything, ?user=<hcaId> (admins) lists someone else's
+    const userId = await resolveUserScope(event, session.user.id);
+
+    // admin overview: every project, deleted ones included. no hackatime here, that'd be one api call per project
+    if (!userId) {
+        return db.query.projects.findMany({
+            columns: allProjectsMask,
+            with: {
+                author: { columns: { hcaId: true, slackId: true, username: true } },
+            },
+            orderBy: desc(projects.timestamp)
+        });
+    }
 
     const mask = Object.fromEntries(
         Object.keys(privateProjectColumns).map(key => [key, true])
@@ -20,7 +38,7 @@ export default defineEventHandler(async event => {
     const result = await db.query.projects.findMany({
         columns: mask,
         where: and(
-            eq(projects.author, session.user.id),
+            eq(projects.author, userId),
             isNull(projects.deletedAt)
         ),
         with: {

@@ -10,7 +10,7 @@ function getPrivateUserColumns() {
 }
 
 function getPublicUserColumns() {
-    const { system, hackatimeToken, email, firstName, lastName, legalLastName, legalFirstName, birthday, phoneNumber, yswsEligible, verificationStatus, ...publicUserColumns } = getTableColumns(users);
+    const { onboardedAt, system, hackatimeToken, email, firstName, lastName, legalLastName, legalFirstName, birthday, phoneNumber, yswsEligible, verificationStatus, ...publicUserColumns } = getTableColumns(users);
     return publicUserColumns;
 }
 

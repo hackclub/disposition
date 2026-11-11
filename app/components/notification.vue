@@ -1,9 +1,7 @@
 <script setup lang="ts">
 import type { NotificationInstance } from '~/types/notification';
 import { Markdown } from '@comark/vue';
-import { parseMarkdown } from 'comark';
-import { renderMarkdown } from 'comark/render';
-import { truncateComark, visibleLength } from '~/utils/index';
+import { limitMarkdown } from '~/utils/index';
 
 const props = defineProps<{ notification: NotificationInstance }>();
 const session = useUserSession();
@@ -12,13 +10,7 @@ const notifManager = useNotificationManager();
 
 const maxLength = 150;
 
-async function limit(source: string, max: number) {
-    const doc = await parseMarkdown(source);
-    if (visibleLength(doc.nodes) <= max) return source; // fits, so no round-trip
-    return await renderMarkdown({ ...doc, nodes: truncateComark(doc.nodes, max) });
-}
-
-const desc = await limit(props.notification.description.trim(), maxLength);
+const { text: desc } = await limitMarkdown(props.notification.description.trim(), maxLength);
 
 async function close() {
     if (props.notification.type == "notification") {

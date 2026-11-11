@@ -47,7 +47,7 @@ onMounted(async () => {
     const config = useRuntimeConfig();
     const launch = computed(() => Date.now() >= config.public.startDate * 1000)
     const { loggedIn } = useUserSession();
-    console.log(Date.now(), launch.value)
+    
     if (loggedIn.value && launch.value) {
         const user = await $fetch<PrivateUser>("/api/user").catch(() => null);
         if (user && !user.onboardedAt) {

@@ -71,6 +71,9 @@ export const ships = pgTable("ships", {
 	user: varchar({ length: 16 }).notNull().references(() => users.hcaId),
 	project: integer().notNull().references(() => projects.id),
 
+	description: text().notNull(),
+	attachments: text().array().notNull().default([]),
+
 	hackatimeProjects: text("hackatime_projects").array().notNull(),
 	hackatimeSeconds: integer("hackatime_seconds").notNull().default(0), // fetched when shipping
 
