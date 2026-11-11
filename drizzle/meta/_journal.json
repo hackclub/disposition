@@ -127,6 +127,13 @@
       "when": 1793943911441,
       "tag": "0017_add_defaults_to_missing_things",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1794373671818,
+      "tag": "0018_foamy_guardsmen",
+      "breakpoints": true
     }
   ]
 }

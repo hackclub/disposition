@@ -195,11 +195,26 @@ const advance3 = userForm.handleSubmit(async (values) => {
 });
 
 // region screen
-const finishing = ref(false);
-
 async function advance4() {
-    finishing.value = true;
     saveError.value = null;
+
+    useConfiguration("shop").write("region", region);
+    config.write("step", 6);
+}
+
+// project screen
+const newProject = ref<boolean>(true);
+
+async function advance5() {
+    saveError.value = null;
+    config.write("step", 7);
+
+    if (newProject) manager.open('new_project', { onboarding: true });
+}
+
+// finish screen
+const finishing = ref<boolean>(false);
+async function advance6() {
     try {
         const form = new FormData();
         form.append("onboardedAt", new Date().toISOString());
@@ -376,13 +391,56 @@ async function advance4() {
 
         <div class="footer">
             <button class="btn" @click="cancel">Cancel</button>
-            <button class="btn" :disabled="finishing" @click="advance4">
-                {{ finishing ? 'Finishing…' : 'Next' }}
-            </button>
+            <button class="btn" @click="advance4">Next</button>
         </div>
     </div>
 
-    <div v-else>
+    <div v-else-if="step === 6">
+        <div class="body">
+            <div class="side yellow">
+                <img class="side-bg" :src="onb1" alt="">
+                <img class="side-logo" :src="onboardingLogo" alt="">
+            </div>
+
+            <div class="page region-page">
+                <h2 class="title">Create a new project</h2>
+
+                <p>
+                    Do you want to create a new project? It is highly recommended to do this now.
+                </p>
+
+                <label>
+                    <input type="checkbox" v-model="newProject" />
+                    Create a new project now
+                </label>
+            </div>
+        </div>
+
+        <div class="footer">
+            <button class="btn" @click="cancel">Cancel</button>
+            <button class="btn" @click="advance5">Next</button>
+        </div>
+    </div>
+    <div v-else-if="step === 7">
+        <div class="body">
+            <div class="side yellow">
+                <img class="side-bg" :src="onb2" alt="">
+                <img class="side-logo" :src="onboardingLogo" alt="">
+            </div>
+
+            <div class="page region-page">
+                <h2 class="title">You're all set!</h2>
+
+                <p class="hint">Press "Finish" to finish the onboarding wizard.</p>
+            </div>
+        </div>
+
+        <div class="footer">
+            <button class="btn" @click="cancel">Cancel</button>
+            <button class="btn" @click="advance6" :disabled="finishing">
+                {{ finishing ? 'Finishing...' : 'Finish'}}
+            </button>
+        </div>
     </div>
 </template>
 

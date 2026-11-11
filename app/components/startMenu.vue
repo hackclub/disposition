@@ -79,7 +79,7 @@ const launch = computed(() => Date.now() >= config.public.startDate * 1000)
 
 .left {
     height: 100%;
-    width: 65%;
+    width: 70%;
 
     padding: 2px;
 
@@ -147,14 +147,14 @@ const launch = computed(() => Date.now() >= config.public.startDate * 1000)
 
 .menu-item {
     padding: 2px;
-    width: 90%;
+    width: 100%;
     text-align: center;
     transition: 0.2s;
 
     user-select: none;
 
     &:hover {
-        font-size: larger;
+        /*font-size: larger;*/
         font-weight: bold;
         cursor: pointer;
     }
