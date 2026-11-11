@@ -198,7 +198,7 @@ const advance3 = userForm.handleSubmit(async (values) => {
 async function advance4() {
     saveError.value = null;
 
-    useConfiguration("shop").write("region", region);
+    useConfiguration("shop").write("region", region.value);
     config.write("step", 6);
 }
 
@@ -209,7 +209,10 @@ async function advance5() {
     saveError.value = null;
     config.write("step", 7);
 
-    if (newProject) manager.open('new_project', { onboarding: true });
+    if (newProject.value) {
+        manager.open('new_project', { onboarding: true });
+        manager.close(props.instance.id); // the project wizard is gonna reopen the onboarding
+    }
 }
 
 // finish screen
@@ -395,7 +398,7 @@ async function advance6() {
         </div>
     </div>
 
-    <div v-else-if="step === 6">
+    <div class="onboarding" v-else-if="step === 6">
         <div class="body">
             <div class="side yellow">
                 <img class="side-bg" :src="onb1" alt="">
@@ -417,11 +420,10 @@ async function advance6() {
         </div>
 
         <div class="footer">
-            <button class="btn" @click="cancel">Cancel</button>
             <button class="btn" @click="advance5">Next</button>
         </div>
     </div>
-    <div v-else-if="step === 7">
+    <div class="onboarding" v-else-if="step === 7">
         <div class="body">
             <div class="side yellow">
                 <img class="side-bg" :src="onb2" alt="">
@@ -436,9 +438,8 @@ async function advance6() {
         </div>
 
         <div class="footer">
-            <button class="btn" @click="cancel">Cancel</button>
             <button class="btn" @click="advance6" :disabled="finishing">
-                {{ finishing ? 'Finishing...' : 'Finish'}}
+                {{ finishing ? 'Finishing...' : 'Finish' }}
             </button>
         </div>
     </div>

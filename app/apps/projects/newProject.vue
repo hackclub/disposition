@@ -7,9 +7,12 @@ import { toTypedSchema } from '@vee-validate/zod';
 import * as z from "zod";
 
 const manager = useWindowManager();
-const props = defineProps<{
+const props = withDefaults(defineProps<{
     instance: WindowInstance
-}>()
+    onboarding?: boolean
+}>(), {
+    onboarding: false
+})
 
 const page = ref<number>(1);
 
@@ -45,6 +48,17 @@ const hackatimeOptions = computed(() => (hackatimeProjects.value?.projects ?? []
 })));
 
 const submitting = ref(false);
+const createdId = ref<number | null>(null);
+const openAfterFinish = ref(true);
+
+function finish() {
+    if (!props.onboarding && openAfterFinish.value && createdId.value !== null) {
+        manager.open("project", { id: createdId.value });
+    }
+    manager.close(props.instance.id);
+    if (props.onboarding) manager.open('onboarding');
+}
+
 const submit = projectForm.handleSubmit(async values => {
     submitting.value = true;
 
@@ -59,8 +73,8 @@ const submit = projectForm.handleSubmit(async values => {
         if (!created) throw new Error("No project returned");
 
         await refreshNuxtData("projects");
-        manager.open("project", { id: created.id });
-        manager.close(props.instance.id);
+        createdId.value = created.id;
+        page.value = 4;
     } catch (error: any) {
         console.error(error);
         await manager.messageBox(
@@ -113,7 +127,7 @@ function advance(p: number) {
         </div>
 
         <div class="footer">
-            <button class="btn" @click="manager.close(props.instance.id)">Cancel</button>
+            <button v-if="!props.onboarding" class="btn" @click="manager.close(props.instance.id)">Cancel</button>
             <button class="btn" @click="advance(page)">Next</button>
         </div>
     </div>
@@ -143,7 +157,7 @@ function advance(p: number) {
         </div>
 
         <div class="footer">
-            <button @click="manager.close(props.instance.id)">Cancel</button>
+            <button v-if="!props.onboarding" @click="manager.close(props.instance.id)">Cancel</button>
             <button @click="advance(page)" :disabled="!projectForm.meta.value.valid">Next</button>
         </div>
     </div>
@@ -176,10 +190,37 @@ function advance(p: number) {
         </div>
 
         <div class="footer">
-            <button @click="manager.close(props.instance.id)">Cancel</button>
+            <button v-if="!props.onboarding" @click="manager.close(props.instance.id)">Cancel</button>
             <button @click="advance(page)" :disabled="!projectForm.meta.value.valid || submitting">
                 {{ submitting ? "Creating..." : "Create" }}
             </button>
+        </div>
+    </div>
+    <div class="wizard" v-else-if="page === 4">
+        <div class="body">
+            <div class="side">
+                <img class="side-bg" :src="onb2" alt="">
+                <img class="side-logo" :src="logo" alt="">
+            </div>
+
+            <div class="page">
+                <h2 class="title">Your project has been created!</h2>
+
+                <p>
+                    You can find your new project anytime in the Project Manager. From there you can edit its
+                    details, post devlogs and ship it when it's ready.
+                </p>
+
+                <label v-if="!props.onboarding" class="hint">
+                    <input type="checkbox" v-model="openAfterFinish" />
+                    Open my project after closing the wizard
+                </label>
+                <p v-else class="hint">Press "Finish" to continue the onboarding.</p>
+            </div>
+        </div>
+
+        <div class="footer">
+            <button @click="finish">Finish</button>
         </div>
     </div>
 </template>
