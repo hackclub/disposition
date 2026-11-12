@@ -1,21 +1,12 @@
 <script setup lang="ts">
-import type { ServerProject } from "~/types/database"
-import { Markdown } from '@comark/vue';
-import { parseMarkdown } from 'comark';
-import { renderMarkdown } from 'comark/render';
-import { truncateComark, visibleLength } from '~/utils/index';
-import badge from '~/assets/icons/badge.png'
+import type { ServerProject, ServerProjectFeed } from "~/types/database"
+import ProjectCard from '~/components/cards/project.vue'
+import Ship from '~/components/cards/ship.vue'
+import Devlog from '~/components/cards/devlog.vue'
 
 const manager = useWindowManager();
 const { data: projects } = await useFetch<ServerProject[]>("/api/projects", { key: "projects" });
-function limit(source: string, max: number) {
-	return source.length > max ? source.slice(0, max).trimEnd() + '...' : source
-}
-
-function formatHours(seconds: number) {
-	return `${(seconds / 3600).toFixed(1)}h logged`
-}
-
+const { data: feed } = await useFetch<ServerProjectFeed>("/api/projects/feed");
 const currentTab = ref<"projects" | "browse">("projects")
 </script>
 
@@ -32,7 +23,7 @@ const currentTab = ref<"projects" | "browse">("projects")
 
 			<div class="tabs">
 				<button @click="currentTab = 'projects'">My projects</button>
-				<button @click="currentTab = 'browse'">Browse projects</button>
+				<button @click="currentTab = 'browse'">Browse feed</button>
 			</div>
 			<div class="spacer"></div>
 		</div>
@@ -43,44 +34,37 @@ const currentTab = ref<"projects" | "browse">("projects")
 				<h1>Your Projects</h1>
 
 				<div class="projects">
-					<div class="project" v-if="projects && projects.length > 0" v-for="(project, i) in projects" :key="i">
-						<div class="project-thumb"
-							:style="project.icon ? { backgroundImage: `url(/images/${project.icon})` } : {}" />
-						<div class="project-main">
-							<span>
-								<span>
-									<h2>{{ limit(project.title, project.platinum ? 18 : 20) }}</h2>
-									<img v-if="project.platinum" class="logged-icon" :src="badge" alt="" />
-								</span>
-
-								<b>{{ formatHours(project.hackatimeSeconds) }}</b>
-							</span>
-							<p>{{ limit(project.description, 140) }}</p>
-						</div>
-
-
-
-						<div class="project-actions">
-							<!-- <p>by <a @click="manager.open('profile', { id: project.author.hcaId })">@{{
-								project.author.username }}</a></p> -->
-
-							<button @click="manager.open('project', { id: project.id })">Open</button>
-							<button @click="manager.open('project_edit', { id: project.id })">Edit</button>
-						</div>
-					</div>
+					<template v-if="projects && projects.length > 0">
+						<ProjectCard v-for="project in projects" :key="project.id" :project="project" />
+					</template>
 					<div v-else>No projects yet, but you can change that :)</div>
 
 					<button @click="manager.open('new_project')">Create a project</button>
 				</div>
 			</div>
-			<div class="browse" v-else-if="currentTab === 'browse'">
+			<div class="browse" v-else-if="currentTab === 'browse' && feed">
+				<p v-if="feed.items.length === 0" class="empty">Nothing here yet... no ships or devlogs!</p>
 
+				<template v-for="item in feed.items" :key="`${item.type}-${item.id}`">
+					<Ship v-if="item.type === 'ship'" :ship="item" />
+					<Devlog v-else :devlog="item" />
+				</template>
 			</div>
 		</div>
 	</div>
 </template>
 
 <style scoped>
+.browse {
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+
+	gap: 10px;
+	padding: 10px;
+	overflow-y: auto;
+}
+
 .projects-page {
 	max-width: 100%;
 	margin: 0 0;
@@ -111,93 +95,6 @@ const currentTab = ref<"projects" | "browse">("projects")
 	display: flex;
 	flex-direction: column;
 	gap: 10px;
-}
-
-.project {
-	border: 1px solid var(--color-gray-medium);
-	background-color: var(--color-bg-light);
-	padding: 10px;
-
-	display: grid;
-	grid-template-columns: 90px 1fr;
-	grid-template-areas:
-		"thumb title"
-		"actions actions";
-	gap: 10px 14px;
-	align-items: start;
-}
-
-.project-thumb {
-	grid-area: thumb;
-	width: 90px;
-	height: 90px;
-	background-color: var(--color-gray-medium);
-	background-size: cover;
-	background-position: center;
-	border: 1px solid var(--color-gray-medium);
-}
-
-.project-main {
-	grid-area: title;
-	width: 100%;
-	display: flex;
-	flex-direction: column;
-
-	span {
-		display: flex;
-		flex-direction: row;
-		justify-content: space-between;
-		align-items: center;
-
-		span {
-			display: flex;
-			flex-direction: row;
-			gap: 5px;
-
-			h2 {
-				margin: 0;
-				font-size: 19px;
-				font-weight: 700;
-				line-height: 1.25;
-			}
-		}
-	}
-
-	p {
-		margin: 0;
-	}
-
-	b {
-		text-align: center;
-		white-space: nowrap;
-		flex-shrink: 0;
-	}
-}
-
-.project-actions {
-	grid-area: actions;
-	display: flex;
-	align-items: center;
-	gap: 10px;
-
-	button {
-		flex: 1;
-	}
-
-	p {
-		margin: 0;
-	}
-}
-
-.logged-time {
-	font-size: 14px;
-	white-space: nowrap;
-}
-
-.logged-icon {
-	width: 28px;
-	height: 28px;
-	object-fit: contain;
 }
 
 .user-bar {

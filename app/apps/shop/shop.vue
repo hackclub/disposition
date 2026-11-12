@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Item } from '~/types/database';
+import ItemCard from '~/components/cards/item.vue';
 
 const manager = useWindowManager();
 const { data } = await useFetch<Record<string, Record<string, Item[]>>>("/api/shop/items/shelves");
@@ -39,7 +40,7 @@ const { data } = await useFetch<Record<string, Record<string, Item[]>>>("/api/sh
 									class="a">{{ name }}↗</h2>
 								<h2 v-else>{{ name }}</h2>
 								<div class="items">
-									<ShopItem v-for="item in items" :item="item"></ShopItem>
+									<ItemCard v-for="item in items" :item="item"></ItemCard>
 								</div>
 							</section>
 						</template>

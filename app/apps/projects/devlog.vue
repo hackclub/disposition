@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import avatar from '~/assets/misc/avatar.png'
 import type { WindowInstance } from '~/types/window'
+import Devlog from '~/components/cards/devlog.vue'
 import type { DevlogComment, ServerDevlog } from '~/types/database'
 
 const props = defineProps<{ instance: WindowInstance, projectId: number, id: number }>();
@@ -13,13 +14,11 @@ const base = `/api/projects/${props.projectId}/devlogs/${props.id}`;
 const { data: devlog, error } = await useFetch<ServerDevlog>(base);
 const { data: comments, refresh: refreshComments } = await useFetch<DevlogComment[]>(`${base}/comments`, { default: () => [] });
 
-// window title -> "Project | Devlog"
 if (devlog.value) {
     const win = manager.get(props.instance.id);
     if (win) win.title = `${devlog.value.project.title} | ${devlog.value.title}`;
 }
 
-// slack pfps from cachet, one lookup per commenter. falls back to the default avatar
 const avatars = ref<Record<string, string>>({});
 watch(comments, async list => {
     const missing = [...new Set(list.map(c => c.user.slackId))].filter(id => !(id in avatars.value));
@@ -47,12 +46,6 @@ async function post() {
     }
 }
 
-// commenters, the devlog's author and admins can delete comments (same rule as the endpoint)
-function canDelete(comment: DevlogComment) {
-    const me = session.user.value?.id;
-    return admin || me === comment.user.hcaId || me === devlog.value?.author;
-}
-
 function deleteComment(comment: DevlogComment) {
     manager.dialogBox("Delete comment?", "Do you want to delete this comment? This cannot be undone.", async (result: boolean) => {
         if (!result) return;
@@ -68,10 +61,10 @@ function deleteComment(comment: DevlogComment) {
 
 <template>
     <div class="devlog-view">
-        <p v-if="error || !devlog" class="empty">Couldn't load this devlog. It might have been deleted.</p>
+        <p v-if="error || !devlog" class="empty">Couldn't load this devlog :(</p>
 
         <template v-else>
-            <DevlogCard :devlog="devlog" :project="devlog.project" :author="devlog.user.username"
+            <Devlog :devlog="{ ...devlog, author: devlog.user }"
                 :trim-description="false" :show-open="false" />
 
             <div class="write">
@@ -83,10 +76,10 @@ function deleteComment(comment: DevlogComment) {
                 <p v-if="comments.length === 0" class="empty">No comments yet. Be the first!</p>
                 <div v-for="c in comments" :key="c.id" class="comment">
                     <div class="comment-head">
-                        <img class="comment-avatar streamer-sensitive" :src="avatars[c.user.slackId] ?? avatar" alt="">
+                        <img class="comment-avatar" :src="avatars[c.user.slackId] ?? avatar" alt="">
                         <a class="comment-author" @click="manager.open('profile', { id: c.user.hcaId })">{{ c.user.username }}</a>
                         <span class="comment-posted">&bull; posted {{ timeAgo(c.timestamp) }}</span>
-                        <button v-if="canDelete(c)" class="delete" @click="deleteComment(c)">Delete</button>
+                        <button v-if="admin || session.user.value?.id === c.user.hcaId" class="delete" @click="deleteComment(c)">Delete</button>
                     </div>
                     <div class="comment-body">{{ c.content }}</div>
                 </div>

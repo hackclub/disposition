@@ -1,38 +1,39 @@
 <script setup lang="ts">
-import type { NotificationInstance } from '~/types/notification';
+import type { Notification, NotificationInstance } from '~/types/notification';
 import { Markdown } from '@comark/vue';
 import { limitMarkdown } from '~/utils/index';
 
-const props = defineProps<{ notification: NotificationInstance }>();
+const props = withDefaults(defineProps<{ notification: NotificationInstance | Notification, desktop?: boolean }>(), { desktop: true });
 const session = useUserSession();
 const windowManager = useWindowManager();
 const notifManager = useNotificationManager();
 
 const maxLength = 150;
-
 const { text: desc } = await limitMarkdown(props.notification.description.trim(), maxLength);
 
 async function close() {
+    if (!('id' in props.notification)) return;
     if (props.notification.type == "notification") {
         notifManager.remove(props.notification.id);
-        if(!session.loggedIn.value) return;
+        if (!session.loggedIn.value) return;
         await $fetch(`/api/notifications/${props.notification.serverId}/read`, { method: "POST" });
     } else {
-        if(session.loggedIn.value) await $fetch(`/api/announcements/${props.notification.serverId}/read`, { method: "POST" });
+        if (session.loggedIn.value) await $fetch(`/api/announcements/${props.notification.serverId}/read`, { method: "POST" });
         notifManager.remove(props.notification.id);
     }
 }
 
 async function more() {
+    if (!('id' in props.notification)) return;
     await close();
 
     if (props.notification.type == "notification") {
         notifManager.remove(props.notification.id);
-        if(!session.loggedIn.value) return;
+        if (!session.loggedIn.value) return;
         await $fetch(`/api/notifications/${props.notification.serverId}/read`, { method: "POST" });
         windowManager.open('notifications', { notificationId: props.notification.serverId });
     } else {
-        if(session.loggedIn.value) await $fetch(`/api/announcements/${props.notification.serverId}/read`, { method: "POST" });
+        if (session.loggedIn.value) await $fetch(`/api/announcements/${props.notification.serverId}/read`, { method: "POST" });
         windowManager.open('notifications', { announcementId: props.notification.serverId });
         notifManager.remove(props.notification.id);
     }
@@ -43,12 +44,12 @@ async function more() {
     <div class="notification" v-if="props.notification.type === 'notification'">
         <div class="bar">
             <p>{{ props.notification.title }}</p>
-            <button class="close" @click="close"></button>
+            <button v-if="props.desktop" class="close" @click="close"></button>
         </div>
 
         <div class="content">
-            <Markdown>{{ desc }}</Markdown>
-            <div class="see-more">
+            <Markdown>{{ props.desktop ? desc : props.notification.description }}</Markdown>
+            <div class="see-more" v-if="props.desktop">
                 <a @click="more">See more...</a>
             </div>
         </div>
@@ -56,14 +57,14 @@ async function more() {
     <div class="announcement" v-else>
         <div class="bar">
             <p>{{ props.notification.title }}</p>
-            <button class="announcement-close" @click="close"></button>
+            <button v-if="props.desktop" class="announcement-close" @click="close"></button>
         </div>
-        <p class="from">From <a class="streamer-sensitive" @click="windowManager.open('profile', { id: props.notification.author!.id })">@{{
+        <p class="from">From <a @click="windowManager.open('profile', { id: props.notification.author!.id })">@{{
             props.notification.author!.username }}</a></p>
 
         <div class="announcement-content">
-            <Markdown>{{ desc }}</Markdown>
-            <div class="see-more">
+            <Markdown>{{ props.desktop ? desc : props.notification.description }}</Markdown>
+            <div class="see-more" v-if="props.desktop">
                 <a @click="more">See more...</a>
             </div>
         </div>

@@ -1,62 +1,167 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import badge from '~/assets/icons/badge.png'
-import avatar from '~/assets/misc/avatar.png'
-import headerbg from '~/assets/misc/header.png'
+import type { WindowInstance } from '~/types/window'
+import { useForm } from "vee-validate";
+import { toTypedSchema } from '@vee-validate/zod'
+import * as z from "zod";
+import { urlToFile } from '~/utils'
+import ProfileEditor, { type UsernameStatus } from '~/components/profileEditor.vue'
+import defaultAvatar from '~/assets/misc/avatar.png'
 
-const username = ref('')
-const bio = ref('')
+const props = defineProps<{ instance: WindowInstance }>();
+const manager = useWindowManager();
+const session = useUserSession();
 
-const emit = defineEmits<{
-    (e: 'cancel'): void
-    (e: 'save', payload: { username: string; bio: string }): void
-}>()
+const userForm = useForm({
+    validationSchema: toTypedSchema(z.object({
+        username: z.string().min(1, "Pick a username"),
+        bio: z.string().optional(),
+    })),
+    initialValues: {
+        username: useUserSession().user.value?.username,
+    },
+});
 
-function save() {
-    emit('save', { username: username.value, bio: bio.value })
+const [usernameModel] = userForm.defineField("username");
+const [bioModel] = userForm.defineField("bio");
+// not part of the vee-validate form, there's nothing to validate. null = the default banner
+const bannerModel = shallowRef<File | null>(null);
+
+// live username check, debounced so we don't hit the server on every keystroke
+const usernameStatus = ref<UsernameStatus>("idle");
+let checkTimer: ReturnType<typeof setTimeout> | undefined;
+let checkId = 0;
+
+watch(usernameModel, value => {
+    clearTimeout(checkTimer);
+    const id = ++checkId;
+
+    if (!value) {
+        usernameStatus.value = "idle";
+        return;
+    }
+
+    usernameStatus.value = "checking";
+    checkTimer = setTimeout(async () => {
+        try {
+            const result = await $fetch("/api/user/username-available", { query: { username: value } });
+            if (id !== checkId) return; // a newer check started while this one was in flight
+            usernameStatus.value = result.available ? "available" : ("reason" in result && result.reason === "invalid" ? "invalid" : "taken");
+        } catch {
+            if (id === checkId) usernameStatus.value = "idle"; // let the server decide on save
+        }
+    }, 400);
+});
+onBeforeUnmount(() => clearTimeout(checkTimer));
+
+const canSave = computed(() =>
+    userForm.meta.value.valid && (usernameStatus.value === "available" || usernameStatus.value === "idle")
+);
+
+// the banner the form started with, so we only upload it again if the user changed it
+const loadedBanner = shallowRef<File | null>(null);
+
+// prefill the form with whatever the server already has for this user
+async function loadUser() {
+    try {
+        const user = await $fetch("/api/user");
+        if (!user) return;
+
+        let banner: File | null = null;
+        if (user.banner) {
+            try {
+                const file = await urlToFile(`/images/${user.banner}`, user.banner.split("/").pop() ?? "banner.png");
+                // urlToFile doesn't check the status, so a 404 page would come back as a "file"
+                if (file.type.startsWith("image/")) banner = file;
+            } catch {
+                // couldn't fetch the stored banner, show the default one
+            }
+        }
+
+        loadedBanner.value = banner;
+        bannerModel.value = banner;
+        userForm.resetForm({
+            values: {
+                username: user.username,
+                bio: user.bio ?? undefined,
+            },
+        });
+    } catch {
+        // not fatal, the user can still fill the form in by hand
+    }
+}
+
+const saving = ref(false);
+const profileError = ref<string | null>(null);
+
+// resolves true once the profile is saved
+async function saveProfile(): Promise<boolean> {
+    const { valid, values } = await userForm.validate();
+    if (!valid || !values?.username || !canSave.value) return false;
+
+    saving.value = true;
+    profileError.value = null;
+    try {
+        const form = new FormData();
+        form.append("username", values.username);
+        form.append("bio", values.bio ?? "");
+        // leaving banner out keeps whatever the server already has, "" clears it back to the default
+        const banner = bannerModel.value;
+        if (banner !== loadedBanner.value) form.append("banner", banner ?? "");
+
+        await $fetch("/api/user", { method: "PATCH", body: form });
+        loadedBanner.value = banner;
+        return true;
+    } catch (e: any) {
+        if (e?.statusCode === 409) usernameStatus.value = "taken";
+        profileError.value = e?.data?.message ?? "Couldn't save your profile. Try again.";
+        return false;
+    } finally {
+        saving.value = false;
+    }
+}
+
+const avatar = ref<string>(defaultAvatar);
+
+onMounted(async () => {
+    const slackId = session.user.value?.slackId;
+    await Promise.all([
+        loadUser(),
+        slackId
+            ? getUserInfo(slackId).then(info => { avatar.value = info.imageUrl }).catch(() => {})
+            : undefined,
+    ]);
+});
+
+async function save() {
+    if (!await saveProfile()) return;
+
+    // pick up the new username in the session, and refetch open windows (profile viewer etc.)
+    await session.fetch();
+    await refreshNuxtData();
+    manager.close(props.instance.id);
 }
 </script>
 
 <template>
     <div class="content">
-        <div class="header">
-            <div class="header-bg">
-                <img :src="headerbg" alt="">
-                <div class="profile-card">
-                    <img class="avatar" :src="avatar" alt="">
-                    <div class="profile-info">
-                        <h2>Username <img class="badge" :src="badge" alt=""></h2>
-                        <p>"This is a bio look at me"</p>
-                        <button class="btn">Edit profile</button>
-                    </div>
-                </div>
-            </div>
-            <div class="spacer"></div>
+        <div class="page">
+            <ProfileEditor :avatar="avatar" v-model:username="usernameModel" v-model:bio="bioModel"
+                    v-model:banner="bannerModel" :username-status="usernameStatus"
+                    :username-error="userForm.errors.value.username" />
+
+            <p class="note">
+                This is a preview of how your profile looks to everyone else. You can change your username,
+                bio and banner.
+            </p>
+
+            <span class="error" v-if="profileError">{{ profileError }}</span>
         </div>
 
-        <div class="main">
-            <div class="edit-panel">
-                <div class="image-col">
-                    <div class="previews">
-                        <div class="preview large"></div>
-                        <div class="preview small"></div>
-                    </div>
-                    <div class="image-actions">
-                        <button class="change-btn">Change/Delete image</button>
-                        <span class="hint">Image must be minimum 100 x 100</span>
-                    </div>
-                </div>
-
-                <div class="form-col">
-                    <input v-model="username" class="field username" type="text" placeholder="Change username...">
-                    <textarea v-model="bio" class="field bio" placeholder="Change bio..."></textarea>
-
-                    <div class="actions">
-                        <button class="btn" @click="emit('cancel')">Cancel</button>
-                        <button class="btn" @click="save">Save</button>
-                    </div>
-                </div>
-            </div>
+        <div class="footer">
+            <button class="btn" @click="manager.close(props.instance.id)">Cancel</button>
+            <button class="btn" :disabled="saving || !canSave" @click="save">
+                {{ saving ? 'Saving…' : 'Save' }}
+            </button>
         </div>
     </div>
 </template>
@@ -65,222 +170,45 @@ function save() {
 .content {
     display: flex;
     flex-direction: column;
-    font-family: 'Fira Sans', sans-serif;
+    height: 100%;
+    min-height: 0;
+    font-family: 'Inter', 'Fira Sans', sans-serif;
     user-select: none;
 }
 
-.header {
+.page {
     display: flex;
     flex-direction: column;
-    font-family: 'Joan', serif;
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    background: var(--color-panel-bg);
 }
 
-.header-bg {
-    position: relative;
-    width: 100%;
-    height: 150px;
-    overflow: hidden;
-
-    > img {
-        position: absolute;
-        inset: 0;
-        width: 100%;
-        height: 100%;
-        object-fit: fill;
-        display: block;
-    }
+.note {
+    margin: 12px 12px 0;
+    font-size: 15px;
+    line-height: 1.25;
 }
 
-.profile-card {
-    position: absolute;
-    top: 8px;
-    left: 20px;
-    width: 330px;
-    max-width: calc(100% - 48px);
+.error {
+    margin: 8px 12px 0;
+    font-weight: 600;
+    color: #b00000;
+}
+
+.footer {
     display: flex;
-    gap: 12px;
-    padding: 6px;
-    background: white;
-    border: 1px solid var(--color-gray-medium);
-
-    .avatar {
-        width: 90px;
-        height: 90px;
-        object-fit: cover;
-        border: 1px solid var(--color-gray-dark);
-        background: var(--color-gray-medium);
-    }
-
-    .profile-info {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        flex: 1;
-
-        h2 {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            margin: 0;
-            font-weight: 500;
-            font-family: 'Joan', serif;
-        }
-
-        p {
-            margin: 0 0 6px;
-            font-size: 12px;
-        }
-    }
-}
-
-.badge {
-    width: 20px;
-    height: 20px;
+    justify-content: flex-end;
+    gap: 10px;
     flex-shrink: 0;
-    object-fit: contain;
-    display: block;
-}
-
-.spacer {
-    width: 100%;
-    height: 12px;
-    border: 1px solid var(--color-border-light);
-    background-color: var(--color-panel-bg);
-    box-sizing: border-box;
-}
-
-.main {
-    padding: 10px;
+    padding: 6px 10px;
+    background: var(--color-bg-light);
+    border-top: 1px solid var(--color-border-light);
 }
 
 .btn {
-    display: flex;
-    justify-content: center;
-    flex-direction: row;
-    gap: 5px;
-
-    button {
-        width: 100px;
-    }
-}
-
-.edit-panel {
-    margin: 0px;
-    display: grid;
-    grid-template-columns: auto 190px;
-    gap: 0 8px;
-    width: fit-content;
-    max-width: 100%;
-    box-sizing: border-box;
-    padding: 2px 6px;
-    background: white;
-    font-family: 'Fira Sans', sans-serif;
-    font-size: 14px;
-    user-select: none;
-}
-
-.image-col {
-    display: flex;
-    flex-direction: column;
-    gap: 1px;
-    min-width: 0;
-}
-
-.previews {
-    display: flex;
-    align-items: flex-end;
-    gap: 6px;
-}
-
-.preview {
-    background: var(--color-gray-medium);
-}
-
-.preview.large {
-    width: 150px;
-    height: 150px;
-}
-
-.preview.small {
-    width: 28px;
-    height: 28px;
-}
-
-.image-actions {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 3px;
-}
-
-.change-btn {
-    height: 22px;
-    padding: 0 5px;
-    font-family: inherit;
-    font-size: 13px;
-    background: linear-gradient(var(--color-btn-gradient-top), var(--color-btn-gradient-bottom-alt));
-    border: 1px solid var(--color-gray-800);
-    border-radius: 3px;
-    cursor: pointer;
-    white-space: nowrap;
-}
-
-.hint {
-    color: var(--color-gray-dark);
-    font-size: 11px;
-}
-
-.form-col {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    min-width: 0;
-}
-
-.field {
-    box-sizing: border-box;
-    display: block;
-    width: 100%;
-    margin: 0;
-    padding: 3px 5px;
-    font-family: inherit;
-    font-size: 14px;
-    line-height: 1.2;
-    color: var(--color-gray-900);
-    background: var(--color-white);
-    border: 1px solid var(--color-gray-dark);
-    border-radius: 0;
-    outline: none;
-}
-
-.field::placeholder {
-    color: var(--color-gray-muted);
-}
-
-.field:focus {
-    border-color: var(--color-gray-800);
-}
-
-.username {
-    height: 24px;
-}
-
-.bio {
-    height: 40px;
-    resize: none;
-    overflow: hidden;
-}
-
-.actions {
-    display: flex;
-    gap: 5px;
-    margin-top: auto;
-
-    .btn {
-        flex: 1;
-        height: 24px;
-        padding: 2px 6px;
-    }
+    width: 23%;
+    min-width: 90px;
 }
 </style>

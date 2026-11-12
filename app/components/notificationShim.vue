@@ -17,6 +17,8 @@
     top: 0;
     left: 0;
 
+    gap: 10px;
+
     display: flex;
     flex-direction: column;
     justify-content: end;

@@ -9,7 +9,8 @@ import heart from '~/assets/icons/heart.png'
 import comment from '~/assets/icons/comment.png'
 
 const props = defineProps<{
-    instance: WindowInstance
+    instance: WindowInstance,
+    id?: number
 }>()
 
 const manager = useWindowManager()

@@ -1,13 +1,13 @@
 const config = useRuntimeConfig();
 
 async function call<T>(token: string, path: string, params?: Record<string, string>): Promise<T> {
-    return $fetch<T>(`https://hackatime.hackclub.com/api/v1/${path}`, {
+    return await $fetch<T>(`https://hackatime.hackclub.com/api/v1/${path}`, {
         headers: {
             Authorization: `Bearer ${token}`
         },
 
         query: params ?? undefined
-    })
+    }) as unknown as T;
 }
 
 export function getLaunchDate(): Date {

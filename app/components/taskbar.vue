@@ -135,6 +135,9 @@ onUnmounted(() => clearInterval(timer));
             img {
                 width: 30px;
                 height: 30px;
+                /* coin.png has ~3px of transparent padding on each side at this size,
+                   pull it in on the left so the gap matches the one after the number */
+                margin-left: -3px;
             }
 
             display: flex;

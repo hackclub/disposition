@@ -7,6 +7,10 @@ const config = useRuntimeConfig();
 
 const info = loggedIn.value && user.value?.slackId ? await getUserInfo(user.value.slackId) : undefined;
 const launch = computed(() => Date.now() >= config.public.startDate * 1000)
+
+function limit(source: string, max: number) {
+	return source.length > max ? source.slice(0, max).trimEnd() + '...' : source
+}
 </script>
 
 <template>
@@ -43,8 +47,8 @@ const launch = computed(() => Date.now() >= config.public.startDate * 1000)
                 <div v-else class="menu-item" @click="manager.open('auth')">Log In</div>
 
                 <div class="menu-profile">
-                    <span v-if="loggedIn && info" class="streamer-sensitive">
-                        <b>{{ info.displayName }}</b>
+                    <span v-if="loggedIn && info">
+                        <b>{{ limit(user?.username!, 8) }}</b>
                         <img class="profile-pic" :src="info.imageUrl"></img>
                     </span>
                     <span v-else>
@@ -141,6 +145,7 @@ const launch = computed(() => Date.now() >= config.public.startDate * 1000)
         flex-direction: row;
         align-items: center;
         justify-content: center;
+        width: 100%;
         gap: 6px;
     }
 }

@@ -59,7 +59,7 @@ import ShopRequest from "../apps/shop/request.vue"
 import Requests from "../apps/shop/requests.vue"
 
 // apps/users
-import profileViewer from "../apps/users/profileViewer.vue"
+import profile from "../apps/users/profile.vue"
 import ProfileEdit from "../apps/users/profileEdit.vue"
 
 // components (system dialogs)
@@ -499,9 +499,9 @@ export const APPS: { [key: string]: AppDef } = {
         hiddenUntilLaunch: true,
     },
 
-    project_edit: {
-        appId: 'project_edit',
-        title: "Project Edit",
+    edit_project: {
+        appId: 'edit_project',
+        title: "Edit Project",
         component: ProjectEdit,
 
         height: 490,
@@ -640,7 +640,7 @@ export const APPS: { [key: string]: AppDef } = {
     profile: {
         appId: 'profile',
         title: 'Profile Viewer',
-        component: profileViewer,
+        component: profile,
         minWidth: 541,
         minHeight: 550,
 
@@ -650,9 +650,9 @@ export const APPS: { [key: string]: AppDef } = {
         hiddenUntilLaunch: true
     },
 
-    profile_edit: {
-        appId: 'profile_edit',
-        title: "Profile Edit",
+    edit_profile: {
+        appId: 'edit_profile',
+        title: "Edit Profile",
         component: ProfileEdit,
 
         height: 410,

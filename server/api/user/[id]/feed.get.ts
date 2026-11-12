@@ -27,7 +27,7 @@ export default defineEventHandler(async event => {
     
     const user = await db.query.users.findFirst({
         where: eq(users.hcaId, id),
-        columns: { hcaId: true },
+        columns: { hcaId: true, username: true },
         with: {
             ships: {
                 where: (ships, { isNull }) => and(
@@ -50,8 +50,9 @@ export default defineEventHandler(async event => {
         message: "User not found"
     });
     
+    const author = { hcaId: user.hcaId, username: user.username };
     return [
-        ...user.ships.map(ship => ({ type: "ship" as const, ...ship })),
-        ...user.devlogs.map(devlog => ({ type: "devlog" as const, ...devlog })),
+        ...user.ships.map(ship => ({ type: "ship" as const, ...ship, author })),
+        ...user.devlogs.map(devlog => ({ type: "devlog" as const, ...devlog, author })),
     ].sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
 });

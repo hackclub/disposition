@@ -3,8 +3,11 @@ import { ref } from 'vue'
 import badge from '~/assets/icons/badge.png'
 import defaultBanner from '~/assets/misc/banner.png'
 import projectImage from '~/assets/misc/project.jpg'
-import type { ServerFeed, ServerUser, ServerUserProject } from '~/types/database'
+import Ship from '~/components/cards/ship.vue'
+import type { ServerFeed, ServerProject, ServerUser } from '~/types/database'
 import type { WindowInstance } from '~/types/window'
+import Devlog from '~/components/cards/devlog.vue'
+import Project from '~/components/cards/project.vue'
 
 const props = defineProps<{ instance: WindowInstance, id?: string }>();
 const session = useUserSession();
@@ -15,7 +18,7 @@ const { data: user } = await useFetch<ServerUser>(() => `/api/user/${userId.valu
 const { data: feed } = await useFetch<ServerFeed>(() => `/api/user/${userId.value}/feed`, { default: () => [], immediate: !!userId.value });
 
 // lazy because hackatime slow
-const { data: projects, status: projectsStatus } = useLazyFetch<ServerUserProject[]>(() => `/api/user/${userId.value}/projects`, { default: () => [], immediate: !!userId.value });
+const { data: projects, status: projectsStatus } = useLazyFetch<ServerProject[]>(() => `/api/user/${userId.value}/projects`, { default: () => [], immediate: !!userId.value });
 const activeTab = ref<'projects' | 'feed'>('feed')
 
 const isOwner = computed(() => !!userId.value && session.user.value?.id === userId.value);
@@ -36,9 +39,9 @@ function hoursLogged(seconds: number) {
                 <div class="profile-card">
                     <img class="avatar" :src="avatar" alt="">
                     <div class="profile-info">
-                        <h2>{{ user?.username ?? "Unknown user" }} <img class="badge" :src="badge" alt=""></h2>
+                        <h2>{{ user?.username ?? "Unknown user" }}</h2>
                         <p v-if="user?.bio">"{{ user.bio }}"</p>
-                        <button v-if="isOwner" class="btn" @click="manager.open('profile_edit')">Edit profile</button>
+                        <button v-if="isOwner" class="btn" @click="manager.open('edit_profile')">Edit profile</button>
                     </div>
                 </div>
 
@@ -56,28 +59,15 @@ function hoursLogged(seconds: number) {
             <p v-if="projectsStatus === 'pending'" class="empty">Loading projects...</p>
             <p v-else-if="projects.length === 0" class="empty">No projects yet!</p>
 
-            <div v-else v-for="project in projects" :key="project.id" class="project-card">
-                <img class="thumb" :src="project.icon ? `/images/${project.icon}` : projectImage" alt="">
-                <div class="project-title">
-                    <h3>{{ project.title }}</h3>
-                    <p>By {{ user?.username }}</p>
-                </div>
-                <div class="project-footer">
-                    <button class="btn open" @click="manager.open('project', { id: project.id })">Open</button>
-                    <span v-if="hoursLogged(project.hackatimeSeconds)" class="logged">
-                        {{ hoursLogged(project.hackatimeSeconds) }}
-                        <img class="badge" :src="badge" alt="">
-                    </span>
-                </div>
-            </div>
+            <Project v-for="project in projects" :project="project"></Project>
         </div>
 
         <div class="main feed" v-else>
             <p v-if="feed.length === 0" class="empty">Nothing here yet... no ships or devlogs!</p>
 
             <template v-for="item in feed" :key="`${item.type}-${item.id}`">
-                <ShipCard v-if="item.type === 'ship'" :ship="item" :project="item.project" :author="user?.username" :show-author="false" />
-                <DevlogCard v-else :devlog="item" :project="item.project" :author="user?.username" :show-author="false" />
+                <Ship v-if="item.type === 'ship'" :ship="item" :show-author="false" />
+                <Devlog v-else :devlog="item" :show-author="false" />
             </template>
         </div>
     </div>
@@ -87,6 +77,8 @@ function hoursLogged(seconds: number) {
 .content {
     display: flex;
     flex-direction: column;
+    height: 100%;
+    min-height: 0;
     font-family: 'Fira Sans', sans-serif;
     user-select: none;
 }
@@ -94,6 +86,7 @@ function hoursLogged(seconds: number) {
 .header {
     display: flex;
     flex-direction: column;
+    flex-shrink: 0;
     font-family: 'Joan', serif;
 }
 
@@ -128,9 +121,9 @@ function hoursLogged(seconds: number) {
 .profile-card {
     position: absolute;
     top: 8px;
-    left: 40px;
-    width: 330px;
-    max-width: calc(100% - 48px);
+    left: 8px;
+    width: fit-content;
+    
     display: flex;
     gap: 12px;
     padding: 6px;
@@ -213,6 +206,9 @@ function hoursLogged(seconds: number) {
 
 .main {
     padding: 10px;
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
 }
 
 .section-title {
@@ -228,63 +224,11 @@ function hoursLogged(seconds: number) {
     flex-grow: 1;
 }
 
-.project-card {
-    display: grid;
-    grid-template-columns: 72px 1fr;
-    grid-template-areas:
-        "thumb title"
-        "footer footer";
-    gap: 6px 12px;
-    padding: 10px;
-    background: var(--color-panel-bg-light);
-    border: 1px solid var(--color-gray-medium);
-
-    .thumb {
-        grid-area: thumb;
-        width: 72px;
-        height: 72px;
-        object-fit: cover;
-        background: var(--color-gray-medium);
-    }
-
-    .project-title {
-        grid-area: title;
-        text-align: center;
-
-        h3 {
-            margin: 0;
-            font-size: 18px;
-        }
-
-        p {
-            margin: 0;
-        }
-    }
-
-    .project-footer {
-        grid-area: footer;
-        display: flex;
-        align-items: center;
-        gap: 6px;
-
-        .open {
-            flex: 1;
-        }
-
-        .logged {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            font-size: 13px;
-            white-space: nowrap;
-        }
-    }
-}
-
 .projects {
     display: flex;
     flex-direction: column;
     gap: 10px;
+    width: 100%;
 
     .section-title {
         margin: 0;
@@ -296,7 +240,6 @@ function hoursLogged(seconds: number) {
     }
 }
 
-/* the cards themselves live in components/devlogCard.vue + shipCard.vue */
 .feed {
     display: flex;
     flex-direction: column;

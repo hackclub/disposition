@@ -4,15 +4,15 @@ import type { WindowInstance } from '~/types/window'
 import onboardingLogo from '~/assets/icons/onboardingLogo.png'
 import headerbg from '~/assets/misc/header.png'
 import avatar from '~/assets/misc/avatar.png'
-import { useForm } from "vee-validate";
-import { toTypedSchema } from '@vee-validate/zod'
-import defaultBanner from '~/assets/misc/banner.png'
-import { urlToFile } from '~/utils'
-import * as z from "zod";
 import onb1 from '~/assets/misc/onboard1.png'
 import onb2 from '~/assets/misc/onboard2.png'
 import onb3 from '~/assets/misc/onboard3.png'
 import onb4 from '~/assets/misc/onboard4.png'
+import { useForm } from "vee-validate";
+import { toTypedSchema } from '@vee-validate/zod'
+import * as z from "zod";
+import { urlToFile } from '~/utils'
+import ProfileEditor, { type UsernameStatus } from '~/components/profileEditor.vue'
 
 const manager = useWindowManager();
 const props = defineProps<{
@@ -78,82 +78,112 @@ async function advance2() {
 }
 
 // user profile screen
-const defaultBannerFile = await urlToFile(defaultBanner, 'banner.png');
 const userForm = useForm({
     validationSchema: toTypedSchema(z.object({
-        banner: z.instanceof(File, { message: "Please choose an image" }),
-        username: z.string().min(1),
+        username: z.string().min(1, "Pick a username"),
         bio: z.string().optional(),
     })),
     initialValues: {
         username: useUserSession().user.value?.username,
-        banner: defaultBannerFile
     },
 });
 
 const [usernameModel] = userForm.defineField("username");
 const [bioModel] = userForm.defineField("bio");
-const [bannerModel] = userForm.defineField("banner");
+// not part of the vee-validate form, there's nothing to validate. null = the default banner
+const bannerModel = shallowRef<File | null>(null);
 
-const previewUrl = ref<string>(defaultBanner);
-let objectUrl: string | null = null;
-const fileInput = ref<HTMLInputElement | null>(null);
+// live username check, debounced so we don't hit the server on every keystroke
+const usernameStatus = ref<UsernameStatus>("idle");
+let checkTimer: ReturnType<typeof setTimeout> | undefined;
+let checkId = 0;
 
-watch(bannerModel, (file) => {
-    if (objectUrl) URL.revokeObjectURL(objectUrl);
-    objectUrl = file instanceof Blob ? URL.createObjectURL(file) : null;
-    previewUrl.value = objectUrl ?? defaultBanner;
+watch(usernameModel, value => {
+    clearTimeout(checkTimer);
+    const id = ++checkId;
+
+    if (!value) {
+        usernameStatus.value = "idle";
+        return;
+    }
+
+    usernameStatus.value = "checking";
+    checkTimer = setTimeout(async () => {
+        try {
+            const result = await $fetch("/api/user/username-available", { query: { username: value } });
+            if (id !== checkId) return; // a newer check started while this one was in flight
+            usernameStatus.value = result.available ? "available" : ("reason" in result && result.reason === "invalid" ? "invalid" : "taken");
+        } catch {
+            if (id === checkId) usernameStatus.value = "idle"; // let the server decide on save
+        }
+    }, 400);
 });
+onBeforeUnmount(() => clearTimeout(checkTimer));
 
-onBeforeUnmount(() => {
-    if (objectUrl) URL.revokeObjectURL(objectUrl);
-});
-
-function setImage(file: File | undefined) {
-    if (!file || !file.type.startsWith("image/")) return;
-    bannerModel.value = file;
-}
-
-function onFileChange(e: Event) {
-    const input = e.target as HTMLInputElement;
-    setImage(input.files?.[0]);
-    input.value = ""; // allow re-selecting the same file
-}
-
-async function resetBanner() {
-    bannerModel.value = defaultBannerFile;
-}
+const canSave = computed(() =>
+    userForm.meta.value.valid && (usernameStatus.value === "available" || usernameStatus.value === "idle")
+);
 
 // the banner the form started with, so we only upload it again if the user changed it
-const loadedBanner = shallowRef<File>(defaultBannerFile);
+const loadedBanner = shallowRef<File | null>(null);
 
-// prefill the profile form with whatever the server already has for this user
+// prefill the form with whatever the server already has for this user
 async function loadUser() {
     try {
         const user = await $fetch("/api/user");
         if (!user) return;
 
-        let banner = defaultBannerFile;
+        let banner: File | null = null;
         if (user.banner) {
             try {
                 const file = await urlToFile(`/images/${user.banner}`, user.banner.split("/").pop() ?? "banner.png");
                 // urlToFile doesn't check the status, so a 404 page would come back as a "file"
                 if (file.type.startsWith("image/")) banner = file;
             } catch {
-                // couldn't fetch the stored banner, keep the default one
+                // couldn't fetch the stored banner, show the default one
             }
         }
 
         loadedBanner.value = banner;
+        bannerModel.value = banner;
         userForm.resetForm({
             values: {
                 username: user.username,
                 bio: user.bio ?? undefined,
-                banner,
             },
         });
     } catch {
         // not fatal, the user can still fill the form in by hand
+    }
+}
+
+const saving = ref(false);
+const profileError = ref<string | null>(null);
+
+// resolves true once the profile is saved
+async function saveProfile(): Promise<boolean> {
+    const { valid, values } = await userForm.validate();
+    if (!valid || !values?.username || !canSave.value) return false;
+
+    saving.value = true;
+    profileError.value = null;
+    try {
+        const form = new FormData();
+        form.append("username", values.username);
+        form.append("bio", values.bio ?? "");
+        // leaving banner out keeps whatever the server already has, "" clears it back to the default
+        const banner = bannerModel.value;
+        if (banner !== loadedBanner.value) form.append("banner", banner ?? "");
+
+        await $fetch("/api/user", { method: "PATCH", body: form });
+        loadedBanner.value = banner;
+        return true;
+    } catch (e: any) {
+        if (e?.statusCode === 409) usernameStatus.value = "taken";
+        profileError.value = e?.data?.message ?? "Couldn't save your profile. Try again.";
+        return false;
+    } finally {
+        saving.value = false;
     }
 }
 
@@ -167,32 +197,13 @@ onMounted(async () => {
 });
 
 // profile screen -> region screen
-const saving = ref(false);
 const saveError = ref<string | null>(null);
 
-const advance3 = userForm.handleSubmit(async (values) => {
-    saving.value = true;
-    saveError.value = null;
-    try {
-        const form = new FormData();
-        form.append("username", values.username);
-        if (values.bio) form.append("bio", values.bio);
-        // leaving banner out keeps whatever the server already has
-        if (values.banner !== loadedBanner.value) {
-            // back to the default: clear it on the server instead of uploading a copy of the default image
-            form.append("banner", values.banner === defaultBannerFile ? "" : values.banner);
-        }
-
-        await $fetch("/api/user", { method: "PATCH", body: form });
-
-        config.write("step", 5);
-        resizeAndCenter(REGULAR_SIZE);
-    } catch (e: any) {
-        saveError.value = e?.data?.message ?? "Couldn't save your profile. Try again.";
-    } finally {
-        saving.value = false;
-    }
-});
+async function advance3() {
+    if (!await saveProfile()) return;
+    config.write("step", 5);
+    resizeAndCenter(REGULAR_SIZE);
+}
 
 // region screen
 async function advance4() {
@@ -331,39 +342,22 @@ async function advance6() {
             <div class="page profile-page">
                 <h2 class="title">Customize your profile</h2>
 
-                <div class="header-bg">
-                    <input ref="fileInput" type="file" accept="image/jpeg,image/png,image/webp" hidden
-                        @change="onFileChange" />
-                    <img class="banner" :src="previewUrl" alt="Banner image" />
-
-                    <div class="profile-card">
-                        <img class="avatar" :src="info.imageUrl" alt="">
-                        <div class="profile-info">
-                            <input type="text" v-model="usernameModel" placeholder="Username" />
-                            <textarea v-model="bioModel" class="bio"
-                                placeholder="Change your bio... (you can use markdown!)"></textarea>
-                        </div>
-                    </div>
-
-                    <span class="banner-buttons">
-                        <button v-if="bannerModel != defaultBannerFile" @click="resetBanner">Reset banner</button>
-                        <button @click="fileInput?.click()">Change banner</button>
-                    </span>
-                </div>
-                <span class="error" v-if="userForm.errors.value.banner">{{ userForm.errors.value.banner }}</span>
+                <ProfileEditor :avatar="info.imageUrl" v-model:username="usernameModel" v-model:bio="bioModel"
+                    v-model:banner="bannerModel" :username-status="usernameStatus"
+                    :username-error="userForm.errors.value.username" />
 
                 <p class="profile-note">
                     This is a preview of how your profile will look when viewed by someone else. You can
                     customize your username and your bio. Have fun with it!
                 </p>
 
-                <span class="error" v-if="saveError">{{ saveError }}</span>
+                <span class="error" v-if="profileError">{{ profileError }}</span>
             </div>
         </div>
 
         <div class="footer">
             <button class="btn" @click="cancel">Cancel</button>
-            <button class="btn" :disabled="saving || !userForm.meta.value.valid" @click="advance3">
+            <button class="btn" :disabled="saving || !canSave" @click="advance3">
                 {{ saving ? 'Saving…' : 'Next' }}
             </button>
         </div>
@@ -446,23 +440,6 @@ async function advance6() {
 </template>
 
 <style scoped>
-.header-bg {
-    position: relative;
-    width: 100%;
-    height: 175px;
-    overflow: hidden;
-
-    .banner {
-        position: absolute;
-        inset: 0;
-        width: 100%;
-        height: 100%;
-        object-fit: fill;
-        user-select: none;
-        pointer-events: none;
-    }
-}
-
 .side-bg {
     position: absolute;
     inset: 0;
@@ -471,75 +448,6 @@ async function advance6() {
     object-fit: cover;
     display: block;
     pointer-events: none;
-}
-
-.profile-card {
-    position: absolute;
-    top: 24px;
-    left: 24px;
-    width: 66%;
-    max-width: calc(100% - 48px);
-    box-sizing: border-box;
-    display: flex;
-    gap: 8px;
-    padding: 14px;
-    background: var(--color-panel-bg);
-    border: 1px solid var(--color-gray-medium);
-
-    .avatar {
-        flex-shrink: 0;
-        width: 104px;
-        height: 104px;
-        object-fit: cover;
-        border: 1px solid var(--color-gray-dark);
-        background: var(--color-gray-medium);
-    }
-
-    .profile-info {
-        display: flex;
-        flex-direction: column;
-        gap: 2px;
-        flex: 1;
-        min-width: 0;
-
-        input[type="text"] {
-            box-sizing: border-box;
-            width: 100%;
-            height: 26px;
-            font-size: 15px;
-        }
-
-        .bio {
-            box-sizing: border-box;
-            width: 100%;
-            flex: 1;
-            min-height: 0;
-            resize: none;
-            font-size: 15px;
-            line-height: 1.2;
-        }
-    }
-}
-
-.banner-buttons {
-    position: absolute;
-    right: 4px;
-    bottom: 4px;
-    padding: 2px 2px;
-
-    display: flex;
-    flex-direction: row;
-    gap: 5px;
-
-    font-size: 12px;
-    cursor: pointer;
-}
-
-.drop-hint {
-    margin: 3px 4px 0 0;
-    text-align: right;
-    font-size: 12px;
-    color: var(--color-gray-dark);
 }
 
 .profile-note {

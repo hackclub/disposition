@@ -1,12 +1,10 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { Markdown } from '@comark/vue'
-import type { Devlog, FeedProject } from '~/types/database'
+import type { FeedDevlog } from '~/types/database'
 
 const props = withDefaults(defineProps<{
-    devlog: Omit<Devlog, 'project'>,
-    project: Pick<FeedProject, 'id' | 'title'>,
-    author?: string,
+    devlog: Omit<FeedDevlog, 'type'>,
 
     trimDescription?: number | false,
     showProject?: boolean, // hide the project name a tag
@@ -36,23 +34,23 @@ watch(() => [props.devlog.description, props.trimDescription, expanded.value] as
 }, { immediate: true });
 
 function open() {
-    manager.open('devlog', { projectId: props.project.id, id: props.devlog.id });
+    manager.open('devlog', { projectId: props.devlog.project.id, id: props.devlog.id });
 }
 
 // TODO: scroll the project viewer to this devlog when it exists
 function more() {
     if (props.seeMore === 'expand') expanded.value = true;
-    else manager.open('project', { id: props.project.id });
+    else manager.open('project', { id: props.devlog.project.id });
 }
 </script>
 
 <template>
     <div class="feed-card">
-        <a v-if="showProject" class="project" @click="manager.open('project', { id: project.id })">{{ project.title }}</a>
+        <a v-if="showProject" class="project" @click="manager.open('project', { id: devlog.project.id })">{{ devlog.project.title }}</a>
 
         <div class="title-row">
             <h2 class="feed-title">{{ devlog.title }}</h2>
-            <span v-if="author && props.showAuthor" class="author">By {{ author }}</span>
+            <span v-if="props.showAuthor" class="author">By {{ devlog.author.username }}</span>
             <span class="posted">&bull; posted {{ timeAgo(devlog.timestamp) }}</span>
         </div>
 

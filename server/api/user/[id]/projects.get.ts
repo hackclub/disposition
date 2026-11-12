@@ -1,9 +1,11 @@
 import { desc, eq, getTableColumns } from "drizzle-orm";
-import { projects, users } from "~~/db/schema";
+import { devlogs, projects, ships, users } from "~~/db/schema";
 import * as z from "zod";
-import { getTotalSeconds, privateProjectColumns, publicProjectColumns } from "~~/server/utils/project/project";
+import { getTotalSeconds, privateProjectColumns, privateShipColumns, publicProjectColumns, publicShipColumns } from "~~/server/utils/project/project";
+import { publicDevlogColumns } from "~~/server/utils/project/devlog";
 import { isAdmin } from "~~/server/utils/requireAdmin";
 
+// same shape as GET /api/projects/:id, one per project
 export default defineEventHandler(async event => {
     const { admin, session } = await isAdmin(event);
     const { id } = await getValidatedRouterParams(event, z.object({
@@ -16,6 +18,16 @@ export default defineEventHandler(async event => {
         Object.keys(projectColumns).map(key => [key, true])
     ) as Record<keyof typeof projectColumns, true>;
 
+    const devlogColumns = admin ? getTableColumns(devlogs) : publicDevlogColumns;
+    const devlogsMask = Object.fromEntries(
+        Object.keys(devlogColumns).map(key => [key, true])
+    ) as Record<keyof typeof devlogColumns, true>;
+
+    const shipColumns = admin ? getTableColumns(ships) : (isOwner ? privateShipColumns : publicShipColumns);
+    const shipsMask = Object.fromEntries(
+        Object.keys(shipColumns).map(key => [key, true])
+    ) as Record<keyof typeof shipColumns, true>;
+
     const user = await db.query.users.findFirst({
         where: eq(users.hcaId, id),
         columns: { hcaId: true },
@@ -24,6 +36,14 @@ export default defineEventHandler(async event => {
                 where: (projects, { isNull }) => isNull(projects.deletedAt),
                 columns: projectsMask,
                 orderBy: desc(projects.timestamp),
+                with: {
+                    author: { columns: { hcaId: true, slackId: true, username: true } },
+                    devlogs: { columns: devlogsMask },
+                    ships: {
+                        where: (ships, { isNull }) => isNull(ships.withdrawnAt),
+                        columns: shipsMask,
+                    },
+                },
             },
         },
     });

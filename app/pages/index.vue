@@ -7,6 +7,7 @@ import Taskbar from '~/components/taskbar.vue';
 import TaskbarItem from '~/components/taskbarItem.vue';
 import BenjiBuddy from "~/components/benjiBuddy.vue";
 import AugustBuddy from "~/components/augustBuddy.vue";
+import NotificationCard from "~/components/cards/notification.vue";
 import { APPS } from "~/registry/apps";
 import type { PrivateUser } from "~/types/database";
 import { onMounted, nextTick, computed } from "vue";
@@ -100,7 +101,7 @@ const wallpaper = computed(() =>
 
         <ClientOnly>
             <NotificationShim>
-                <Notification v-for="notification in notifications" :notification="notification"></Notification>
+                <NotificationCard v-for="notification in notifications" :key="notification.id" :notification="notification"></NotificationCard>
             </NotificationShim>
         </ClientOnly>
 

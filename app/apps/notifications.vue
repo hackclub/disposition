@@ -3,27 +3,21 @@ import { computed } from 'vue'
 import type { Notification } from '~/types/notification'
 import type { WindowInstance } from '~/types/window';
 import { Markdown } from '@comark/vue';
+import NotificationCard from '~/components/cards/notification.vue';
 
 const windowManager = useWindowManager();
 const props = defineProps<{ instance: WindowInstance, notificationId?: number, announcementId?: number }>();
 const session = useUserSession();
 
-const announcements = ref<Notification[]>([])
-const notifications = ref<Notification[]>([])
+const loggedIn = session.loggedIn.value;
 
-if(session.loggedIn.value) {
-    const {data: announcementsData} = useFetch<Notification[]>("/api/announcements?readFilter=all")
-    announcements.value = announcementsData.value ?? []
-
-    const {data: notificationsData} = useFetch<Notification[]>("/api/notifications?readFilter=all")
-    notifications.value = notificationsData.value ?? [];
-} else {
-    const {data: announcementsData} = useFetch<Notification[]>("/api/announcements")
-    announcements.value = announcementsData.value ?? []
-}
+const [{ data: announcements }, { data: notifications }] = await Promise.all([
+    useFetch<Notification[]>(loggedIn ? "/api/announcements?readFilter=all" : "/api/announcements", { default: () => [] }),
+    useFetch<Notification[]>("/api/notifications?readFilter=all", { default: () => [], immediate: loggedIn }),
+]);
 
 const feed = computed(() =>
-    [...announcements.value, ...notifications.value].sort(
+    [...(announcements.value ?? []), ...(notifications.value ?? [])].sort(
         (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
     )
 )
@@ -57,29 +51,10 @@ onMounted(() => {
             <div class="spacer"></div>
         </div>
 
-        <div class="notifications" ref="feedRef" v-if="notifications.length > 0">
-            <template v-for="notif in feed">
-                <div class="notification" v-if="notif.type === 'notification'"
-                    :data-feed-key="`notification-${notif.serverId}`">
-                    <div class="bar">
-                        <p>{{ notif.title }}</p>
-                    </div>
-
-                    <div class="notification-content">
-                        <Markdown>{{ notif.description }}</Markdown>
-                    </div>
-                </div>
-                <div class="announcement" v-else :data-feed-key="`announcement-${notif.serverId}`">
-                    <div class="bar">
-                        <p>{{ notif.title }}</p>
-                    </div>
-                    <p class="from">From <a class="streamer-sensitive" @click="windowManager.open('profile', { id: notif.author!.id })">@{{
-                        notif.author!.username }}</a></p>
-
-                    <div class="announcement-content">
-                        <Markdown>{{ notif.description }}</Markdown>
-                    </div>
-                </div>
+        <div class="notifications" ref="feedRef" v-if="feed.length > 0">
+            <template v-for="notif in feed" :key="`${notif.type}-${notif.serverId}`">
+                <NotificationCard :data-feed-key="`${notif.type}-${notif.serverId}`"
+                    :notification="notif" :desktop="false"></NotificationCard>
             </template>
         </div>
         <div class="else" v-else>

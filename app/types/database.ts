@@ -133,7 +133,8 @@ export type Request = {
     message?: string
 }
 
-/* what GET /api/projects/:id returns */
+/* what GET /api/projects/:id returns. GET /api/projects and GET /api/user/:id/projects return a list of these.
+   hackatimeSeconds is -1 if it couldn't be fetched */
 export type ServerProject = {
     id: number,
     author: {
@@ -233,46 +234,24 @@ export type FeedProject = {
     icon: string | null,
 }
 
-export type FeedShip = Omit<Ship, "project"> & { type: "ship", project: FeedProject }
-export type FeedDevlog = Omit<Devlog, "project"> & { type: "devlog", project: FeedProject }
-
-/* what GET /api/user/:id/feed returns, newest first. narrow on `type` */
-export type ServerFeed = (FeedShip | FeedDevlog)[]
-
 export type FeedAuthor = {
     hcaId: string,
     username: string,
 }
 
+/* a ship/devlog with its project + author filled in. this is what the ship/devlog cards take */
+export type FeedShip = Omit<Ship, "project"> & { type: "ship", project: FeedProject, author: FeedAuthor }
+export type FeedDevlog = Omit<Devlog, "project" | "author"> & { type: "devlog", project: FeedProject, author: FeedAuthor }
+export type FeedItem = FeedShip | FeedDevlog
+
+/* what GET /api/user/:id/feed returns, newest first. narrow on `type` */
+export type ServerFeed = FeedItem[]
+
 /* what GET /api/projects/feed returns, newest first. narrow items on `type`.
    pass nextCursor back as ?before= for the next page; null means there's nothing older */
 export type ServerProjectFeed = {
-    // devlog.author is swapped from the id string to the full author here
-    items: ((FeedShip | Omit<FeedDevlog, "author">) & { author: FeedAuthor })[],
+    items: FeedItem[],
     nextCursor: Date | null,
-}
-
-/* what GET /api/user/:id/projects returns, newest first. hackatimeSeconds is -1 if it couldn't be fetched */
-export type ServerUserProject = {
-    id: number,
-    author: string,
-    title: string,
-    description: string,
-
-    icon: string | null,
-    banner: string | null,
-    repository: string | null,
-    demo: string | null,
-
-    timestamp: Date,
-    platinum: boolean,
-    hackatimeSeconds: number,
-
-    // owner
-    hackatimeProjects?: string[],
-
-    // admin
-    deletedAt?: Date | null,
 }
 
 /* admin lists: GET /api/projects?user=all, GET /api/ships, GET /api/devlogs */

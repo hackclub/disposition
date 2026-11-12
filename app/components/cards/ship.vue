@@ -2,12 +2,10 @@
 import { ref, watch } from 'vue'
 import { Markdown } from '@comark/vue'
 import badge from '~/assets/icons/badge.png'
-import type { FeedProject, Ship, ShipStatus } from '~/types/database'
+import type { FeedShip, ShipStatus } from '~/types/database'
 
 const props = withDefaults(defineProps<{
-    ship: Omit<Ship, 'project'>,
-    project: Pick<FeedProject, 'id' | 'title'>,
-    author?: string,
+    ship: Omit<FeedShip, 'type'>,
 
     trimDescription?: number | false,
     showProject?: boolean, // hide the project name a tag
@@ -46,17 +44,17 @@ watch(() => [props.ship.description, props.trimDescription, expanded.value] as c
 // TODO: scroll the project viewer to this ship when it exists
 function more() {
     if (props.seeMore === 'expand') expanded.value = true;
-    else manager.open('project', { id: props.project.id });
+    else manager.open('project', { id: props.ship.project.id });
 }
 </script>
 
 <template>
     <div class="feed-card ship">
-        <a v-if="showProject" class="project" @click="manager.open('project', { id: project.id })">{{ project.title }}</a>
+        <a v-if="showProject" class="project" @click="manager.open('project', { id: ship.project.id })">{{ ship.project.title }}</a>
 
         <div class="title-row">
             <h2 class="feed-title">Shipped!</h2>
-            <span v-if="author && props.showAuthor" class="author">By {{ author }}</span>
+            <span v-if="props.showAuthor" class="author">By {{ ship.author.username }}</span>
             <span class="posted">&bull; posted {{ timeAgo(ship.timestamp) }}</span>
         </div>
 
@@ -71,7 +69,7 @@ function more() {
         </div>
 
         <div class="footer">
-            <button v-if="showOpen" class="btn" @click="manager.open('project', { id: project.id })">Open</button>
+            <button v-if="showOpen" class="btn" @click="manager.open('project', { id: ship.project.id })">Open</button>
             <span v-if="ship.hackatimeSeconds" class="logged">
                 {{ formatDuration(ship.hackatimeSeconds) }} logged
                 <img class="icon" :src="badge" alt="">
