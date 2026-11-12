@@ -239,6 +239,19 @@ export type FeedDevlog = Omit<Devlog, "project"> & { type: "devlog", project: Fe
 /* what GET /api/user/:id/feed returns, newest first. narrow on `type` */
 export type ServerFeed = (FeedShip | FeedDevlog)[]
 
+export type FeedAuthor = {
+    hcaId: string,
+    username: string,
+}
+
+/* what GET /api/projects/feed returns, newest first. narrow items on `type`.
+   pass nextCursor back as ?before= for the next page; null means there's nothing older */
+export type ServerProjectFeed = {
+    // devlog.author is swapped from the id string to the full author here
+    items: ((FeedShip | Omit<FeedDevlog, "author">) & { author: FeedAuthor })[],
+    nextCursor: Date | null,
+}
+
 /* what GET /api/user/:id/projects returns, newest first. hackatimeSeconds is -1 if it couldn't be fetched */
 export type ServerUserProject = {
     id: number,
