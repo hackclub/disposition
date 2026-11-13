@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import badge from '~/assets/icons/badge.png'
 import type { ServerProject } from '~/types/database'
+import projectIcon from '~/assets/misc/projectIcon.png'
 
 const props = defineProps<{ project: ServerProject }>();
 
@@ -17,7 +18,7 @@ function limit(source: string, max: number) {
 <template>
 	<div class="project">
 		<div class="project-thumb"
-			:style="project.icon ? { backgroundImage: `url(/images/${project.icon})` } : {}" />
+			:style="project.icon ? { backgroundImage: `url(/images/${project.icon})` } : { backgroundImage: `url(${projectIcon})` }" />
 		<div class="project-main">
 			<span>
 				<span>

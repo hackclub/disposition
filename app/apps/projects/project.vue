@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Markdown } from '@comark/vue'
-import projectImage from '~/assets/misc/project.jpg'
+import projectImage from '~/assets/misc/projectIcon.png'
 import badge from '~/assets/icons/badge.png'
 import type { ServerProject } from '~/types/database'
 import type { WindowInstance } from '~/types/window'

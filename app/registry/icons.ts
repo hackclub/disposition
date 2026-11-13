@@ -9,6 +9,7 @@ import countdownIcon from "~/assets/icons/countdown.png"
 import feedbackPostIcon from "~/assets/icons/feedback.png"
 import managerIcon from "~/assets/icons/manager.png"
 import errorIcon from "~/assets/icons/error.png"
+import profileIcon from "~/assets/icons/profile.png"
 
 export const ICONS: { [key: string]: string } = {
     manager: managerIcon,
@@ -24,5 +25,6 @@ export const ICONS: { [key: string]: string } = {
     notifications: notificationsIcon,
     admin_shop: shopIcon,
     admin_projects: managerIcon,
-    evil: errorIcon
+    evil: errorIcon,
+    profile: profileIcon
 }

@@ -72,7 +72,7 @@ function more() {
             <button v-if="showOpen" class="btn" @click="manager.open('project', { id: ship.project.id })">Open</button>
             <span v-if="ship.hackatimeSeconds" class="logged">
                 {{ formatDuration(ship.hackatimeSeconds) }} logged
-                <img class="icon" :src="badge" alt="">
+                <!--<img class="icon" :src="badge" alt="">-->
             </span>
         </div>
     </div>
