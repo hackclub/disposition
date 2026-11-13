@@ -10,7 +10,7 @@ import Devlog from '~/components/cards/devlog.vue'
 const props = defineProps<{ instance: WindowInstance, id: number }>();
 const manager = useWindowManager();
 const session = useUserSession();
-const { data: project } = await useFetch<ServerProject>(`/api/projects/${props.id}`);
+const { data: project } = await useFetch<ServerProject>(`/api/projects/${props.id}`, { key: `project-${props.id}` });
 
 const timeline = computed(() => {
     if (!project.value) return [];
@@ -53,10 +53,10 @@ function link(url: string) {
                 <div class="about-text">
                     <Markdown>{{ project.description }}</Markdown>
                 </div>
-                <div v-if="project.repository || project.demo" class="links">
+                <div v-if="project.repository || project.demo || isAuthor" class="links">
                     <button v-if="project.repository" @click="link(project.repository)">GitHub repo</button>
                     <button v-if="project.demo" @click="link(project.demo)">Demo</button>
-                    <button v-if="session.user.value?.id === project.author.hcaId" @click="manager.open('edit_project', { id: project.id })">Edit</button>
+                    <button v-if="isAuthor" @click="manager.open('edit_project', { id: project.id })">Edit</button>
                 </div>
             </div>
 

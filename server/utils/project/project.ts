@@ -28,15 +28,23 @@ export const ProjectPostBody = z.object({
     hackatimeProjects: z.array(z.string()).optional(),
 })
 
-export const ProjectPatchBody = z.object({
-    title: z.string().optional(),
-    description: z.string().optional(),
+// "" clears the link, anything else has to be an http(s) url (these get window.open'd)
+const optionalLink = z.string().trim()
+    .transform(value => value || null)
+    .pipe(z.url({ protocol: /^https?$/, message: "Must be an http(s) URL" }).nullable())
+    .optional();
 
-    banner: z.instanceof(File).optional(),
-    icon: z.instanceof(File).optional(),
-    repository: z.string().optional(),
-    demo: z.string().optional(),
-    hackatimeProjects: z.array(z.string()).optional(),
+export const ProjectPatchBody = z.object({
+    title: z.string().trim().min(1).optional(),
+    description: z.string().trim().min(1).optional(),
+
+    // missing = leave alone, a File replaces it, null ("" over form data) clears it
+    banner: z.union([z.instanceof(File), z.literal("").transform(() => null)]).nullable().optional(),
+    icon: z.union([z.instanceof(File), z.literal("").transform(() => null)]).nullable().optional(),
+    repository: optionalLink,
+    demo: optionalLink,
+    // an empty form value is how the client says "unlink everything", so drop blanks
+    hackatimeProjects: z.array(z.string()).transform(list => list.filter(Boolean)).optional(),
 
     ai: z.stringbool().optional(),
     aiDeclaration: z.string().optional(),

@@ -11,7 +11,8 @@ export default defineEventHandler(async event => {
         id: z.coerce.number().int().positive(),
     }).parse);
 
-    const columns = admin ? getTableColumns(projects) : publicProjectColumns
+    // hackatimeProjects is owner-only, but we only know the owner after the query, so fetch it and strip it below
+    const columns = admin ? getTableColumns(projects) : { ...publicProjectColumns, hackatimeProjects: projects.hackatimeProjects }
     const devlogColumns = admin ? getTableColumns(devlogs) : publicDevlogColumns
     const shipColumns = admin ? getTableColumns(ships) : publicShipColumns
 
@@ -50,8 +51,12 @@ export default defineEventHandler(async event => {
         message: "Project not found"
     })
 
+    const { hackatimeProjects, ...rest } = project;
+    const canSeePrivate = admin || session.user.id === project.author.hcaId;
+
     return {
-        ...project,
+        ...rest,
+        ...(canSeePrivate && { hackatimeProjects }),
         hackatimeSeconds: await getTotalSeconds(id)
     }
 })

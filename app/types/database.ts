@@ -155,7 +155,10 @@ export type ServerProject = {
     demo: string | null,
 
     timestamp: Date,
-    platinum: boolean
+    platinum: boolean,
+
+    // owner
+    hackatimeProjects?: string[],
 }
 
 export type Devlog = {

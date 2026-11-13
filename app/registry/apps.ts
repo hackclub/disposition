@@ -504,7 +504,7 @@ export const APPS: { [key: string]: AppDef } = {
         title: "Edit Project",
         component: ProjectEdit,
 
-        height: 490,
+        height: 680,
         minWidth: 542,
         minHeight: 307,
 

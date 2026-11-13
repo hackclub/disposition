@@ -35,48 +35,50 @@ export default defineEventHandler(async event => {
         data: z.flattenError(parsed.error as z.ZodError),
     });
 
-    // only the project's owner can change the banner
+    // only the project's owner can change the banner/icon
     const { banner, icon, ...data } = parsed.data as z.infer<typeof ProjectPatchBody>;
     const bannerFile = isOwner && banner instanceof File && banner.size > 0 ? banner : undefined;
     const iconFile = isOwner && icon instanceof File && icon.size > 0 ? icon : undefined;
+    const clearBanner = isOwner && banner === null && !!existing.banner;
+    const clearIcon = isOwner && icon === null && !!existing.icon;
 
-    if (!Object.keys(data).length && !bannerFile && !iconFile) throw createError({
+    if (!Object.keys(data).length && !bannerFile && !iconFile && !clearBanner && !clearIcon) throw createError({
         statusCode: 400,
         message: "Nothing to update"
     });
 
+    // validate both before uploading either so a bad icon doesn't orphan a good banner
+    if (bannerFile) validateImage(bannerFile);
+    if (iconFile) validateImage(iconFile);
+
+    const uploaded: BlobObject[] = [];
     let newBanner: BlobObject | undefined;
     let newIcon: BlobObject | undefined;
-    if (bannerFile) {
-        validateImage(bannerFile);
-        newBanner = await blob.put(bannerFile.name, bannerFile, {
+    try {
+        if (bannerFile) uploaded.push(newBanner = await blob.put(bannerFile.name, bannerFile, {
             addRandomSuffix: true,
             prefix: "projects",
-        });
-    }
+        }));
 
-    if (iconFile) {
-        validateImage(iconFile);
-        newIcon = await blob.put(iconFile.name, iconFile, {
+        if (iconFile) uploaded.push(newIcon = await blob.put(iconFile.name, iconFile, {
             addRandomSuffix: true,
-            prefix: "projects"
-        })
-    }
+            prefix: "projects",
+        }));
 
-    try {
         await db
             .update(projects)
             .set({
                 ...data,
-                ...(newBanner && { banner: newBanner.pathname }),
-                ...(newIcon && { icon: newIcon.pathname })
+                ...(newBanner ? { banner: newBanner.pathname } : clearBanner && { banner: null }),
+                ...(newIcon ? { icon: newIcon.pathname } : clearIcon && { icon: null }),
             })
             .where(eq(projects.id, id));
     } catch (err) {
-        if (newBanner) await blob.delete(newBanner.pathname).catch(() => { });
+        await Promise.all(uploaded.map(b => blob.delete(b.pathname).catch(() => { })));
         throw err;
     }
 
-    if (newBanner && existing.banner) await blob.delete(existing.banner).catch(() => { });
-    if (newIcon && existing.icon) await blob.delete(existing.icon).catch(() => { });
+    // the old images are unreferenced now
+    if ((newBanner || clearBanner) && existing.banner) await blob.delete(existing.banner).catch(() => { });
+    if ((newIcon || clearIcon) && existing.icon) await blob.delete(existing.icon).catch(() => { });
 });

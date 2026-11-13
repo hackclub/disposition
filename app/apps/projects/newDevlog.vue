@@ -1,47 +1,57 @@
 <script setup lang="ts">
-import { ref, computed, onBeforeUnmount, onErrorCaptured } from 'vue'
-import { Markdown } from '@comark/vue'
+import { ref, computed, onBeforeUnmount } from 'vue'
+import type { FeedDevlog, ServerProject } from '~/types/database'
 import type { WindowInstance } from '~/types/window'
+import DevlogCard from '~/components/cards/devlog.vue'
 import headerbg from '~/assets/misc/header.png'
-import rigby from '~/assets/misc/rigby.jpg'
-import badge from '~/assets/icons/badge.png'
-import heart from '~/assets/icons/heart.png'
-import comment from '~/assets/icons/comment.png'
+import projectImage from '~/assets/misc/project.jpg'
 
 const props = defineProps<{
     instance: WindowInstance,
-    id?: number
+    id: number
 }>()
 
 const manager = useWindowManager()
+const session = useUserSession()
 
 const EDIT_SIZE = { width: 570, height: 490 }
 const PREVIEW_SIZE = { width: 570, height: 700 }
 
-const projectTitle = 'Restoring Rigby\u2019s faith from the evil'
-const author = 'Username'
-const hoursLogged = '28h Logged'
-const devlogNumber = 13
+const { data: project } = await useFetch<ServerProject>(`/api/projects/${props.id}`, { key: `project-${props.id}` })
+
+const hoursLogged = computed(() => {
+    const seconds = project.value?.hackatimeSeconds ?? -1
+    return seconds < 0 ? '' : `${(seconds / 3600).toFixed(1)}h Logged`
+})
+const devlogTitle = computed(() => `Devlog ${(project.value?.devlogs.length ?? 0) + 1}`)
 
 const text = ref('')
 const photoFile = ref<File | null>(null)
 const photoUrl = ref('')
 const previewing = ref(false)
+const submitting = ref(false)
 const fileInput = ref<HTMLInputElement | null>(null)
-const comarkFailed = ref(false)
 
-const fallbackParagraphs = computed(() =>
-    text.value
-        .split(/\n+/)
-        .map(p => p.trim())
-        .filter(Boolean)
-)
+const canSave = computed(() => !!project.value && !!text.value.trim() && !submitting.value)
 
-onErrorCaptured((err) => {
-    console.error('[New Devlog] Comark failed to render:', err)
-    comarkFailed.value = true
-    return false
-})
+// shaped like a feed devlog so the preview is the exact card everyone else will see
+const previewDevlog = computed<Omit<FeedDevlog, 'type'>>(() => ({
+    id: 0,
+    linkedShip: null,
+    title: devlogTitle.value,
+    description: text.value.trim() || '*Nothing written yet.*',
+    attachments: photoUrl.value ? [photoUrl.value] : [],
+    timestamp: new Date(),
+    project: {
+        id: props.id,
+        title: project.value?.title ?? '',
+        icon: project.value?.icon ?? null,
+    },
+    author: {
+        hcaId: session.user.value?.id ?? '',
+        username: project.value?.author.username ?? '',
+    },
+}))
 
 function pickPhoto() {
     fileInput.value?.click()
@@ -67,13 +77,31 @@ onBeforeUnmount(() => {
     if (photoUrl.value) URL.revokeObjectURL(photoUrl.value)
 })
 
-const emit = defineEmits<{
-    (e: 'cancel'): void
-    (e: 'save', payload: { text: string; photo: File | null }): void
-}>()
+async function save() {
+    if (!canSave.value) return
+    submitting.value = true
 
-function save() {
-    emit('save', { text: text.value, photo: photoFile.value })
+    const body = new FormData()
+    body.append('title', devlogTitle.value)
+    body.append('description', text.value.trim())
+    if (photoFile.value) body.append('attachments', photoFile.value)
+
+    try {
+        const [created] = await $fetch<{ id: number }[]>(`/api/projects/${props.id}/devlogs`, { method: 'POST', body })
+        if (!created) throw new Error('No devlog returned')
+
+        await refreshNuxtData([`project-${props.id}`, 'projects'])
+        manager.close(props.instance.id)
+    } catch (error: any) {
+        console.error(error)
+        await manager.messageBox(
+            'Error!',
+            `There was an error posting your devlog:\n${error?.data?.message ?? error?.message ?? 'unknown error'}`,
+            { error: true }
+        )
+    } finally {
+        submitting.value = false
+    }
 }
 </script>
 <template>
@@ -83,11 +111,11 @@ function save() {
                 <img :src="headerbg" alt="">
 
                 <div class="project-card">
-                    <img class="thumb" :src="rigby" alt="">
+                    <img class="thumb" :src="project?.icon ? `/images/${project.icon}` : projectImage" alt="">
                     <div class="project-info">
-                        <h2>{{ projectTitle }}</h2>
+                        <h2>{{ project?.title }}</h2>
                         <div class="meta">
-                            <span>Made by {{ author }}</span>
+                            <span>Made by {{ project?.author.username }}</span>
                             <span>{{ hoursLogged }}</span>
                         </div>
                     </div>
@@ -113,52 +141,14 @@ function save() {
                 </button>
             </div>
 
-            <div v-else key="preview" class="devlog-card">
-                <span class="project">{{ projectTitle }}</span>
-
-                <div class="title-row">
-                    <h2 class="devlog-title">Devlog {{ devlogNumber }}</h2>
-                    <span class="author">By {{ author }}</span>
-                    <span class="posted">&bull; posted just now</span>
-                </div>
-
-                <div class="devlog-content">
-                    <p v-if="!text.trim()" class="empty">Nothing written yet.</p>
-
-                    <template v-else-if="comarkFailed">
-                        <p v-for="(p, i) in fallbackParagraphs" :key="i" class="plain">{{ p }}</p>
-                    </template>
-
-                    <Suspense v-else>
-                        <Markdown class="devlog-text" :value="text" />
-                        <template #fallback>
-                            <p class="empty">Rendering...</p>
-                        </template>
-                    </Suspense>
-
-                    <button type="button" class="see-more">See more...</button>
-                    <img v-if="photoUrl" class="devlog-photo" :src="photoUrl" alt="">
-                </div>
-
-                <div class="card-footer">
-                    <button type="button" class="card-open" disabled>Open</button>
-
-                    <span class="stat">
-                        <img class="icon" :src="heart" alt="">
-                        0
-                    </span>
-
-                    <span class="stat">
-                        <img class="icon" :src="comment" alt="">
-                        0
-                    </span>
-
-                    <span class="logged">
-                        {{ hoursLogged }}
-                        <img class="icon" :src="badge" alt="">
-                    </span>
-                </div>
-            </div>
+            <DevlogCard
+                v-else
+                key="preview"
+                class="preview"
+                :devlog="previewDevlog"
+                :show-open="false"
+                see-more="expand"
+            />
         </div>
 
         <div class="actions">
@@ -167,8 +157,10 @@ function save() {
             </button>
 
             <div class="right">
-                <button type="button" class="action-btn" @click="emit('cancel')">Cancel</button>
-                <button type="button" class="action-btn" @click="save">Save</button>
+                <button type="button" class="action-btn" @click="manager.close(props.instance.id)">Cancel</button>
+                <button type="button" class="action-btn" :disabled="!canSave" @click="save">
+                    {{ submitting ? 'Saving...' : 'Save' }}
+                </button>
             </div>
         </div>
     </div>
@@ -369,154 +361,7 @@ function save() {
     width: 96px;
 }
 
-.devlog-card {
-    display: flex;
-    flex-direction: column;
-    flex-shrink: 0;
-    box-sizing: border-box;
-    padding: 6px 6px 8px;
-    background: var(--color-bg-light);
-    border: 1px solid var(--color-gray-light);
-}
-
-.project {
-    margin-left: 2px;
-    font-size: 14px;
-    color: var(--color-gray-medium);
-}
-
-.title-row {
-    display: flex;
-    align-items: baseline;
-    gap: 6px;
-    margin: 0 2px 4px;
-}
-
-.devlog-title {
-    margin: 0;
-    font-size: 20px;
-    font-weight: 700;
-    font-family: inherit;
-}
-
-.author {
-    font-size: 16px;
-}
-
-.posted {
-    font-size: 14px;
-}
-
-.devlog-content {
-    box-sizing: border-box;
-    padding: 6px 7px 10px;
-    background: var(--color-white);
-    border: 1px solid var(--color-border-dark);
-
-    .empty,
-    .plain {
-        margin: 0 0 12px;
-        font-size: 13px;
-        line-height: 1.3;
-    }
-
-    .empty {
-        color: var(--color-gray-muted);
-    }
-
-    .see-more {
-        display: block;
-        margin: 0 0 4px;
-        padding: 0;
-        font-family: inherit;
-        font-size: 15px;
-        font-weight: 700;
-        text-align: left;
-        color: inherit;
-        background: none;
-        border: none;
-        cursor: pointer;
-    }
-
-    .devlog-photo {
-        display: block;
-        width: 148px;
-        height: 129px;
-        object-fit: cover;
-        background: var(--color-panel-bg);
-    }
-}
-
-.devlog-content :deep(.devlog-text) {
-    font-size: 13px;
-    line-height: 1.3;
-    overflow-wrap: anywhere;
-}
-
-.devlog-content :deep(.devlog-text p) {
-    margin: 0 0 12px;
-}
-
-.devlog-content :deep(.devlog-text h1),
-.devlog-content :deep(.devlog-text h2),
-.devlog-content :deep(.devlog-text h3) {
-    margin: 0 0 8px;
-    font-family: inherit;
-    font-size: 15px;
-    font-weight: 700;
-}
-
-.devlog-content :deep(.devlog-text ul),
-.devlog-content :deep(.devlog-text ol) {
-    margin: 0 0 12px;
-    padding-left: 20px;
-}
-
-.devlog-content :deep(.devlog-text a) {
-    color: #1a1aff;
-}
-
-.devlog-content :deep(.devlog-text img) {
-    max-width: 100%;
-}
-
-.devlog-content :deep(.devlog-text code) {
-    padding: 0 3px;
-    background: var(--color-panel-bg);
-}
-
-.card-footer {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    margin-top: 10px;
-    padding: 0 2px;
-}
-
-.card-open {
-    width: 126px;
-}
-
-.stat {
-    display: flex;
-    align-items: center;
-    gap: 3px;
-    font-size: 14px;
-}
-
-.logged {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    margin-left: auto;
-    font-size: 14px;
-    white-space: nowrap;
-}
-
-.icon {
-    width: 28px;
-    height: 28px;
-    object-fit: contain;
+.preview {
     flex-shrink: 0;
 }
 </style>
