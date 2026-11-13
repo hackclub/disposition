@@ -41,7 +41,6 @@ export function timeAgo(value: string | number | Date): string {
 }
 
 // truncating markdown and shi. god bless claude sonnet 5.5 //
-
 import type { Node, ElementNode } from 'comark';
 import { parseMarkdown } from 'comark';
 import { renderMarkdown } from 'comark/render';
@@ -77,7 +76,6 @@ export function truncateComark(nodes: Node[], max = 150): Node[] {
     return truncateNodes(nodes, { left: max });
 }
 
-/* cuts markdown down to `max` visible characters. `truncated` says whether anything got cut (so you know to show "see more") */
 export async function limitMarkdown(source: string, max = 150): Promise<{ text: string, truncated: boolean }> {
     const doc = await parseMarkdown(source);
     if (visibleLength(doc.nodes) <= max) return { text: source, truncated: false }; // fits, so no round-trip
@@ -85,7 +83,6 @@ export async function limitMarkdown(source: string, max = 150): Promise<{ text: 
 }
 
 // file bullshit //
-
 export async function urlToFile(url: string, filename: string): Promise<File> {
     const res = await fetch(url)
     const blob = await res.blob()

@@ -108,6 +108,8 @@ function link(url: string) {
     top: 8px;
     left: 8px;
     width: fit-content;
+    max-width: calc(100% - 16px);
+    box-sizing: border-box;
 
     display: flex;
     gap: 12px;
@@ -132,6 +134,7 @@ function link(url: string) {
         justify-content: center;
         align-items: center;
         flex: 1;
+        min-width: 0;
 
         h2 {
             display: flex;
@@ -140,6 +143,7 @@ function link(url: string) {
             margin: 0;
             font-weight: 500;
             font-family: 'Joan', serif;
+            overflow-wrap: anywhere;
         }
 
         p {
@@ -213,6 +217,7 @@ function link(url: string) {
     font-size: 15px;
     font-weight: 500;
     line-height: 1.25;
+    overflow-wrap: anywhere;
 }
 
 .links {

@@ -44,7 +44,7 @@ function limit(source: string, max: number) {
 	padding: 10px;
 
 	display: grid;
-	grid-template-columns: 90px 1fr;
+	grid-template-columns: 90px minmax(0, 1fr);
 	grid-template-areas:
 		"thumb title"
 		"actions actions";
@@ -64,7 +64,7 @@ function limit(source: string, max: number) {
 
 .project-main {
 	grid-area: title;
-	width: 100%;
+	min-width: 0;
 	display: flex;
 	flex-direction: column;
 
@@ -78,9 +78,11 @@ function limit(source: string, max: number) {
 			display: flex;
 			flex-direction: row;
 			gap: 5px;
+			min-width: 0;
 
 			h2 {
 				margin: 0;
+				overflow-wrap: anywhere;
 				font-size: 19px;
 				font-weight: 700;
 				line-height: 1.25;
@@ -90,11 +92,12 @@ function limit(source: string, max: number) {
 
 	p {
 		margin: 0;
+		overflow-wrap: anywhere;
 	}
 
 	b {
 		text-align: center;
-		white-space: nowrap;
+		/*white-space: nowrap;*/
 		flex-shrink: 0;
 	}
 }

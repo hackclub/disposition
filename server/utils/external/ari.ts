@@ -5,6 +5,12 @@ import { projects, ships, users } from "~~/db/schema";
 const config = useRuntimeConfig();
 // path is appended to the ingest url, e.g. "/withdraw"
 async function call(unsigned: any, path = "") {
+    // nuxt turns missing env vars into "", which would post to /api/ingest/ signed with an empty secret
+    if (!config.ari.programId || !config.ari.inboundSecret) throw createError({
+        statusCode: 500,
+        message: "Ari isn't configured on this server (ARI_PROGRAM_ID / ARI_INBOUND_SECRET are missing)."
+    });
+
     const url = `https://webhooks.ari.hackclub.com/api/ingest/${config.ari.programId}${path}`;
     const { headers, body } = signAriRequest(JSON.stringify(unsigned));
 
@@ -26,7 +32,7 @@ export async function sendShip(ship: typeof ships.$inferSelect) {
     if (!author) return;
 
     return call({
-        external_id: project.id,
+        external_id: String(project.id), // ari rejects numbers here
         title: project.title,
         description: project.description,
         maker: {
@@ -41,7 +47,7 @@ export async function sendShip(ship: typeof ships.$inferSelect) {
         hackatime_projects: ship.hackatimeProjects,
         evidence: ["commits", "elapsed"],
         meta: {
-            "Project page": `${config.public.baseUrl}/?project=${project.id}`, // TODO: implement ts
+            "Project page": `${config.public.baseUrl}/?project=${project.id}`,
             "Internal note": ship.internalMessage,
             
             "Used AI?": ship.ai,
@@ -60,7 +66,7 @@ export async function withdrawShip(ship: typeof ships.$inferSelect): Promise<boo
     });
 
     try {
-        await call({ external_id: ship.project }, "/withdraw");
+        await call({ external_id: String(ship.project) }, "/withdraw");
         return true;
     } catch (err: any) {
         if (err?.statusCode === 404) return false;

@@ -52,7 +52,8 @@ export const UserPostBody = z.object({
 export const UserPatchBody = z.object({
     username: z.string().optional(),
     bio: z.string().optional(),
-    onboardedAt: z.coerce.date().optional(),
+    // a date marks onboarding as done, null ("" over form data) resets it so onboarding runs again
+    onboardedAt: z.union([z.literal("").transform(() => null), z.coerce.date()]).nullable().optional(),
     // a File replaces the banner, an empty string clears it (back to the default one)
     banner: z.union([z.instanceof(File), z.literal("")]).optional(),
 })

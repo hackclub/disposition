@@ -7,8 +7,31 @@ function save(key: string, value: any) {
     write(key, value);
 }
 
+const manager = useWindowManager();
+const { loggedIn } = useUserSession();
+
 const showBuddies = ref(read("showBuddies"));
 const streamerMode = ref(read("streamerMode"));
+
+function resetOnboarding() {
+    manager.dialogBox("Redo onboarding?", "Do you want to go through onboarding again? Your account, profile and projects stay as they are.", async (result: boolean) => {
+        if (!result) return;
+        const body = new FormData();
+        body.append("onboardedAt", "");
+
+        try {
+            await $fetch("/api/user", { method: "PATCH", body });
+            manager.open("onboarding");
+        } catch (error: any) {
+            console.error(error);
+            await manager.messageBox(
+                "Error!",
+                `There was an error resetting your onboarding:\n${error?.data?.message ?? error?.message ?? "unknown error"}`,
+                { error: true }
+            );
+        }
+    }, { question: true });
+}
 
 // wallpaper stuff //
 const fileInput = ref<HTMLInputElement | null>(null);
@@ -68,6 +91,11 @@ function handleImageFile(file: File) {
                     <input type="checkbox" v-model="streamerMode" @change="save('streamerMode', streamerMode)" />
                     Streamer mode
                 </label>
+
+                <div class="general-actions">
+                    <button @click="manager.open('cutscene')">Watch the intro cutscene again</button>
+                    <button v-if="loggedIn" @click="resetOnboarding">Redo onboarding</button>
+                </div>
             </div>
 
             <div v-if="currentTab == 'appearance'">
@@ -95,6 +123,13 @@ function handleImageFile(file: File) {
 <style scoped>
 .main {
     padding: 10px;
+}
+
+.general-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin-top: 10px;
 }
 
 .wallpaper {

@@ -1,4 +1,4 @@
-const HEADERS = { "User-Agent": "YourShopName/1.0 ( you@example.com )" };
+const HEADERS = { "User-Agent": "Disposition/1.0 (archer@hackclub.com)" };
 
 async function call(path: string, query: Record<string, string>): Promise<any | null> {
     try {

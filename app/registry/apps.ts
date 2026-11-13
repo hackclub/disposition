@@ -31,6 +31,7 @@ import AdminShip from "../apps/admin/projects/adminShip.vue"
 // apps/misc
 import Auth from "../apps/misc/auth.vue"
 import Countdown from "../apps/misc/countdown.vue"
+import Cutscene from "../apps/misc/cutscene.vue"
 import DispoInator3000 from "../apps/misc/dispoInator3000.vue"
 import ErrorApp from "../apps/misc/error.vue"
 import Evil from "../apps/misc/evil.vue"
@@ -48,6 +49,7 @@ import Project from "../apps/projects/project.vue"
 import ProjectEdit from "../apps/projects/projectEdit.vue"
 import Devlog from "../apps/projects/devlog.vue"
 import NewDevlog from "../apps/projects/newDevlog.vue"
+import ShipWizard from "../apps/projects/ship.vue"
 
 // apps/shop
 import Shop from "../apps/shop/shop.vue"
@@ -368,6 +370,20 @@ export const APPS: { [key: string]: AppDef } = {
         hidden: true
     },
 
+    cutscene: {
+        appId: 'cutscene',
+        title: 'Cutscene',
+        component: Cutscene,
+
+        minWidth: 1,
+        minHeight: 1,
+
+        tool: true,
+        resizeable: false,
+        hidden: true,
+        fullscreen: true
+    },
+
     error: {
         appId: 'error',
         title: 'Error',
@@ -543,6 +559,22 @@ export const APPS: { [key: string]: AppDef } = {
         resizeable: false,
         hidden: true,
         hiddenUntilLaunch: true,
+    },
+
+    ship: {
+        appId: 'ship',
+        title: "Ship Wizard",
+        component: ShipWizard,
+
+        width: 640,
+        height: 560,
+        minWidth: 640,
+        minHeight: 560,
+
+        tool: true,
+        resizeable: false,
+        hidden: true,
+        wallpaper: onboardingWallpaper,
     },
 
     ///////////////////////////////////////////////

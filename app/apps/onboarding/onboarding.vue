@@ -261,10 +261,14 @@ async function advance6() {
                 </p>
 
                 <p>
-                    lorem ipsum dolor sit amet sit sit sit sit sits its itsi sits istis isit
-                    sit sit sit sit sit sit sit sit sit si sit sit sit sit stit sit sit sit sit
-                    sit si sit sits its isit sit sit sit sit sit sit sit sit sit sit sit sit sit
-                    sit sit sit sit sit sit sits it sit sit sit sit sit sits sit
+                    Here's the deal: you build a project, log your hours with Hackatime and ship it. Once a
+                    reviewer approves it, you get coins for every hour you put in, and you can spend them on real
+                    CDs, cassettes and vinyl records or other items from the shop.
+                </p>
+
+                <p>
+                    Before you start, you'll have to link your Hack Club Auth and Hackatime accounts, set up your profile
+                    and region, and create your first project. It only takes a couple of minutes!
                 </p>
 
                 <p class="hint">Click "Next" in order to start the onboarding</p>

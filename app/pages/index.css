@@ -102,8 +102,12 @@ button {
         filter: brightness(0.5);
     }
 
+    /* same look as a disabled checkbox: flat grey with grey text so it doesn't look clickable */
     &:disabled {
-        cursor: not-allowed; /* TODO: better style for this */
+        cursor: not-allowed;
+        color: var(--color-gray-dark);
+        background: var(--color-gray-light);
+        border-color: var(--color-gray-medium);
     }
 }
 
@@ -173,17 +177,19 @@ input[type="submit"] {
     font-family: 'Fira Sans', sans-serif;
     font-size: 15px;
 
-    &:hover {
+    &:hover:not(:disabled) {
         filter: brightness(0.8);
     }
 
-    &:active {
+    &:active:not(:disabled) {
         filter: brightness(0.5);
     }
 
     &:disabled {
-        filter: brightness(0.5);
         cursor: not-allowed;
+        color: var(--color-gray-dark);
+        background: var(--color-gray-light);
+        border-color: var(--color-gray-medium);
     }
 }
 
@@ -221,6 +227,17 @@ input[type="checkbox"] {
     &:checked::before {
         transform: scale(1);
     }
+
+    /* flat, greyed out box with a grey tick so it doesn't look clickable */
+    &:disabled {
+        cursor: not-allowed;
+        background: var(--color-gray-light);
+        border-color: var(--color-gray-medium);
+    }
+
+    &:disabled::before {
+        background: var(--color-gray-dark);
+    }
 }
 
 label:has(input[type="checkbox"]) {
@@ -228,6 +245,11 @@ label:has(input[type="checkbox"]) {
     display: flex;
     align-items: center;
     gap: 3px;
+}
+
+label:has(input[type="checkbox"]:disabled) {
+    color: var(--color-gray-dark);
+    cursor: not-allowed;
 }
 
 input[type="text"],

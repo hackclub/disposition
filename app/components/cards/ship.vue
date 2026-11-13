@@ -110,6 +110,7 @@ function more() {
     }
 
     .feed-title {
+        overflow-wrap: anywhere;
         margin: 0;
         font-size: 20px;
         font-weight: 700;
@@ -125,6 +126,7 @@ function more() {
     }
 
     .feed-content {
+        overflow-wrap: anywhere;
         box-sizing: border-box;
         padding: 6px 7px 10px;
         background: var(--color-white);

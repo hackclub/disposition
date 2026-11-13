@@ -123,8 +123,6 @@ export default defineEventHandler(async event => {
                 message: "Failed to create ship"
             })
 
-            // devlogs posted since the previous ship belong to this one. that includes ones that were
-            // linked to a ship that got withdrawn, since that ship never really happened
             const withdrawnShips = tx.select({ id: ships.id }).from(ships)
                 .where(and(eq(ships.project, parsed.data.project), isNotNull(ships.withdrawnAt)));
 
@@ -137,6 +135,17 @@ export default defineEventHandler(async event => {
                     lte(devlogs.timestamp, created.timestamp),
                 ));
 
+            try {
+                await sendShip(created); // pray
+            } catch (err: any) {
+                // err.data is ari's response body, which says what it rejected (e.g. which field failed validation on a 422)
+                console.error("[ship] failed to send ship to Ari:", err?.statusCode, JSON.stringify(err?.data ?? null, null, 2), err);
+                throw createError({
+                    statusCode: 502,
+                    message: `Couldn't send your ship to the review queue (${err?.statusCode ?? "no response"}), so it wasn't shipped. Please try again later.`
+                });
+            }
+
             return created;
         });
     } catch (err) {
@@ -144,5 +153,16 @@ export default defineEventHandler(async event => {
         throw err;
     }
 
-    await sendShip(shipResult); // pray
+    try {
+        await sendNotification({
+            title: `🚢 Ship #${shipResult.id}: Received`,
+            description: `"${project.title}" is in the review queue. You'll get another notification once a reviewer has looked at it.`,
+            user: session.user.id
+        });
+    } catch (err) {
+        console.error("[ship] failed to send ship received notification:", err);
+    }
+
+    setResponseStatus(event, 201);
+    return { id: shipResult.id };
 })

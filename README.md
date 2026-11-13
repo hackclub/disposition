@@ -79,6 +79,8 @@ Halfway through third space, macondo open sourced (shoutout santi and nathan) an
 
 so, with the help of my eyes and 20 of my neurons i was able to cook up the schema for these. originally, i wanted my devlogs to work like they do on stardance/flavortown where time only gets added to your project if you create a devlog. However, ari does not support this :) so i had to do what a lot of yswses do now and have devlogs be optional. which i guess is more convenient for the user, but obligatory devlogs make it easier to justify the time spent on a project for reviewers!!
 
+all the ui and api's for all of these were very annoying to implement and brought up 2 gorillion problems i had to solve but eventually i powered through it (in the last week). i really don't want to get into the details
+
 ### conclusion
 
 that was a lot of yapping. tl;dr, ive just always wanted to see a bit more of an unconventional website for a ysws so this is my go at that.

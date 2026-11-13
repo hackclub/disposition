@@ -117,11 +117,11 @@ function advance(p: number) {
                 <h2 class="title">Welcome to the project creation wizard!</h2>
 
                 <p>
-                    john project is creating a project
+                    This wizard will help you set up a new project!
                 </p>
 
                 <p>
-                    lorem ipsum dolor sit amet
+                    Don't worry about getting everything perfect, you can edit your project whenever you feel like it!
                 </p>
             </div>
         </div>

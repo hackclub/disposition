@@ -44,6 +44,13 @@ onMounted(async () => {
         return;
     }
 
+    // play the intro cutscene on the very first visit (per browser), never again
+    const cutscene = useConfiguration("cutscene");
+    if (!cutscene.has("seen")) {
+        cutscene.write("seen", true);
+        open("cutscene");
+    }
+
     // launch onboarding for logged in users that haven't finished it yet
     const config = useRuntimeConfig();
     const launch = computed(() => Date.now() >= config.public.startDate * 1000)
