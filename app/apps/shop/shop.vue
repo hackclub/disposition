@@ -3,6 +3,8 @@ import type { Item } from '~/types/database';
 import ItemCard from '~/components/cards/item.vue';
 
 const manager = useWindowManager();
+const config = useRuntimeConfig();
+const launch = computed(() => Date.now() >= config.public.startDate * 1000)
 const { data } = await useFetch<Record<string, Record<string, Item[]>>>("/api/shop/items/shelves");
 </script>
 
@@ -19,7 +21,7 @@ const { data } = await useFetch<Record<string, Record<string, Item[]>>>("/api/sh
 						</span>
 					</div>
 
-					<div class="app-buttons" v-if="loggedIn">
+					<div class="app-buttons" v-if="loggedIn && launch">
 						<button @click="manager.open('orders')">My orders</button>
 						<button @click="manager.open('requests')">My requests</button>
 					</div>

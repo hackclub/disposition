@@ -22,8 +22,7 @@ const funFact = ref(funFacts[Math.floor(Math.random() * funFacts.length)]);
 
 const openNext = ref(read("openNext"));
 const manager = useWindowManager();
-const config = useRuntimeConfig();
-const launch = computed(() => Date.now() >= config.public.startDate * 1000)
+const launch = computed(() => pastLaunch());
 
 const rsvpButton = ref<HTMLElement>();
 async function rsvp() {

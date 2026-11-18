@@ -6,6 +6,7 @@ const manager = useWindowManager();
 const props = defineProps<{ instance: WindowInstance, id: number }>()
 const admin = await isAdmin();
 const session = await useUserSession();
+const launch = computed(() => pastLaunch());
 
 const balance = ref<number>();
 const user = ref<PrivateUser>();
@@ -101,7 +102,7 @@ async function callback(result: boolean) {
                     </div> -->
                 </div>
 
-                <div class="vertical order" v-if="loggedIn && balance && user">
+                <div class="vertical order" v-if="loggedIn && balance && user && launch">
                     <h2>Finish your order</h2>
 
                     <b>Shipping address</b>
@@ -213,7 +214,7 @@ p {
     align-items: flex-start;
     gap: 10px;
 
-    > .vertical:first-child {
+    >.vertical:first-child {
         flex: 1 1 0;
         min-width: 0;
         padding: 10px;
@@ -284,6 +285,7 @@ p {
 }
 
 @media (max-width: 600px) {
+
     .horizontal,
     .horizontal2 {
         flex-direction: column;

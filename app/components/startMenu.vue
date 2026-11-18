@@ -3,14 +3,15 @@ import { APPS } from '~/registry/apps';
 import { ICONS } from '~/registry/icons';
 const { loggedIn, user } = await useUserSession()
 const manager = useWindowManager();
-const config = useRuntimeConfig();
 
 const info = loggedIn.value && user.value?.slackId ? await getUserInfo(user.value.slackId) : undefined;
-const launch = computed(() => Date.now() >= config.public.startDate * 1000)
+const launch = computed(() => pastLaunch());
 
 function limit(source: string, max: number) {
 	return source.length > max ? source.slice(0, max).trimEnd() + '...' : source
 }
+
+console.log(launch.value);
 </script>
 
 <template>

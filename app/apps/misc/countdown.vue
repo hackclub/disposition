@@ -4,7 +4,7 @@ import logo from '~/assets/logos/dispositionAlt.png'
 import countdownTile from '~/assets/misc/countdownTile.png'
 
 const config = useRuntimeConfig();
-const LAUNCH_DATE = new Date(config.public.startDate * 1000)
+const date = new Date(config.public.startDate * 1000)
 
 const now = ref<number | null>(null)
 let timer: ReturnType<typeof setInterval> | undefined
@@ -27,7 +27,7 @@ function pad(n: number) {
 const tiles = computed(() => {
     const diff = now.value === null
         ? 0
-        : Math.max(0, LAUNCH_DATE.getTime() - now.value)
+        : Math.max(0, date.getTime() - now.value)
 
     const days = Math.floor(diff / 86_400_000)
     const hours = Math.floor((diff % 86_400_000) / 3_600_000)

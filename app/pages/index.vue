@@ -52,8 +52,7 @@ onMounted(async () => {
     }
 
     // launch onboarding for logged in users that haven't finished it yet
-    const config = useRuntimeConfig();
-    const launch = computed(() => Date.now() >= config.public.startDate * 1000)
+    const launch = computed(() => pastLaunch());
     const { loggedIn } = useUserSession();
     
     if (loggedIn.value && launch.value) {

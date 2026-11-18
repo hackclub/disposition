@@ -1,6 +1,15 @@
+import type { Node, ElementNode } from 'comark';
+import { parseMarkdown } from 'comark';
+import { renderMarkdown } from 'comark/render';
+
 export async function isAdmin() {
     const { loggedIn, user } = await useUserSession();
     return (loggedIn.value && useRuntimeConfig().public.adminIds.includes(user.value!.slackId))
+}
+
+// time functions
+export function pastLaunch(): boolean {
+    return (Date.now() >= useRuntimeConfig().public.startDate * 1000);
 }
 
 export function formatDuration(totalSeconds: number | null | undefined): string {
@@ -41,10 +50,6 @@ export function timeAgo(value: string | number | Date): string {
 }
 
 // truncating markdown and shi. god bless claude sonnet 5.5 //
-import type { Node, ElementNode } from 'comark';
-import { parseMarkdown } from 'comark';
-import { renderMarkdown } from 'comark/render';
-
 export function visibleLength(nodes: Node[]): number {
     return nodes.reduce((sum, n) =>
         sum + (typeof n === 'string' ? n.length : visibleLength(n.slice(2) as Node[])), 0);
