@@ -11,13 +11,16 @@ const props = withDefaults(defineProps<{
 })
 const launch = pastLaunch();
 const { loggedIn } = await useUserSession();
+const admin = await isAdmin();
 
 function open(appId: string): boolean {
     if (!Object.keys(APPS).includes(appId)) return false;
     const app = APPS[appId];
-    if(app?.hiddenAfterLaunch && launch) return false;
-    if(app?.hiddenUntilLaunch && !launch) return false;
-    if(app?.hiddenUntilSignedIn && !loggedIn.value) return false;
+    if (!admin) {
+        if (app?.hiddenAfterLaunch && launch) return false;
+        if (app?.hiddenUntilLaunch && !launch) return false;
+        if (app?.hiddenUntilSignedIn && !loggedIn.value) return false;
+    }
 
     manager.open(appId);
     return true;

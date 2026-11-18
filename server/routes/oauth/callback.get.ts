@@ -102,14 +102,15 @@ async function callback(event: H3Event) {
             });
         }
 
-        const trust = await getTrustFactor(identity.slack_id);
-        if (trust?.trust_level !== "green") {
-            throw createError({
-                statusCode: 403,
-                statusMessage: "Not Hackatime trusted",
-                message: "You must be trusted on Hackatime to sign up for Disposition.",
-            });
-        }
+        // for now im disabling this because some people don't have trust_level == green for some reason
+        // const trust = await getTrustFactor(identity.slack_id);
+        // if (trust?.trust_level !== "green") {
+        //     throw createError({
+        //         statusCode: 403,
+        //         statusMessage: "Not Hackatime trusted",
+        //         message: "You must be trusted on Hackatime to sign up for Disposition.",
+        //     });
+        // }
     }
 
     // we have to get the username, fancy style.

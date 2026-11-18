@@ -10,8 +10,6 @@ const launch = computed(() => pastLaunch());
 function limit(source: string, max: number) {
 	return source.length > max ? source.slice(0, max).trimEnd() + '...' : source
 }
-
-console.log(launch.value);
 </script>
 
 <template>
