@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { WindowInstance } from '~/types/window';
 import type { ServerItem, Address, PrivateUser } from '~/types/database';
+import coin from "~/assets/icons/coin.png"
 
 const manager = useWindowManager();
 const props = defineProps<{ instance: WindowInstance, id: number }>()
@@ -56,8 +57,12 @@ async function callback(result: boolean) {
                     <img class="image" :src="`/images/${item.image}`" alt="Item image" />
                 </div>
                 <div class="vertical fields">
-                    <p>
-                        <b>Price: </b>{{ item.price }}
+                    <p class="price">
+                        <b>Price: </b>
+                        <template>
+                            {{ item.price }}
+                            <img :src="coin" />
+                        </template>
                     </p>
                     <p v-if="item.genre">
                         <b>Genre: </b>{{ item.genre }}
@@ -268,6 +273,21 @@ p {
         gap: 10px;
         border-bottom: 1px solid var(--color-border-light);
         padding-bottom: 3px;
+    }
+
+    .price {
+        template {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+
+            img {
+                user-select: none;
+                width: 20px;
+                height: 20px;
+            }
+        }
     }
 }
 

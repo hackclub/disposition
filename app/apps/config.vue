@@ -94,7 +94,7 @@ function handleImageFile(file: File) {
 
                 <div class="general-actions">
                     <button @click="manager.open('cutscene')">Watch the intro cutscene again</button>
-                    <button v-if="loggedIn" @click="resetOnboarding">Redo onboarding</button>
+                    <button v-if="loggedIn && pastLaunch()" @click="resetOnboarding">Redo onboarding</button>
                 </div>
             </div>
 

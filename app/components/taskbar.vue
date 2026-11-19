@@ -49,12 +49,12 @@ onUnmounted(() => clearInterval(timer));
         <div class="right">
             <!-- calendar, clock, announcements, idk -->
             <AuthState v-slot="{ loggedIn }">
-                <div class="balance" v-if="loggedIn">
+                <div class="balance" v-if="loggedIn && pastLaunch()">
                     <img src="~/assets/icons/coin.png"></img>
                     {{ balance }}
                 </div>
 
-                <div class="divider" v-if="loggedIn"></div>
+                <div class="divider" v-if="loggedIn && pastLaunch()"></div>
             </AuthState>
 
             <div class="clock">

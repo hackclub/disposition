@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Item } from '~/types/database';
+import coin from "~/assets/icons/coin.png";
 
 const manager = useWindowManager();
 const props = defineProps<{ item: Item }>()
@@ -11,7 +12,10 @@ const props = defineProps<{ item: Item }>()
         <p class="album" v-if="item.media == 'other'">{{ item.album }}</p>
         <p class="album" v-else>{{ item.album }} ({{ item.media }})</p>
         <p class="artist" v-if="item.media != 'other'">{{ item.artist }}</p>
-        <p class="price">{{ item.price }} C</p>
+        <p class="price">
+            {{ item.price }}
+            <img :src="coin" />    
+        </p>
     </div>
 </template>
 
@@ -60,6 +64,19 @@ const props = defineProps<{ item: Item }>()
         border: 1px solid var(--color-border-dark);
         background-color: var(--color-white);
         font-weight: bold;
+
+        display: flex;
+        flex-direction: row;
+        
+        img {
+            width: 20px;
+            height: 20px;
+            user-select: none;
+        }
+    }
+    
+    &:hover {
+        cursor: pointer;
     }
 }
 </style>

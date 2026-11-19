@@ -6,6 +6,9 @@ const manager = useWindowManager();
 const config = useRuntimeConfig();
 const launch = computed(() => Date.now() >= config.public.startDate * 1000)
 const { data } = await useFetch<Record<string, Record<string, Item[]>>>("/api/shop/items/shelves");
+const { read, write } = useConfiguration("shop");
+
+const region = read("region");
 </script>
 
 <template>

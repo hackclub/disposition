@@ -19,6 +19,18 @@ export default defineNuxtConfig({
 		blob: true
 	},
 
+	app: {
+		head: {
+			title: 'Disposition',
+			htmlAttrs: {
+				lang: 'en',
+			},
+			link: [
+				{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+			],
+		},
+	},
+
 	runtimeConfig: {
 		hackclub: {
 			clientId: process.env.NUXT_HACKCLUB_CLIENT_ID || process.env.HCA_CLIENT_ID || '',
@@ -60,7 +72,7 @@ export default defineNuxtConfig({
 				settings: {
 					showBuddies: true,
 					streamerMode: false,
-					
+
 					wallpaperSource: "/wallpaper/default.png",
 					configVersion: "1.0.3"
 				}
