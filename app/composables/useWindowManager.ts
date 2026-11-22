@@ -1,7 +1,7 @@
 import Documentation from "~/apps/documentation.vue";
 import Welcome from "~/apps/welcome.vue";
 import type { WindowInstance } from "~/types/window"
-import { APPS } from "~/registry/apps.ts"
+import { APPS } from "~/utils/apps"
 import type { DialogBoxOptions } from "~/components/dialogBox.vue";
 import type { MessageBoxOptions } from "~/components/messageBox.vue";
 

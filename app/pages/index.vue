@@ -8,7 +8,7 @@ import TaskbarItem from '~/components/taskbarItem.vue';
 import BenjiBuddy from "~/components/benjiBuddy.vue";
 import AugustBuddy from "~/components/augustBuddy.vue";
 import NotificationCard from "~/components/cards/notification.vue";
-import { APPS } from "~/registry/apps";
+import { APPS } from "~/utils/apps";
 import type { PrivateUser } from "~/types/database";
 import { onMounted, nextTick, computed } from "vue";
 

@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import type { Component } from 'vue';
-import { APPS } from '~/registry/apps';
 import { ICONS } from '~/registry/icons';
 import type { WindowInstance } from '~/types/window';
 

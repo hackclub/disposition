@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, nextTick } from "vue";
 import Window from "~/components/window.vue"
-import { APPS } from "~/registry/apps";
+import { APPS } from "~/utils/apps";
 import type { WindowInstance } from "~/types/window";
 
 const manager = useWindowManager();

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { APPS } from '~/registry/apps';
+import { APPS } from '~/utils/apps';
 import { ICONS } from '~/registry/icons';
 const { loggedIn, user } = await useUserSession()
 const manager = useWindowManager();
