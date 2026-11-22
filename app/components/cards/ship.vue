@@ -84,9 +84,10 @@ function more() {
     flex-direction: column;
     flex-shrink: 0;
     box-sizing: border-box;
-    padding: 6px 6px 8px;
+    padding: 8px 8px 10px;
     background: var(--color-bg-light);
-    border: 1px solid var(--color-gray-light);
+    border: 2px solid var(--color-border-dark);
+    box-shadow: 4px 4px 0 var(--color-shadow-dark);
     font-family: 'Inter', 'Fira Sans', sans-serif;
     font-size: 14px;
 
@@ -192,6 +193,7 @@ function more() {
 .feed-card.ship {
     background-color: #050505BF;
     border: 2px solid #8E8F90;
+    box-shadow: 4px 4px 0 var(--color-shadow-dark);
     color: var(--color-white);
 
     .feed-content {

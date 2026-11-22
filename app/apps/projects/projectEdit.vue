@@ -344,8 +344,9 @@ async function save() {
     display: flex;
     gap: 12px;
     padding: 6px;
-    background: white;
-    border: 1px solid var(--color-gray-medium);
+    background: var(--color-panel-bg);
+    border: 2px solid var(--color-border-dark);
+    box-shadow: 4px 4px 0 var(--color-shadow-dark);
 
     .thumb {
         flex-shrink: 0;
@@ -393,15 +394,20 @@ async function save() {
     flex: 1;
     min-height: 0;
     overflow-y: auto;
-    padding: 6px 12px 12px;
+    padding: 14px 16px 16px;
+    background: var(--color-panel-bg);
 }
 
 .edit-panel {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 12px;
     width: 100%;
     box-sizing: border-box;
+    padding: 16px;
+    background: var(--color-bg-light);
+    border: 2px solid var(--color-border-dark);
+    box-shadow: 4px 4px 0 var(--color-shadow-dark);
     font-size: 14px;
 }
 
@@ -459,7 +465,7 @@ async function save() {
 }
 
 .error {
-    color: #c00;
+    color: #b00000;
     font-size: 13px;
 }
 
@@ -468,14 +474,14 @@ async function save() {
     display: block;
     width: 100%;
     margin: 0;
-    padding: 3px 6px;
+    padding: 5px 7px;
     font-family: inherit;
-    font-size: 16px;
+    font-size: 15px;
     line-height: 1.2;
     color: var(--color-gray-900);
     background: var(--color-white);
-    border: 1px solid var(--color-gray-dark);
-    border-radius: 0;
+    border: 1px solid var(--color-border-dark);
+    border-radius: 2px;
     outline: none;
 }
 
@@ -484,7 +490,8 @@ async function save() {
 }
 
 .field:focus {
-    border-color: var(--color-gray-800);
+    border-color: var(--color-black);
+    box-shadow: 0 0 0 0.2px var(--color-black);
 }
 
 .name {
@@ -501,7 +508,10 @@ async function save() {
     justify-content: space-between;
     align-items: center;
     flex-shrink: 0;
-    padding: 8px 12px 12px;
+    padding: 10px 12px;
+
+    background: var(--color-bg-light);
+    border-top: 1px solid var(--color-border-light);
 
     .right {
         display: flex;
@@ -510,7 +520,7 @@ async function save() {
 
     .btn {
         width: 94px;
-        height: 24px;
+        height: 26px;
         padding: 2px 6px;
     }
 }

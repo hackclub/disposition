@@ -5,10 +5,28 @@ import ItemCard from '~/components/cards/item.vue';
 const manager = useWindowManager();
 const config = useRuntimeConfig();
 const launch = computed(() => Date.now() >= config.public.startDate * 1000)
-const { data } = await useFetch<Record<string, Record<string, Item[]>>>("/api/shop/items/shelves");
-const { read, write } = useConfiguration("shop");
+const { read } = useConfiguration("shop");
 
-const region = read("region");
+const REGIONS = [
+	{ label: "All regions", code: undefined },
+	{ label: "Europe", code: "eu" },
+	{ label: "North America", code: "na" },
+	{ label: "South America", code: "sa" },
+	{ label: "Asia", code: "as" },
+	{ label: "Africa", code: "af" },
+	{ label: "Oceania", code: "oc" },
+] as const;
+
+const savedRegion = read("region");
+const selectedRegion = ref<string | undefined>(REGIONS.find(r => r.label === savedRegion)?.code);
+
+const { data } = await useFetch<Record<string, Record<string, Item[]>>>("/api/shop/items/shelves", {
+	query: { region: selectedRegion },
+});
+
+const hasItems = computed(() =>
+	Object.values(data.value ?? {}).some(section => Object.values(section).some(items => items.length > 0))
+);
 </script>
 
 <template>
@@ -34,23 +52,34 @@ const region = read("region");
 			</div>
 
 			<div class="main" v-if="data">
-				<template v-for="(categories, section) in data">
-					<div class="browse-section">
-						<h1>{{ section }}</h1>
-						<div class="divider"></div>
+				<div class="filters">
+					<label>Region
+						<select v-model="selectedRegion">
+							<option v-for="r in REGIONS" :key="r.label" :value="r.code">{{ r.label }}</option>
+						</select>
+					</label>
+				</div>
 
-						<template v-for="(items, name) in categories">
-							<section class="browse-category" v-if="items.length > 0">
-								<h2 v-if="section == 'By Genre'" @click="manager.open('category', { category: name })"
-									class="a">{{ name }}↗</h2>
-								<h2 v-else>{{ name }}</h2>
-								<div class="items">
-									<ItemCard v-for="item in items" :item="item"></ItemCard>
-								</div>
-							</section>
-						</template>
+				<p v-if="!hasItems" class="empty">No shop items found.</p>
 
-					</div>
+				<template v-else>
+					<template v-for="(categories, section) in data" :key="section">
+						<div class="browse-section">
+							<h1>{{ section }}</h1>
+							<div class="divider"></div>
+
+							<template v-for="(items, name) in categories" :key="name">
+								<section class="browse-category" v-if="items.length > 0">
+									<h2 v-if="section == 'By Genre'" @click="manager.open('category', { category: name })"
+										class="a">{{ name }}↗</h2>
+									<h2 v-else>{{ name }}</h2>
+									<div class="items">
+										<ItemCard v-for="item in items" :key="item.id" :item="item"></ItemCard>
+									</div>
+								</section>
+							</template>
+						</div>
+					</template>
 				</template>
 			</div>
 			<div class="flex-center" v-else>
@@ -61,6 +90,17 @@ const region = read("region");
 </template>
 
 <style scoped>
+.filters {
+	display: flex;
+	justify-content: end;
+	user-select: none;
+}
+
+.empty {
+	text-align: center;
+	color: var(--color-text-hint);
+}
+
 .a:hover {
 	cursor: pointer;
 	text-decoration: underline;

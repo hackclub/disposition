@@ -24,6 +24,10 @@ const activeTab = ref<'projects' | 'feed'>('feed')
 const isOwner = computed(() => !!userId.value && session.user.value?.id === userId.value);
 const avatar = (await getUserInfo(user.value!.slackId)).imageUrl
 
+function openSlack() {
+    if (user.value?.slackId) window.open(`https://hackclub.slack.com/team/${user.value.slackId}`, '_blank', 'noopener');
+}
+
 function hoursLogged(seconds: number) {
     if (seconds < 0) return null; // no hackatime token / couldn't fetch
     return `${Math.floor(seconds / 3600)}h Logged`;
@@ -41,6 +45,7 @@ function hoursLogged(seconds: number) {
                     <div class="profile-info">
                         <h2>{{ user?.username ?? "Unknown user" }}</h2>
                         <p v-if="user?.bio">"{{ user.bio }}"</p>
+                        <button v-if="user?.slackId" class="btn" @click="openSlack">Slack profile</button>
                         <button v-if="isOwner" class="btn" @click="manager.open('edit_profile')">Edit profile</button>
                     </div>
                 </div>
@@ -91,19 +96,22 @@ function hoursLogged(seconds: number) {
 }
 
 .header-bg {
-    position: relative;
-    width: 100%;
-    height: 150px;
-    overflow: hidden;
+	position: relative;
+	width: 100%;
+	min-height: 150px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
 
-    > img {
-        position: absolute;
-        inset: 0;
-        width: 100%;
-        height: 100%;
-        object-fit: fill;
-        display: block;
-    }
+	> img {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		display: block;
+		z-index: 0;
+	}
 }
 
 .back-btn {
@@ -119,16 +127,18 @@ function hoursLogged(seconds: number) {
 }
 
 .profile-card {
-    position: absolute;
-    top: 8px;
-    left: 8px;
-    width: fit-content;
-    
-    display: flex;
-    gap: 12px;
-    padding: 6px;
-    background: var(--color-panel-bg);
-    border: 1px solid var(--color-gray-medium);
+	position: relative;
+	z-index: 1;
+	margin: 8px 8px 12px;
+	width: fit-content;
+	max-width: calc(100% - 16px);
+
+	display: flex;
+	gap: 12px;
+	padding: 6px;
+	background: var(--color-panel-bg);
+	border: 2px solid var(--color-border-dark);
+	box-shadow: 4px 4px 0 var(--color-shadow-dark);
 
     .avatar {
         width: 90px;
@@ -144,6 +154,7 @@ function hoursLogged(seconds: number) {
         justify-content: center;
         align-items: center;
         flex: 1;
+        gap: 4px;
 
         h2 {
             display: flex;
@@ -155,7 +166,7 @@ function hoursLogged(seconds: number) {
         }
 
         p {
-            margin: 0 0 6px;
+            margin: 0 0 4px;
             font-size: 12px;
         }
     }
@@ -170,30 +181,35 @@ function hoursLogged(seconds: number) {
 }
 
 .tabs {
-    position: absolute;
-    left: 10px;
-    bottom: 0;
-    display: flex;
-    gap: 6px;
+	position: relative;
+	z-index: 1;
+	display: flex;
+	gap: 8px;
+	padding: 4px 10px 0;
+	background: var(--color-panel-bg);
+	border-top: 1px solid var(--color-border-dark);
+	border-bottom: 1px solid var(--color-border-light);
 
-    button {
-        width: 90px;
-        height: 18px;
-        font-size: 12px;
-        background: var(--color-bg-light);
-        border-bottom: none;
-        cursor: pointer;
-        border: none;
-        border-radius: 0;
-        border-top-left-radius: 4px;
-        border-top-right-radius: 4px;
+	button {
+		width: 90px;
+		height: 22px;
+		font-size: 12px;
+		background: var(--color-bg-light);
+		cursor: pointer;
+		border: 1px solid var(--color-border-light);
+		border-bottom: none;
+		border-radius: 5px 5px 0 0;
+		user-select: none;
 
-        user-select: none;
-
-        &.active {
-            background: var(--color-white);
-        }
-    }
+		&.active {
+			background: var(--color-white);
+			border-color: var(--color-border-dark);
+			font-weight: 700;
+			position: relative;
+			margin-bottom: -1px;
+			height: 23px;
+		}
+	}
 }
 
 .spacer {
@@ -205,10 +221,11 @@ function hoursLogged(seconds: number) {
 }
 
 .main {
-    padding: 10px;
+    padding: 14px 16px;
     flex: 1;
     min-height: 0;
     overflow-y: auto;
+    background: var(--color-panel-bg);
 }
 
 .section-title {

@@ -22,8 +22,8 @@ const currentTab = ref<"projects" | "browse">("projects")
 			</div>
 
 			<div class="tabs">
-				<button @click="currentTab = 'projects'">My projects</button>
-				<button @click="currentTab = 'browse'">Browse feed</button>
+				<button :class="{ active: currentTab === 'projects' }" @click="currentTab = 'projects'">My projects</button>
+				<button :class="{ active: currentTab === 'browse' }" @click="currentTab = 'browse'">Browse feed</button>
 			</div>
 			<div class="spacer"></div>
 		</div>
@@ -37,7 +37,7 @@ const currentTab = ref<"projects" | "browse">("projects")
 					<template v-if="projects && projects.length > 0">
 						<ProjectCard v-for="project in projects" :key="project.id" :project="project" />
 					</template>
-					<div v-else>No projects yet, but you can change that :)</div>
+					<p v-else class="empty">No projects yet, but you can change that :)</p>
 
 					<button @click="manager.open('new_project')">Create a project</button>
 				</div>
@@ -60,9 +60,15 @@ const currentTab = ref<"projects" | "browse">("projects")
 	display: flex;
 	flex-direction: column;
 
-	gap: 10px;
-	padding: 10px;
+	gap: 12px;
+	padding: 14px;
 	overflow-y: auto;
+	background: var(--color-panel-bg);
+
+	.empty {
+		text-align: center;
+		margin: 8px 0;
+	}
 }
 
 .projects-page {
@@ -75,12 +81,12 @@ const currentTab = ref<"projects" | "browse">("projects")
 
 	display: flex;
 	flex-direction: column;
-	padding: 16px;
-	background: white;
+	padding: 18px;
+	background: var(--color-panel-bg);
 	overflow-y: auto;
 
 	h1 {
-		margin: 0;
+		margin: 0 0 12px;
 
 		text-align: center;
 		font-size: 26px;
@@ -94,7 +100,15 @@ const currentTab = ref<"projects" | "browse">("projects")
 
 	display: flex;
 	flex-direction: column;
-	gap: 10px;
+	gap: 12px;
+
+	.empty {
+		text-align: center;
+		margin: 0;
+		padding: 14px;
+		background: var(--color-bg-light);
+		border: 1px solid var(--color-border-light);
+	}
 }
 
 .user-bar {
@@ -127,20 +141,6 @@ const currentTab = ref<"projects" | "browse">("projects")
 	min-height: 0;
 }
 
-.tabs {
-	display: flex;
-	flex-direction: row;
-	gap: 5px;
-	padding-left: 5px;
-}
-
-.tabs button {
-	background-color: var(--color-bg-light);
-	border: none;
-	border-radius: 0;
-	user-select: none;
-}
-
 .buttons {
 	display: flex;
 	flex-direction: row;
@@ -158,13 +158,24 @@ const currentTab = ref<"projects" | "browse">("projects")
 	padding-left: 5px;
 
 	button {
+		height: 26px;
+		padding: 0 12px;
+		font-size: 13px;
 		background-color: var(--color-bg-light);
-		border: none;
+		border: 1px solid var(--color-border-light);
+		border-bottom: none;
 		border-radius: 0;
-		border-top-left-radius: 4px;
-		border-top-right-radius: 4px;
+		border-top-left-radius: 5px;
+		border-top-right-radius: 5px;
 
 		user-select: none;
+		cursor: pointer;
+
+		&.active {
+			background: var(--color-white);
+			border-color: var(--color-border-dark);
+			font-weight: 700;
+		}
 	}
 }
 

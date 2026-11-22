@@ -15,6 +15,11 @@ function getPrivateProjectColumns() {
 export const publicProjectColumns = getPublicProjectColumns()
 export const privateProjectColumns = getPrivateProjectColumns();
 
+const optionalLink = z.string().trim()
+    .transform(value => value || null)
+    .pipe(z.url({ protocol: /^https?$/, message: "Must be an http(s) URL" }).nullable())
+    .optional();
+
 // modelled after the project setup wizard thing. i don't ask for a demo url on new project because that would be stupid
 // same applies to the ai declaration and update declaration
 export const ProjectPostBody = z.object({
@@ -23,16 +28,32 @@ export const ProjectPostBody = z.object({
 
     // banner: z.instanceof(File).optional(),
     // icon: z.instanceof(File).optional(),
-    repository: z.string().optional(),
+    repository: optionalLink,
     // demo: z.string().optional(),
     hackatimeProjects: z.array(z.string()).optional(),
 })
 
-// "" clears the link, anything else has to be an http(s) url (these get window.open'd)
-const optionalLink = z.string().trim()
-    .transform(value => value || null)
-    .pipe(z.url({ protocol: /^https?$/, message: "Must be an http(s) URL" }).nullable())
-    .optional();
+const PRIVATE_HOST = /^(localhost|127\.|0\.0\.0\.0|10\.|192\.168\.|169\.254\.|172\.(1[6-9]|2\d|3[01])\.)/i;
+
+export async function assertGitRepository(url: string) {
+    if (PRIVATE_HOST.test(new URL(url).hostname)) throw createError({
+        statusCode: 400,
+        message: "Repository URL must be public"
+    });
+
+    try {
+        const body = await $fetch<string>(`${url.replace(/\/+$/, "")}/info/refs?service=git-upload-pack`, {
+            responseType: "text",
+            timeout: 5000,
+        });
+        if (!body.includes("# service=git-upload-pack")) throw new Error();
+    } catch {
+        throw createError({
+            statusCode: 400,
+            message: "Repository URL must point to a public git repository"
+        });
+    }
+}
 
 export const ProjectPatchBody = z.object({
     title: z.string().trim().min(1).optional(),

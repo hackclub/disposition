@@ -186,13 +186,16 @@ async function save() {
 }
 
 .note {
-    margin: 12px 12px 0;
+    margin: 14px 16px 16px;
+    padding: 12px;
     font-size: 15px;
-    line-height: 1.25;
+    line-height: 1.3;
+    background: var(--color-bg-light);
+    border: 1px solid var(--color-border-dark);
 }
 
 .error {
-    margin: 8px 12px 0;
+    margin: 0 16px 14px;
     font-weight: 600;
     color: #b00000;
 }
@@ -200,9 +203,9 @@ async function save() {
 .footer {
     display: flex;
     justify-content: flex-end;
-    gap: 10px;
+    gap: 8px;
     flex-shrink: 0;
-    padding: 6px 10px;
+    padding: 10px 12px;
     background: var(--color-bg-light);
     border-top: 1px solid var(--color-border-light);
 }
@@ -210,5 +213,6 @@ async function save() {
 .btn {
     width: 23%;
     min-width: 90px;
+    height: 26px;
 }
 </style>

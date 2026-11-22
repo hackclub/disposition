@@ -13,7 +13,9 @@ const { data } = await useFetch<Item[]>(`/api/shop/genres/${props.category}`);
         <h1>{{ props.category }}</h1>
         <div class="divider"></div>
 
-        <div class="items">
+        <p v-if="data.length === 0">No shop items found.</p>
+
+        <div class="items" v-else>
             <ItemCard v-for="item in data" :item="item"></ItemCard>
         </div>
     </div>

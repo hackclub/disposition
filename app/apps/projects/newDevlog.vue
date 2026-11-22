@@ -212,7 +212,8 @@ async function save() {
     gap: 12px;
     padding: 6px;
     background: var(--color-panel-bg);
-    border: 1px solid var(--color-gray-medium);
+    border: 2px solid var(--color-border-dark);
+    box-shadow: 4px 4px 0 var(--color-shadow-dark);
 
     .thumb {
         flex-shrink: 0;
@@ -265,7 +266,8 @@ async function save() {
     min-height: 0;
     overflow-y: auto;
     box-sizing: border-box;
-    padding: 6px 13px 8px;
+    padding: 12px 16px;
+    background: var(--color-panel-bg);
 }
 
 .heading {
@@ -281,27 +283,28 @@ async function save() {
     display: flex;
     flex-direction: column;
     flex-shrink: 0;
-    gap: 8px;
+    gap: 10px;
     box-sizing: border-box;
-    padding: 12px 10px;
+    padding: 14px;
     background: var(--color-bg-light);
-    border: 1px solid var(--color-gray-light);
+    border: 2px solid var(--color-border-dark);
+    box-shadow: 4px 4px 0 var(--color-shadow-dark);
 }
 
 .field {
     box-sizing: border-box;
     display: block;
     width: 100%;
-    height: 72px;
+    height: 90px;
     margin: 0;
-    padding: 6px 8px;
+    padding: 7px 9px;
     font-family: inherit;
     font-size: 14px;
     line-height: 1.3;
     color: var(--color-gray-900);
     background: var(--color-white);
-    border: 1px solid var(--color-gray-dark);
-    border-radius: 0;
+    border: 1px solid var(--color-border-dark);
+    border-radius: 2px;
     outline: none;
     resize: none;
 }
@@ -311,7 +314,8 @@ async function save() {
 }
 
 .field:focus {
-    border-color: var(--color-gray-800);
+    border-color: var(--color-black);
+    box-shadow: 0 0 0 0.2px var(--color-black);
 }
 
 .panel button.photo-drop {
@@ -345,7 +349,10 @@ async function save() {
     justify-content: space-between;
     align-items: center;
     flex-shrink: 0;
-    padding: 8px 14px 12px;
+    padding: 10px 14px;
+
+    background: var(--color-bg-light);
+    border-top: 1px solid var(--color-border-light);
 
     .right {
         display: flex;
@@ -355,6 +362,7 @@ async function save() {
 
 .action-btn {
     width: 94px;
+    height: 26px;
 }
 
 .preview-btn {

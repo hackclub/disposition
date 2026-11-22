@@ -118,7 +118,8 @@ function link(url: string) {
     align-items: center;
 
     background: var(--color-panel-bg);
-    border: 1px solid var(--color-gray-medium);
+    border: 2px solid var(--color-border-dark);
+    box-shadow: 4px 4px 0 var(--color-shadow-dark);
 
     .avatar {
         width: 70px;
@@ -182,8 +183,9 @@ function link(url: string) {
     box-sizing: border-box;
     width: 100%;
     height: 100%;
-    padding: 4px 13px 14px;
+    padding: 12px 16px 18px;
     overflow-y: auto;
+    background: var(--color-panel-bg);
     font-family: 'Inter', 'Fira Sans', sans-serif;
     font-size: 15px;
     user-select: none;
@@ -193,21 +195,23 @@ function link(url: string) {
     flex-shrink: 0;
     margin: 0 0 6px;
     text-align: center;
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 600;
-    font-family: 'Inter', 'Fira Sans', sans-serif;
+    letter-spacing: 0.3px;
+    font-family: 'Joan', serif;
 }
 
 .panel {
     box-sizing: border-box;
     flex-shrink: 0;
     background: var(--color-bg-light);
-    border: 1px solid var(--color-gray-light);
+    border: 2px solid var(--color-border-dark);
+    box-shadow: 4px 4px 0 var(--color-shadow-dark);
 }
 
 .about {
-    margin-bottom: 8px;
-    padding: 8px;
+    margin-bottom: 12px;
+    padding: 12px;
 
 }
 

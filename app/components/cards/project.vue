@@ -40,9 +40,10 @@ function limit(source: string, max: number) {
 
 <style scoped>
 .project {
-	border: 1px solid var(--color-gray-medium);
+	border: 2px solid var(--color-border-dark);
 	background-color: var(--color-bg-light);
-	padding: 10px;
+	padding: 12px;
+	box-shadow: 4px 4px 0 var(--color-shadow-dark);
 
 	display: grid;
 	grid-template-columns: 90px minmax(0, 1fr);
@@ -60,7 +61,8 @@ function limit(source: string, max: number) {
 	background-color: var(--color-gray-medium);
 	background-size: cover;
 	background-position: center;
-	border: 1px solid var(--color-gray-medium);
+	border: 1px solid var(--color-border-dark);
+	box-shadow: inset 0 0 0 1px var(--color-white);
 }
 
 .project-main {

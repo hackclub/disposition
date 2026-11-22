@@ -1,10 +1,11 @@
-import { sql, lte, isNotNull, desc, gte, eq, count, notInArray, SQL, inArray, ne, and } from "drizzle-orm";
+import { sql, lte, isNotNull, desc, gte, eq, count, notInArray, SQL, inArray, ne, and, arrayContains } from "drizzle-orm";
 import type { AnyColumn } from "drizzle-orm";
 import { shopItems, shopOrders } from "~~/db/schema";
 import { db } from "~~/server/utils/db";
 
 const SHELF_SIZE = 15;
 const GENRE_SHELVES = 8;
+const REGION_CODES = ["na", "sa", "eu", "af", "as", "oc"];
 
 function latestPer(partitionBy: AnyColumn, filter?: SQL) {
     const ranked = db.select({
@@ -70,14 +71,20 @@ export default defineEventHandler(async (event) => {
         // etc.. //
     */
 
+    // the client sends the region it wants to browse, defaulting to the one picked in onboarding
+    const region = getQuery(event).region;
+    const regionFilter = typeof region === "string" && REGION_CODES.includes(region)
+        ? arrayContains(shopItems.region, [region])
+        : undefined;
+
     const staffPicks = await db.select(publicItemColumns).from(shopItems)
-        .where(isNotNull(shopItems.staffPickAt))
+        .where(and(isNotNull(shopItems.staffPickAt), regionFilter))
         .orderBy(desc(shopItems.staffPickAt))
         .limit(SHELF_SIZE);
 
     const trending = await db.select(publicItemColumns).from(shopOrders)
         .innerJoin(shopItems, eq(shopOrders.item, shopItems.id))
-        .where(and(gte(shopOrders.timestamp, sql`now() - interval '7 days'`), ne(shopOrders.status, 'cancelled')))
+        .where(and(gte(shopOrders.timestamp, sql`now() - interval '7 days'`), ne(shopOrders.status, 'cancelled'), regionFilter))
         .groupBy(shopItems.id)
         .orderBy(desc(count()), desc(shopItems.id))
         .limit(SHELF_SIZE);
@@ -85,23 +92,23 @@ export default defineEventHandler(async (event) => {
     // if there arent enough trending items just add random items
     if (trending.length < SHELF_SIZE) {
         const filler = await db.select(publicItemColumns).from(shopItems)
-            .where(trending.length ? notInArray(shopItems.id, trending.map(t => t.id)) : undefined)
+            .where(and(trending.length ? notInArray(shopItems.id, trending.map(t => t.id)) : undefined, regionFilter))
             .orderBy(sql`random()`)
             .limit(SHELF_SIZE - trending.length)
         trending.push(...filler);
     }
 
-    const mediaRows = await latestPer(shopItems.media);
+    const mediaRows = await latestPer(shopItems.media, regionFilter);
 
     const topGenres = await db.select({ genre: shopItems.genre! }).from(shopItems)
-        .where(isNotNull(shopItems.genre))
+        .where(and(isNotNull(shopItems.genre), regionFilter))
         .groupBy(shopItems.genre)
         .orderBy(desc(count()), shopItems.genre)
         .limit(GENRE_SHELVES)
         .then(rows => rows.map(r => r.genre).filter((genre): genre is string => genre !== null))
 
     const genreRows = topGenres.length
-        ? await latestPer(shopItems.genre, inArray(shopItems!.genre!, topGenres))
+        ? await latestPer(shopItems.genre, and(inArray(shopItems!.genre!, topGenres), regionFilter))
         : [];
 
     return {

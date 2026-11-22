@@ -1,6 +1,6 @@
 import * as z from "zod";
 import { projects } from "~~/db/schema";
-import { ProjectPostBody } from "~~/server/utils/project/project";
+import { ProjectPostBody, assertGitRepository } from "~~/server/utils/project/project";
 
 export default defineEventHandler(async event => {
     const session = await requireUserSession(event);
@@ -16,6 +16,8 @@ export default defineEventHandler(async event => {
         message: "Invalid input",
         data: z.flattenError(parsed.error)
     })
+
+    if (parsed.data.repository) await assertGitRepository(parsed.data.repository);
 
     const project: typeof projects.$inferInsert = {
         title: parsed.data.title,

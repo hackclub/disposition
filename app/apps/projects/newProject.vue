@@ -235,7 +235,7 @@ function advance(p: number) {
 .form {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 14px;
 
     span {
         label {
@@ -244,7 +244,7 @@ function advance(p: number) {
 
         display: flex;
         flex-direction: column;
-        gap: 5px;
+        gap: 6px;
     }
 }
 
@@ -278,11 +278,13 @@ function advance(p: number) {
 .side {
     position: relative;
     flex: 0 0 39%;
+    border-right: 2px solid var(--color-border-dark);
 }
 
 .side-small {
     position: relative;
     flex: 0 0 14%;
+    border-right: 2px solid var(--color-border-dark);
 }
 
 .side-logo {
@@ -307,14 +309,14 @@ function advance(p: number) {
     flex: 1;
     min-width: 0;
     box-sizing: border-box;
-    padding: 20px 16px 14px;
+    padding: 24px 20px 18px;
     overflow-y: auto;
     background: var(--color-panel-bg);
 
     p {
         margin: 0 0 14px;
         font-size: 14px;
-        line-height: 1.3;
+        line-height: 1.4;
     }
 }
 
@@ -378,7 +380,8 @@ function advance(p: number) {
     gap: 8px;
     padding: 14px 8px;
     background: var(--color-bg-light);
-    border: 1px solid var(--color-gray-medium);
+    border: 2px solid var(--color-border-dark);
+    box-shadow: 3px 3px 0 var(--color-shadow-dark);
 }
 
 .status {
@@ -389,15 +392,16 @@ function advance(p: number) {
 .footer {
     display: flex;
     justify-content: flex-end;
-    gap: 10px;
+    gap: 8px;
     flex-shrink: 0;
-    padding: 6px 10px;
+    padding: 10px 12px;
     background: var(--color-bg-light);
     border-top: 1px solid var(--color-border-light);
 
     button {
         width: 23%;
         min-width: 90px;
+        height: 26px;
     }
 }
 </style>

@@ -93,7 +93,8 @@ const statusText = computed(() => {
     gap: 8px;
     padding: 14px;
     background: var(--color-panel-bg);
-    border: 1px solid var(--color-gray-medium);
+    border: 2px solid var(--color-border-dark);
+    box-shadow: 4px 4px 0 var(--color-shadow-dark);
 
     .avatar {
         flex-shrink: 0;
