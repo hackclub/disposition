@@ -43,59 +43,156 @@ function selectArticle(path: string) {
                 </div>
             </div>
 
-            <div class="divider"></div>
-
             <ContentRenderer v-if="home" :value="home" class="page" />
         </div>
     </div>
 </template>
 
 <style scoped>
-.page {
-    flex: 1;
-    min-width: 0;
-    min-height: 0;
-    overflow-y: auto;
-}
-
-.main {
-    margin: 0;
-    padding: 0 10px 5px;
-
-    display: flex;
-    flex-direction: row;
-    gap: 4px;
-
-    width: 100%;
-    flex: 1;
-    min-height: 0;
-}
-
-.sidebar {
-    flex: 0 0 300px;
-    overflow-y: auto;
-
-    h3 {
-		background-color: var(--color-panel-bg);
-        padding: 2px;
-    }
-
-    a:hover {
-        cursor: pointer;
-        text-decoration: underline;
-    }
-}
-
-.divider {
-    flex: 0 0 2px;
-    background-color: var(--color-panel-bg);
-}
-
 .content {
     width: 100%;
     height: 100%;
     display: flex;
     flex-direction: column;
+}
+
+.main {
+    margin: 0;
+    padding: 10px 12px 14px;
+
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+
+    width: 100%;
+    flex: 1;
+    min-height: 0;
+    box-sizing: border-box;
+}
+
+.sidebar {
+    flex: 0 0 300px;
+    box-sizing: border-box;
+    overflow-y: auto;
+    padding: 10px 12px;
+
+    background: var(--color-bg-light);
+    border: 2px solid var(--color-border-dark);
+    box-shadow: 4px 4px 0 var(--color-shadow-dark);
+
+    font-family: 'Inter', 'Fira Sans', sans-serif;
+    font-size: 14px;
+    user-select: none;
+
+    h3 {
+        margin: 0 0 6px;
+        padding: 3px 6px;
+        font-size: 14px;
+        background-color: var(--color-panel-bg);
+        border-bottom: 1px solid var(--color-border-light);
+    }
+
+    ul {
+        margin: 0 0 12px;
+        padding: 0;
+        list-style: none;
+    }
+
+    li + li {
+        margin-top: 2px;
+    }
+
+    a {
+        display: block;
+        padding: 3px 6px;
+        cursor: pointer;
+
+        &:hover {
+            background-color: var(--color-panel-bg);
+            text-decoration: underline;
+        }
+
+        &.active {
+            font-weight: bold;
+            background-color: var(--color-panel-bg);
+        }
+    }
+}
+
+.page {
+    flex: 1;
+    min-width: 0;
+    min-height: 0;
+    box-sizing: border-box;
+    overflow-y: auto;
+    padding: 14px 18px;
+
+    background: var(--color-bg-light);
+    border: 2px solid var(--color-border-dark);
+    box-shadow: 4px 4px 0 var(--color-shadow-dark);
+
+    font-family: 'Inter', 'Fira Sans', sans-serif;
+    font-size: 15px;
+    line-height: 1.45;
+}
+
+.page :deep(h1),
+.page :deep(h2),
+.page :deep(h3) {
+    font-family: 'Joan', serif;
+    line-height: 1.2;
+    margin: 16px 0 8px;
+}
+
+.page :deep(h1:first-child),
+.page :deep(h2:first-child),
+.page :deep(h3:first-child) {
+    margin-top: 0;
+}
+
+.page :deep(h1) {
+    font-size: 24px;
+}
+
+.page :deep(h2) {
+    font-size: 20px;
+}
+
+.page :deep(h3) {
+    font-size: 17px;
+}
+
+.page :deep(p) {
+    margin: 0 0 10px;
+}
+
+.page :deep(a) {
+    color: inherit;
+    text-decoration: underline;
+}
+
+.page :deep(ul),
+.page :deep(ol) {
+    margin: 0 0 10px;
+    padding-left: 22px;
+}
+
+.page :deep(li) {
+    margin-bottom: 4px;
+}
+
+.page :deep(img) {
+    max-width: 100%;
+    height: auto;
+    border: 2px solid var(--color-border-dark);
+    box-shadow: 4px 4px 0 var(--color-shadow-dark);
+}
+
+.page :deep(pre) {
+    overflow-x: auto;
+    padding: 10px;
+    background: var(--color-panel-bg);
+    border: 1px solid var(--color-border-dark);
 }
 
 .logo {
@@ -154,5 +251,6 @@ function selectArticle(path: string) {
     height: 12px;
     border: 1px solid var(--color-border-light);
     background-color: var(--color-panel-bg);
+    box-sizing: border-box;
 }
 </style>
