@@ -238,17 +238,15 @@ async function callback(event: H3Event) {
         }))
     }
 
-    // insert rsvp if needed
-    if (rsvpState) {
-        await db.insert(rsvps).values({
-            hcaId: identity.id,
-            slackId: identity.slack_id,
-            email: identity.primary_email,
-            name: `${identity.first_name} ${identity.last_name}`,
-            yswsEligible: identity.ysws_eligible ?? true, // ditto
-            verificationStatus: identity.verification_status,
-        }).onConflictDoNothing();
-    }
+    // insert rsvp
+    await db.insert(rsvps).values({
+        hcaId: identity.id,
+        slackId: identity.slack_id,
+        email: identity.primary_email,
+        name: `${identity.first_name} ${identity.last_name}`,
+        yswsEligible: identity.ysws_eligible ?? true, // ditto
+        verificationStatus: identity.verification_status,
+    }).onConflictDoNothing();
 
     return sendRedirect(event, '/');
 }
